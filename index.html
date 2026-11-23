@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Zivo Shop Helper">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
+
+<meta name="theme-color" content="#090d16">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon.png">
+
+<meta name="author" content="Aura Zivo">
+<meta name="description" content="Zivo Shop Helper - Smart POS Billing, Stock Inventory, Udhaar Ledger & Festival Receipts for Local Shops.">
+
+<title>Zivo Shop Helper - Smart Shop POS & Inventory</title>
+
+<!-- FIREBASE SDK LIBRARIES (v13.4.0 ES Module + Compat for Auth/Firestore) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBC24g6jviipUviY9xSh_K0aXyJotHhiVw",
+    authDomain: "zivo-shophelper.firebaseapp.com",
+    projectId: "zivo-shophelper",
+    storageBucket: "zivo-shophelper.firebasestorage.app",
+    messagingSenderId: "247526924763",
+    appId: "1:247526924763:web:78dd4a26ad01761a4bc7fe",
+    measurementId: "G-H83N3MZ8F0"
+  };
+
+  window.__zivoApp = initializeApp(firebaseConfig);
+  try {
+    window.__zivoAnalytics = getAnalytics(window.__zivoApp);
+  } catch (e) {
+    console.warn("Analytics skipped in offline/restricted environment:", e.message);
+  }
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<!-- External Visual & Utility Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<link rel="stylesheet" href="style.css">
+
+<style id="dynamicPrintStyle">
+@page { size: auto; margin: 0mm; }
+@media print {
+    body * { visibility: hidden; }
+    #printableReceiptArea, #printableReceiptArea * { visibility: visible; }
+    #printableReceiptArea { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
+}
+</style>
+</head>
+
+<body class="dark-mode">
+
+<!-- AUTH GATEKEEPER -->
+<div id="authGatekeeper" class="auth-gatekeeper">
+    <div class="auth-window">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="background: rgba(20, 184, 166, 0.12); border: 1px solid rgba(20, 184, 166, 0.35); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;">
+                <p style="margin: 0; font-size: 14px; font-weight: 700; color: #14b8a6;" data-i18n="welcome_banner">👋 Welcome to Zivo Shop Helper</p>
+                <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-muted);" data-i18n="welcome_sub">Sign in to your shop or register a new counter in seconds.</p>
+            </div>
+            <h2 style="margin: 0; color: #14b8a6; font-size: 26px; font-weight: 800;">🏪 Zivo Shop Helper</h2>
+            <p style="margin: 4px 0 0 0; color: var(--text-muted); font-size: 13px;" data-i18n="app_tagline">Fast POS Billing, Stock & Credit Assistant</p>
+        </div>
+
+        <div id="formLogin">
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);" data-i18n="lbl_email_user">EMAIL / USERNAME</label>
+            <input type="text" id="loginUserNick" placeholder="Enter your email or username">
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);" data-i18n="lbl_password">PASSWORD</label>
+            <input type="password" id="loginPass" placeholder="Enter password" onkeypress="if(event.key==='Enter') execLogin()">
+            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="execLogin()" data-i18n="btn_login">Access Shop Dashboard</button>
+            <p style="text-align:center; font-size:12px; margin-top:14px;">
+                <a href="#" onclick="showAuthView('signup'); return false;" style="color: #14b8a6; font-weight: 600;" data-i18n="link_signup">Create New Shop Account</a> | 
+                <a href="#" onclick="showAuthView('forgot'); return false;" style="color: var(--text-muted);" data-i18n="link_forgot">Forgot Password?</a>
+            </p>
+        </div>
+
+        <div id="formSignup" style="display: none;">
+            <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Owner Full Name *</label>
+            <input type="text" id="signOwner" placeholder="e.g. Rajesh Kumar">
+
+            <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Shop / Business Name *</label>
+            <input type="text" id="signShop" placeholder="e.g. Patna General Store">
+
+            <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Email Address *</label>
+            <input type="email" id="signEmail" placeholder="shop@example.com">
+            
+            <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Create Password (min 6 chars) *</label>
+            <input type="password" id="signPass" placeholder="Create strong password">
+            
+            <button class="btn btn-success" style="width: 100%; margin-top: 10px;" onclick="execRegister()">Register Free Shop Account</button>
+            <p style="text-align:center; font-size:12px; margin-top:10px;"><a href="#" onclick="showAuthView('login'); return false;" style="color: #14b8a6;">Back to Sign In</a></p>
+        </div>
+
+        <div id="formForgot" style="display: none;">
+            <p style="font-size: 12px; color: var(--text-muted);">Enter your registered account email to receive a password reset link.</p>
+            <input type="email" id="forgotTargetEmail" placeholder="Enter Registered Email">
+            <button class="btn btn-warning" style="width: 100%; margin-top: 10px;" onclick="execRecovery()">Send Reset Link</button>
+            <p style="text-align:center; font-size:12px; margin-top:10px;"><a href="#" onclick="showAuthView('login'); return false;" style="color: #14b8a6;">Back to Sign In</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- HEADER BAR -->
+<div class="edge-title-bar">
+    <div style="font-weight:bold; font-size:16px; margin-right:14px; display: flex; align-items: center; gap: 8px;">
+        <img src="favicon.png" alt="Logo" style="width: 34px; height: 34px; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">
+        <span>Zivo Shop Helper</span>
+        <span id="planStatusPill" style="background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 999px; font-size: 11px;">FREE PLAN</span>
+    </div>
+    <div class="edge-tab-container" id="edgeTabStrip">
+        <div class="edge-tab active" id="tab-dashboard" onclick="openTab('dashboard')">
+            <span data-i18n="tab_dashboard">🏠 Main Dashboard</span>
+        </div>
+    </div>
+    <div style="display: flex; gap: 6px; align-items: center;">
+        <button class="btn btn-gold" style="padding: 5px 11px; font-size: 11px;" onclick="openUpgradeModal()" id="btnUpgradeHeader">⭐ Upgrade Pro</button>
+        <button class="btn btn-purple" style="padding: 5px 10px; font-size: 11px;" onclick="openAboutDevModal()">ℹ️ About</button>
+        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 11px;" onclick="logoutAccount()">🚪 Logout</button>
+    </div>
+</div>
+
+<!-- NAVIGATION BAR -->
+<div class="edge-nav-bar">
+    <button class="icon-btn-large" title="Back" onclick="navigateBack()">◀</button>
+    <button class="icon-btn-large" title="Home" onclick="openTab('dashboard')">🏠</button>
+    <button class="icon-btn-large" title="Reload" onclick="location.reload()">🔄</button>
+    <div class="address-bar">
+        <span id="activeOnlineUsersIndicator" style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 2px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;">🟢 Shop Ready</span>
+        <input type="text" id="globalLauncher" placeholder="Type to jump to module (e.g., bill, stock, credit, eod)..." oninput="quickLaunchFilter(this.value)">
+    </div>
+</div>
+
+<!-- MAIN VIEWPORT -->
+<div class="app-viewport">
+
+    <!-- DASHBOARD VIEW -->
+    <div id="view-dashboard" class="tab-view">
+        <div style="background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); box-shadow: var(--card-shadow); display: flex; justify-content: space-between; align-items: center; width: 100%; border: 1px solid var(--border-color); flex-wrap: wrap; gap: 16px;">
+            <div>
+                <h2 style="margin: 0; font-size: 22px;" id="dashWelcome">Welcome Back 👋</h2>
+                <p style="margin: 4px 0 0 0; color: var(--text-muted); font-size: 12px;" id="dashPaymentBreakdown">Cash: ₹0.00 | UPI: ₹0.00 | Card: ₹0.00 | Credit: ₹0.00</p>
+                <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="openTab('billcreator')">🧾 New Bill</button>
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="openEodSummaryModal()">📊 Day Closing Report</button>
+                    <button class="btn btn-purple" style="padding: 6px 12px; font-size: 12px;" onclick="syncShopDataToCloud()" id="btnCloudSync">☁️ Sync Cloud</button>
+                </div>
+            </div>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div style="text-align: right;">
+                    <small style="font-weight:700; font-size: 10px; color: var(--text-muted);" data-i18n="lbl_today_sales">TODAY'S TOTAL SALES</small>
+                    <div style="font-size: 22px; font-weight: 800; color: var(--accent-green);" id="dashSales">₹0.00</div>
+                </div>
+                <div style="text-align: right;">
+                    <small style="font-weight:700; font-size: 10px; color: var(--text-muted);" data-i18n="lbl_today_profit">TODAY'S NET PROFIT</small>
+                    <div style="font-size: 22px; font-weight: 800; color: var(--primary-teal);" id="dashProfit">₹0.00</div>
+                </div>
+                <div style="text-align: right;">
+                    <small style="font-weight:700; font-size: 10px; color: var(--text-muted);">PENDING CREDIT</small>
+                    <div style="font-size: 22px; font-weight: 800; color: var(--accent-orange);" id="dashPendingCredit">₹0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOW STOCK ALERT BANNER -->
+        <div id="lowStockBanner" class="alert-banner">
+            <span id="lowStockBannerText">⚠️ Low Stock Alert!</span>
+            <button class="btn btn-warning" style="padding: 6px 12px; font-size: 12px;" onclick="openTab('stock')">View Stock</button>
+        </div>
+
+        <div class="section-heading" data-i18n="sec_billing">1. Daily Billing & Stock</div>
+        <div class="grid-dashboard">
+            <div class="widget-card" onclick="openTab('billcreator')"><span class="icon">🧾</span><span class="title" data-i18n="mod_bill">Bill Creator</span></div>
+            <div class="widget-card" onclick="openTab('stock')"><span class="icon">📦</span><span class="title" data-i18n="mod_stock">Stock Inventory</span></div>
+            <div class="widget-card" onclick="openTab('history')"><span class="icon">📜</span><span class="title" data-i18n="mod_history">Sales History</span></div>
+            <div class="widget-card" onclick="openTab('returns')"><span class="icon">🔄</span><span class="title" data-i18n="mod_returns">Customer Returns</span></div>
+            <div class="widget-card" onclick="openTab('services')"><span class="icon">🛠️</span><span class="title" data-i18n="mod_services">Services Manager</span></div>
+            <div class="widget-card" onclick="openCalculatorModal()"><span class="icon">🔢</span><span class="title" data-i18n="mod_calc">Shop Calculator</span></div>
+        </div>
+
+        <div class="section-heading" data-i18n="sec_customers">2. Customers, Credit & Growth</div>
+        <div class="grid-dashboard">
+            <div class="widget-card" onclick="openTab('credit')"><span class="icon">💰</span><span class="title" data-i18n="mod_credit">Credit / Udhaar Ledger</span></div>
+            <div class="widget-card" onclick="openProTab('catalog')"><span class="pro-badge">PRO</span><span class="icon">📖</span><span class="title" data-i18n="mod_catalog">Digital Catalog</span></div>
+            <div class="widget-card" onclick="openProTab('status')"><span class="pro-badge">PRO</span><span class="icon">📱</span><span class="title" data-i18n="mod_status">WhatsApp Status Studio</span></div>
+            <div class="widget-card" onclick="openProTab('aiassistant')"><span class="pro-badge">PRO</span><span class="icon">🤖</span><span class="title" data-i18n="mod_ai">AI Business Assistant</span></div>
+        </div>
+
+        <div class="section-heading" data-i18n="sec_ops">3. Operations, Staff & Settings</div>
+        <div class="grid-dashboard">
+            <div class="widget-card" onclick="openTab('expenses')"><span class="icon">💸</span><span class="title" data-i18n="mod_expenses">Expense Tracker</span></div>
+            <div class="widget-card" onclick="openTab('suppliers')"><span class="icon">🚚</span><span class="title" data-i18n="mod_suppliers">Suppliers & Orders</span></div>
+            <div class="widget-card" onclick="openTab('labels')"><span class="icon">🏷️</span><span class="title" data-i18n="mod_labels">QR & Barcode Studio</span></div>
+            <div class="widget-card" onclick="openProTab('staff')"><span class="pro-badge">PRO</span><span class="icon">👨‍💼</span><span class="title" data-i18n="mod_staff">Staff & Attendance</span></div>
+            <div class="widget-card" onclick="openTab('business')"><span class="icon">🏪</span><span class="title" data-i18n="mod_business">Business Profile</span></div>
+            <div class="widget-card" onclick="openTab('setting')"><span class="icon">⚙️</span><span class="title" data-i18n="mod_setting">Settings</span></div>
+        </div>
+    </div>
+
+    <!-- BILL CREATOR -->
+    <div id="view-billcreator" class="tab-view" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <h2 style="margin: 0;">🧾 Professional Bill Creator</h2>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn btn-warning" style="padding: 6px 12px; font-size: 12px;" onclick="holdCurrentBill()">⏸️ Hold Bill</button>
+                <button class="btn btn-purple" style="padding: 6px 12px; font-size: 12px;" onclick="openHeldBillsModal()" id="btnHeldBillsCount">📋 Held Bills (0)</button>
+            </div>
+        </div>
+        <div style="display: flex; gap: 20px; width: 100%; flex-wrap: wrap; margin-top: 14px;">
+            <!-- LIVE RECEIPT PREVIEW -->
+            <div style="flex: 1; min-width: 300px;">
+                <div style="background: var(--glass-bg); padding: 20px; border-radius: var(--border-radius); border: 1px solid var(--border-color); box-shadow: var(--card-shadow);">
+                    <h4 style="margin:0 0 10px 0;">Live Receipt Preview</h4>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 140px;">
+                            <label style="font-size: 11px; font-weight: bold; color: var(--text-muted);">Paper Size:</label>
+                            <select id="cfgPaperStyle" onchange="handlePaperStyleChange()">
+                                <option value="paper-thermal-80">80mm Thermal (Free)</option>
+                                <option value="paper-thermal-58">58mm Mini Thermal (Free)</option>
+                                <option value="paper-a4">A4 Full Invoice (PRO)</option>
+                                <option value="paper-a5">A5 Half Page (PRO)</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1; min-width: 140px;">
+                            <label style="font-size: 11px; font-weight: bold; color: var(--text-muted);">Festival Theme:</label>
+                            <select id="cfgFestivalTheme" onchange="handleFestivalThemeChange()">
+                                <option value="standard">Standard Clean (Free)</option>
+                                <option value="theme-diwali">🪔 Diwali Special (PRO)</option>
+                                <option value="theme-holi">🎨 Holi Festival (PRO)</option>
+                                <option value="theme-festive">✨ Festive Offer (PRO)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="printableReceiptArea" class="bill-paper paper-thermal-80"></div>
+                </div>
+            </div>
+
+            <!-- BILL INPUTS -->
+            <div style="flex: 1.2; min-width: 320px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); box-shadow: var(--card-shadow); border: 1px solid var(--border-color);">
+                <h4 style="margin-top:0; color: var(--primary-teal);">Customer & Invoice Details</h4>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 140px;">
+                        <label style="font-size:11px; font-weight:bold; color: var(--text-muted);">Customer Name:</label>
+                        <input type="text" id="billCustName" placeholder="Walk-in Customer" oninput="renderBillReceiptPreview()">
+                    </div>
+                    <div style="flex: 1; min-width: 140px;">
+                        <label style="font-size:11px; font-weight:bold; color: var(--text-muted);">Customer Mobile (WhatsApp):</label>
+                        <input type="tel" id="billCustPhone" placeholder="e.g. 9876543210" oninput="renderBillReceiptPreview()">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 130px;">
+                        <label style="font-size:11px; font-weight:bold; color: var(--text-muted);">Payment Mode:</label>
+                        <select id="billPayModeInput" onchange="renderBillReceiptPreview()">
+                            <option value="Cash">Cash</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Card">Card</option>
+                            <option value="Credit / Udhaar">Credit / Udhaar</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 110px;">
+                        <label style="font-size:11px; font-weight:bold; color: var(--text-muted);">Discount:</label>
+                        <input type="number" id="billDiscountInput" placeholder="0" min="0" value="0" oninput="renderBillReceiptPreview()">
+                    </div>
+                    <div style="flex: 1; min-width: 110px;">
+                        <label style="font-size:11px; font-weight:bold; color: var(--text-muted);">GST / Tax (%):</label>
+                        <input type="number" id="billTaxRateInput" placeholder="0" min="0" value="0" oninput="renderBillReceiptPreview()">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); cursor: pointer;">
+                        <input type="checkbox" id="chkIncludeUpiQr" checked onchange="renderBillReceiptPreview()" style="width: 16px; height: 16px; margin: 0;">
+                        Show UPI Payment QR on Receipt (set UPI ID in Settings)
+                    </label>
+                </div>
+
+                <h4 style="margin-top:10px; color: var(--primary-teal);">Add Products / Services</h4>
+                <button class="btn btn-purple" style="width: 100%; font-size: 12px; margin-bottom: 10px;" onclick="openScannerModal()">📷 Scan Barcode / QR Code</button>
+
+                <div style="position: relative;">
+                    <input type="text" id="itemAddName" placeholder="Type product name or scan barcode..." oninput="handleStockAutocomplete(this.value)" autocomplete="off">
+                    <div id="autocompleteBox" class="autocomplete-dropdown" style="display: none;"></div>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <input type="number" id="itemAddQty" placeholder="Qty" value="1" min="1" style="flex: 0.7;" oninput="calculateAutoLineTotal()">
+                    <input type="number" id="itemAddPrice" placeholder="Unit Price" min="0" style="flex: 1;" oninput="calculateAutoLineTotal()">
+                    <input type="number" id="itemAddTotal" placeholder="Total" readonly style="flex: 1; font-weight:bold;">
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 4px;" onclick="addItemToManualBill()">➕ Add Line Item</button>
+
+                <div id="manualBillItemsList" style="margin-top: 12px;"></div>
+
+                <div style="display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap;">
+                    <button class="btn btn-success" style="flex: 1; min-width: 160px;" onclick="markBillAsSoldAndPrint()">🖨️ Complete & Print Bill</button>
+                    <button class="btn btn-primary" style="flex: 1; min-width: 160px;" onclick="shareCurrentBillWhatsApp()">📲 Send on WhatsApp</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INVENTORY VIEW -->
+    <div id="view-stock" class="tab-view" style="display: none;">
+        <h2>📦 Stock Management System</h2>
+        <div style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-warning" onclick="exportLowStockList()">📥 Export Low Stock (CSV)</button>
+                <button class="btn btn-primary" onclick="exportAllStockCSV()">📤 Export Full Stock (CSV)</button>
+                <label class="btn btn-success" style="margin: 0;">
+                    📂 Import CSV
+                    <input type="file" accept=".csv" style="display: none;" onchange="importStockCSV(event)">
+                </label>
+            </div>
+            <span id="stockLimitLabel" style="font-size: 12px; color: var(--text-muted); font-weight: bold;">Free Plan: 0 / 25 items used</span>
+        </div>
+        <div style="display: flex; gap: 20px; width: 100%; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                <h4 style="margin-top:0;">Add / Edit Inventory Item</h4>
+                <input type="hidden" id="stkEditingId" value="">
+                <input type="text" id="stkName" placeholder="Product Title *">
+                <input type="number" id="stkPrice" placeholder="Selling Price *" min="0">
+                <input type="number" id="stkCost" placeholder="Purchase / Cost Price" min="0">
+                <input type="number" id="stkQty" placeholder="Available Quantity *" min="0">
+                <input type="number" id="stkMin" placeholder="Low Stock Alert Threshold" min="0" value="5">
+                <input type="text" id="stkCustomCode" placeholder="Custom Barcode / QR Code (Optional)">
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button class="btn btn-primary" style="flex:1;" onclick="saveProduct()">💾 Save Product</button>
+                    <button class="btn btn-danger" style="flex:1;" onclick="resetStockForm()">Clear</button>
+                </div>
+            </div>
+            <div style="flex: 2; min-width: 340px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow-x: auto;">
+                <h4 style="margin-top:0;">Current Inventory Master</h4>
+                <table class="table-custom">
+                    <thead><tr><th>Product</th><th>Code</th><th>Price</th><th>Stock</th><th>Action</th></tr></thead>
+                    <tbody id="stkTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SALES HISTORY -->
+    <div id="view-history" class="tab-view" style="display: none;">
+        <h2>📜 Sales History Ledger</h2>
+        <div style="background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow-x: auto;">
+            <input type="text" id="searchHistoryInput" placeholder="Search by Invoice #, Customer Name, or Payment Mode..." oninput="renderHistoryTable(this.value)">
+            <table class="table-custom">
+                <thead><tr><th>INV #</th><th>Date & Time</th><th>Customer</th><th>Product/Service Bought</th><th>Mode</th><th>Total</th><th>Action</th></tr></thead>
+                <tbody id="historyTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- CUSTOMER RETURNS -->
+    <div id="view-returns" class="tab-view" style="display: none;">
+        <h2>🔄 Customer Product Returns & Refund Processor</h2>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                <h4 style="margin-top:0;">Process Item Return</h4>
+                <input type="text" id="retInvId" placeholder="Invoice ID (e.g. INV-172535)">
+                <input type="text" id="retItemName" placeholder="Exact Product Name *">
+                <input type="number" id="retQty" value="1" min="1" placeholder="Quantity Returned *">
+                <input type="number" id="retRefund" placeholder="Refund Amount *" min="0">
+                <input type="text" id="retReason" placeholder="Reason for Return">
+                <button class="btn btn-warning" style="width:100%; margin-top:10px;" onclick="processCustomerReturn()">Process Return & Restock</button>
+            </div>
+            <div style="flex: 1.8; min-width: 340px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow-x: auto;">
+                <h4 style="margin-top:0;">Processed Returns Log</h4>
+                <table class="table-custom">
+                    <thead><tr><th>Date</th><th>Invoice</th><th>Product</th><th>Qty</th><th>Refund</th><th>Reason</th></tr></thead>
+                    <tbody id="returnsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SERVICES MANAGER -->
+    <div id="view-services" class="tab-view" style="display: none;">
+        <h2>🛠️ Services Manager</h2>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                <h4 style="margin-top:0;">Add Service Offering</h4>
+                <input type="text" id="srvName" placeholder="Service Title (e.g. Home Delivery / Repair) *">
+                <input type="text" id="srvDesc" placeholder="Short Description">
+                <input type="number" id="srvPrice" placeholder="Service Fee *" min="0">
+                <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="saveServiceItem()">💾 Save Service</button>
+            </div>
+            <div style="flex: 1.8; min-width: 340px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow-x: auto;">
+                <h4 style="margin-top:0;">Active Services</h4>
+                <table class="table-custom">
+                    <thead><tr><th>Service Name</th><th>Description</th><th>Fee</th><th>Action</th></tr></thead>
+                    <tbody id="servicesTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREDIT MANAGER (UDHAAR) -->
+    <div id="view-credit" class="tab-view" style="display: none;">
+        <h2>💰 Customer Credit Manager (Udhaar Ledger)</h2>
+        <div style="display: flex; gap: 20px; width: 100%; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 280px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                <h4 style="margin-top:0;">Record New Credit</h4>
+                <input type="text" id="credCustName" placeholder="Customer Name *">
+                <input type="tel" id="credCustPhone" placeholder="Mobile Number (for WhatsApp Reminder)">
+                <input type="number" id="credAmount" placeholder="Amount Due *" min="1">
+                <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Promised Payment Date:</label>
+                <input type="date" id="credDueDate">
+                <input type="text" id="credNote" placeholder="Notes / Items">
+                <button class="btn btn-warning" style="width:100%; margin-top:10px;" onclick="addCreditEntry()">➕ Record Credit</button>
+            </div>
+            <div style="flex: 2; min-width: 340px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow-x: auto;">
+                <h4 style="margin-top:0;">Active Credit Accounts</h4>
+                <table class="table-custom">
+                    <thead><tr><th>Customer</th><th>Due Date</th><th>Due Amount</th><th>Notes</th><th>Action</th></tr></thead>
+                    <tbody id="creditTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPENSE TRACKER -->
+    <div id="view-expenses" class="tab-view" style="display: none;">
+        <h2>💸 Shop Expense Tracker</h2>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                <h4 style="margin-top:0;">Record Expense</h4>
+                <input type="text" id="expTitle" placeholder="Expense Title (e.g. Shop Rent, Electricity) *">
+                <input type="number" id="expAmount" placeholder="Amount *" min="1">
+                <input type="date" id="expDate">
+                <button class="btn btn-danger" style="width:100%; margin-top:10px;" onclick="addExpenseEntry()">Record Expense</button>
+            </div>
+            <div style="flex: 1.8; min-width: 340px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow-x: auto;">
+                <h4 style="margin-top:0;">Expenses Ledger</h4>
+                <table class="table-custom">
+                    <thead><tr><th>Title</th><th>Date</th><th>Amount</th><th>Action</th></tr></thead>
+                    <tbody id="expenseTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUPPLIERS -->
+    <div id="view-suppliers" class="tab-view" style="display: none;">
+        <h2>🚚 Supplier Directory</h2>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 280px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                <h4 style="margin-top:0;">Add Vendor / Supplier</h4>
+                <input type="text" id="suppName" placeholder="Vendor Name *">
+                <input type="tel" id="suppPhone" placeholder="Phone Number">
+                <input type="text" id="suppCategory" placeholder="Supply Category">
+                <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="addSupplier()">Save Vendor</button>
+            </div>
+            <div style="flex: 1.8; min-width: 340px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow-x: auto;">
+                <h4 style="margin-top:0;">Suppliers List</h4>
+                <table class="table-custom">
+                    <thead><tr><th>Vendor Name</th><th>Phone</th><th>Category</th><th>Action</th></tr></thead>
+                    <tbody id="supplierTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- DIGITAL CATALOG (PRO) -->
+    <div id="view-catalog" class="tab-view" style="display: none;">
+        <h2>📖 Digital Product Catalog (PRO)</h2>
+        <div style="background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+            <p style="color: var(--text-muted); margin-top: 0; font-size: 13px;">Show your live product catalog to customers right on your phone or tablet.</p>
+            <div id="catalogGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-top: 14px;"></div>
+        </div>
+    </div>
+
+    <!-- AI BUSINESS ASSISTANT (PRO) -->
+    <div id="view-aiassistant" class="tab-view" style="display: none;">
+        <h2>🤖 Smart Shop AI Assistant (PRO)</h2>
+        <div style="background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); max-width: 760px; border: 1px solid var(--border-color);">
+            <div id="aiChatBox" style="background: var(--input-bg); border-radius: 12px; padding: 16px; height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; border: 1px solid var(--border-color);">
+                <div style="background: var(--glass-bg); border: 1px solid var(--border-color); padding: 10px 14px; border-radius: 10px; max-width: 85%;">Namaste! Ask me about your today's sales, expenses, low stock items, or total pending credit.</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="aiUserPrompt" placeholder="e.g. How much credit is pending? / Show low stock / Today profit..." style="margin:0;" onkeypress="if(event.key==='Enter') executeAiQuery()">
+                <button class="btn btn-primary" onclick="executeAiQuery()">Ask</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STAFF ATTENDANCE (PRO) -->
+    <div id="view-staff" class="tab-view" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <h2 style="margin: 0;">👨‍💼 Staff Attendance & Salary Manager (PRO)</h2>
+            <button class="btn btn-success" onclick="openStaffSalaryModal()">💵 Calculate Monthly Salaries</button>
+        </div>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 14px;">
+            <div style="flex: 1; min-width: 300px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                <h4 style="margin-top:0;">Register Staff</h4>
+                <input type="text" id="staffRegName" placeholder="Staff Full Name *">
+                <input type="tel" id="staffRegPhone" placeholder="Mobile Phone">
+                <input type="number" id="staffRegSalary" placeholder="Monthly Base Salary *" min="0">
+                <input type="text" id="staffRegRole" placeholder="Role (e.g. Helper, Cashier)">
+                <button class="btn btn-primary" style="width:100%; margin-top:6px;" onclick="registerStaffMember()">💾 Save Staff</button>
+
+                <h4 style="margin-top:18px;">Mark Today's Attendance</h4>
+                <select id="staffSelectDropdown"></select>
+                <select id="staffStatus">
+                    <option value="Present">🟢 Present (1 Day)</option>
+                    <option value="Half-Day">🟡 Half-Day (0.5 Day)</option>
+                    <option value="Absent">🔴 Absent (0 Days)</option>
+                </select>
+                <button class="btn btn-success" style="width:100%; margin-top:6px;" onclick="saveStaffAttendance()">Mark Attendance</button>
+            </div>
+            <div style="flex: 1.8; min-width: 340px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow-x: auto;">
+                <h4 style="margin-top:0;">Staff & Attendance Summary</h4>
+                <table class="table-custom">
+                    <thead><tr><th>Name</th><th>Role</th><th>Base Salary</th><th>Present Days</th><th>Action</th></tr></thead>
+                    <tbody id="staffTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR / BARCODE STUDIO -->
+    <div id="view-labels" class="tab-view" style="display: none;">
+        <h2>🏷️ Barcode & QR Code Studio</h2>
+        <div style="background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); max-width: 540px; border: 1px solid var(--border-color);">
+            <label style="color: var(--text-muted);"><b>Format:</b></label>
+            <select id="studioCodeType" onchange="generateStudioCodePreview()">
+                <option value="barcode">Barcode (CODE128)</option>
+                <option value="qrcode">QR Code</option>
+            </select>
+            <label style="color: var(--text-muted);"><b>Select Product:</b></label>
+            <select id="studioItemSelect" onchange="generateStudioCodePreview()"></select>
+            <div id="studioPrintCard" style="border: 2px solid var(--primary-teal); padding: 20px; text-align: center; border-radius: 14px; margin-top: 14px; background: #ffffff; color: #000;">
+                <div style="font-size: 10px; font-weight: bold; letter-spacing: 2px; color: #64748b;" id="studioShopName">ZIVO SHOP HELPER</div>
+                <h2 id="studioItemTitle" style="margin: 6px 0; color: #111;">Select Product</h2>
+                <h2 id="studioItemPrice" style="margin: 6px 0; color: #16a34a;">₹0.00</h2>
+                <div style="display: flex; justify-content: center; margin-top: 10px;">
+                    <svg id="studioSvgBarcode"></svg>
+                    <div id="studioQrBox" style="display: none;"></div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 14px;">
+                <button class="btn btn-primary" style="flex:1;" onclick="window.print()">🖨️ Print Label</button>
+                <button class="btn btn-success" style="flex:1;" onclick="downloadStudioLabelPng()">📥 Download PNG</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATUS CREATOR (PRO) -->
+    <div id="view-status" class="tab-view" style="display: none;">
+        <h2>📱 WhatsApp Status Promo Creator (PRO)</h2>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                <input type="text" id="statusTag" value="FESTIVAL SPECIAL OFFER 🪔" oninput="renderStatusPreview()">
+                <input type="text" id="statusTitle" value="🔥 MEGA STORE SALE!" oninput="renderStatusPreview()">
+                <input type="text" id="statusDisc" value="UP TO 30% OFF" oninput="renderStatusPreview()">
+                <textarea id="statusBody" rows="2" oninput="renderStatusPreview()">Visit our store today for fresh stock and festival discounts!</textarea>
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button class="btn btn-success" style="flex:1;" onclick="downloadStatusBanner()">📥 Download Image</button>
+                    <button class="btn btn-primary" style="flex:1;" onclick="sharePromoWhatsApp()">📲 Share WhatsApp</button>
+                </div>
+            </div>
+            <div style="flex: 1; min-width: 320px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                <div id="statusCardContainer" style="background: linear-gradient(135deg, #0f766e, #0d9488); padding: 24px; border-radius: 16px; color: #fff;">
+                    <span id="prevStatusTag" style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: bold;">FESTIVAL SPECIAL OFFER 🪔</span>
+                    <h1 id="prevStatusTitle" style="margin: 12px 0 6px 0; font-size: 20px;">🔥 MEGA STORE SALE!</h1>
+                    <div id="prevStatusDisc" style="font-size: 16px; font-weight: 800; color: #fef08a; margin-bottom: 6px;">UP TO 30% OFF</div>
+                    <p id="prevStatusBody" style="font-size: 12px; margin: 0;">Visit our store today for fresh stock and festival discounts!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BUSINESS SETUP -->
+    <div id="view-business" class="tab-view" style="display: none;">
+        <h2>🏪 Business Profile Setup</h2>
+        <div style="max-width: 520px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+            <label style="color: var(--text-muted);"><b>Shop / Business Name:</b></label>
+            <input type="text" id="bizShopName" placeholder="Shop Name">
+            <label style="color: var(--text-muted);"><b>Owner Name:</b></label>
+            <input type="text" id="bizOwnerName" placeholder="Owner Name">
+            <label style="color: var(--text-muted);"><b>GSTIN (Optional):</b></label>
+            <input type="text" id="bizGst" placeholder="e.g. 10AAAAA0000A1Z5">
+            <label style="color: var(--text-muted);"><b>Contact Phone:</b></label>
+            <input type="tel" id="bizPhone" placeholder="Phone Number">
+            <label style="color: var(--text-muted);"><b>Shop Address:</b></label>
+            <input type="text" id="bizAddress" placeholder="Main Road, Patna">
+            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="saveBusinessProfile()">💾 Save Business Details</button>
+        </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="view-setting" class="tab-view" style="display: none;">
+        <h2>⚙️ Settings & Localization (45+ Languages)</h2>
+        <div style="max-width: 540px; background: var(--glass-bg); padding: 22px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+            <label style="color: var(--text-muted);"><b>1. App Language (45+ Languages):</b></label>
+            <select id="cfgLang" onchange="changeLanguageSetting(this.value)"></select>
+
+            <label style="color: var(--text-muted);"><b>2. Currency Symbol:</b></label>
+            <select id="cfgCurr" onchange="saveConfig()">
+                <option value="₹">INR (₹ - Indian Rupee)</option>
+                <option value="$">USD ($ - US Dollar)</option>
+                <option value="€">EUR (€ - Euro)</option>
+                <option value="£">GBP (£ - British Pound)</option>
+                <option value="AED">AED (UAE Dirham)</option>
+                <option value="SAR">SAR (Saudi Riyal)</option>
+                <option value="BDT">BDT (৳ - Bangladeshi Taka)</option>
+                <option value="NPR">NPR (रु - Nepali Rupee)</option>
+            </select>
+
+            <label style="color: var(--text-muted);"><b>3. Shop UPI ID (for Receipt Payment QR):</b></label>
+            <input type="text" id="cfgDefaultUpi" placeholder="yourshop@upi" onchange="saveConfig()">
+
+            <label style="color: var(--text-muted);"><b>4. Theme Mode:</b></label>
+            <select id="cfgThemeMode" onchange="toggleThemeModeSetting(this.value)">
+                <option value="dark" selected>🌙 Dark Mode</option>
+                <option value="light">☀️ Light Mode</option>
+            </select>
+
+            <label style="color: var(--text-muted);"><b>5. Display Layout:</b></label>
+            <select id="cfgDisplayMode" onchange="toggleDisplayModeSetting(this.value)">
+                <option value="auto">🔄 Auto-Sense</option>
+                <option value="desktop">🖥️ Desktop View</option>
+                <option value="mobile">📱 Mobile View</option>
+            </select>
+
+            <label style="color: var(--text-muted);"><b>6. Receipt Footer Note:</b></label>
+            <input type="text" id="cfgFooterMsg" value="Thank you for shopping with us!" onchange="saveConfig()">
+
+            <hr style="margin: 16px 0; border-color: var(--border-color);">
+            <button class="btn btn-danger" style="width: 100%;" onclick="openMasterResetModal()">Reset All Shop Data</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- MOBILE BOTTOM NAVIGATION BAR -->
+<div class="mobile-bottom-bar">
+    <button class="mobile-nav-btn" onclick="openTab('dashboard')"><span>🏠</span> Home</button>
+    <button class="mobile-back-btn" onclick="navigateBack()" title="Back">◀</button>
+    <button class="mobile-nav-btn" onclick="openTab('billcreator')"><span>🧾</span> Billing</button>
+</div>
+
+<!-- UPGRADE TO PRO MODAL -->
+<div id="modalUpgradePro" class="modal-mask">
+    <div class="modal-box" style="max-width: 480px; text-align: left;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent-gold); padding-bottom: 10px; margin-bottom: 14px;">
+            <h2 style="margin: 0; color: #f59e0b; font-size: 20px;">⭐ Upgrade to Zivo Pro</h2>
+            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="closeUpgradeModal()">✕</button>
+        </div>
+        <p style="color: var(--text-muted); font-size: 13px; margin-top: 0;">Unlock all premium shop tools for <b>₹99 / month</b> (or ₹799/year):</p>
+        <ul style="font-size: 13px; line-height: 1.8; padding-left: 20px; color: var(--text-color);">
+            <li>🪔 <b>Festival Bill Themes</b> (Diwali, Holi & Festive Receipts)</li>
+            <li>📄 <b>A4 & A5 Full Invoice Formats</b></li>
+            <li>📦 <b>Unlimited Stock Items</b> (Free plan allows up to 25)</li>
+            <li>📖 <b>Digital Product Catalog & WhatsApp Status Studio</b></li>
+            <li>🤖 <b>Smart AI Business Assistant & Staff Salary Manager</b></li>
+        </ul>
+        <button class="btn btn-gold" style="width: 100%; margin-top: 12px; font-size: 14px;" onclick="startRazorpayCheckout()">💳 Pay ₹99 via Razorpay & Unlock Pro</button>
+        <p style="font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px;">Instant activation • Cancel anytime</p>
+    </div>
+</div>
+
+<!-- END OF DAY CLOSING REPORT MODAL -->
+<div id="modalEodReport" class="modal-mask">
+    <div class="modal-box" style="max-width: 480px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-teal); padding-bottom: 10px; margin-bottom: 14px;">
+            <h2 style="margin: 0; color: var(--primary-teal); font-size: 20px;">📊 Today's Closing Report</h2>
+            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="closeEodSummaryModal()">✕</button>
+        </div>
+        <div id="eodReportBody" style="font-size: 14px; line-height: 1.8;"></div>
+        <button class="btn btn-success" style="width: 100%; margin-top: 14px;" onclick="shareEodWhatsApp()">📲 Send Closing Report to WhatsApp</button>
+    </div>
+</div>
+
+<!-- HELD BILLS MODAL -->
+<div id="modalHeldBills" class="modal-mask">
+    <div class="modal-box" style="max-width: 480px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent-purple); padding-bottom: 10px; margin-bottom: 14px;">
+            <h2 style="margin: 0; color: var(--accent-purple); font-size: 20px;">📋 Held / Parked Bills</h2>
+            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="closeHeldBillsModal()">✕</button>
+        </div>
+        <div id="heldBillsList"></div>
+    </div>
+</div>
+
+<!-- STAFF SALARY MODAL -->
+<div id="modalStaffSalary" class="modal-mask">
+    <div class="modal-box" style="max-width: 600px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-teal); padding-bottom: 10px; margin-bottom: 14px;">
+            <h2 style="margin: 0; color: var(--primary-teal); font-size: 18px;">💵 Monthly Staff Salary Sheet (30-Day Basis)</h2>
+            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="closeStaffSalaryModal()">✕</button>
+        </div>
+        <div id="staffSalaryResultContainer" style="overflow-x: auto;"></div>
+    </div>
+</div>
+
+<!-- ABOUT MODAL -->
+<div id="modalAboutDev" class="modal-mask">
+    <div class="modal-box" style="max-width: 480px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent-purple); padding-bottom: 10px; margin-bottom: 14px;">
+            <h2 style="margin: 0; color: var(--accent-purple); font-size: 20px;">About Zivo Shop Helper</h2>
+            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="closeAboutDevModal()">✕</button>
+        </div>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+            <b>Zivo Shop Helper</b> by <b>Aura Zivo</b> helps local shopkeepers manage daily POS billing, stock inventory, customer returns, and credit accounts quickly from mobile or desktop—even offline.
+        </p>
+        <button class="btn btn-primary" style="width: 100%;" onclick="closeAboutDevModal()">Close</button>
+    </div>
+</div>
+
+<!-- CALCULATOR MODAL -->
+<div id="modalCalculator" class="modal-mask">
+    <div class="modal-box" style="max-width: 320px; text-align: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-teal); padding-bottom: 8px; margin-bottom: 12px;">
+            <h2 style="margin: 0; color: var(--primary-teal); font-size: 18px;">🔢 Shop Calculator</h2>
+            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="closeCalculatorModal()">✕</button>
+        </div>
+        <input type="text" id="calcScreen" class="calc-display" readonly value="0">
+        <div class="calculator-grid">
+            <button class="calc-btn" onclick="calcAppend('7')">7</button>
+            <button class="calc-btn" onclick="calcAppend('8')">8</button>
+            <button class="calc-btn" onclick="calcAppend('9')">9</button>
+            <button class="calc-btn op" onclick="calcAppend('/')">÷</button>
+            <button class="calc-btn" onclick="calcAppend('4')">4</button>
+            <button class="calc-btn" onclick="calcAppend('5')">5</button>
+            <button class="calc-btn" onclick="calcAppend('6')">6</button>
+            <button class="calc-btn op" onclick="calcAppend('*')">×</button>
+            <button class="calc-btn" onclick="calcAppend('1')">1</button>
+            <button class="calc-btn" onclick="calcAppend('2')">2</button>
+            <button class="calc-btn" onclick="calcAppend('3')">3</button>
+            <button class="calc-btn op" onclick="calcAppend('-')">-</button>
+            <button class="calc-btn" onclick="calcAppend('0')">0</button>
+            <button class="calc-btn" onclick="calcAppend('.')">.</button>
+            <button class="calc-btn eq" onclick="calcCompute()">=</button>
+            <button class="calc-btn op" onclick="calcAppend('+')">+</button>
+        </div>
+        <button class="btn btn-danger" style="width: 100%; margin-top: 10px;" onclick="calcClear()">Clear</button>
+    </div>
+</div>
+
+<!-- BARCODE SCANNER MODAL -->
+<div id="modalScanner" class="modal-mask">
+    <div class="modal-box" style="max-width: 400px; text-align: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent-purple); padding-bottom: 8px; margin-bottom: 12px;">
+            <h2 style="margin: 0; color: var(--accent-purple); font-size: 18px;">Scan Barcode / QR</h2>
+            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="closeScannerModal()">✕</button>
+        </div>
+        <div id="reader" style="width: 100%; border-radius: 10px; overflow: hidden;"></div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Point camera at product barcode or QR code.</p>
+        <button id="btnAutoScanToggle" class="btn btn-success" style="width: 100%; margin-bottom: 8px;" onclick="toggleAutoScanMode()">⚡ Continuous Scan: ON</button>
+        <button class="btn btn-primary" style="width: 100%;" onclick="closeScannerModal()">Close Scanner</button>
+    </div>
+</div>
+
+<!-- RESET CONFIRMATION MODAL -->
+<div id="modalResetConfirm" class="modal-mask">
+    <div class="modal-box" style="max-width: 380px; text-align: center;">
+        <h2 style="margin: 0 0 10px 0; color: var(--accent-red); font-size: 18px;">⚠️ Confirm Data Reset</h2>
+        <p style="font-size: 13px; color: var(--text-muted);">Type <b>DELETE</b> below to erase all local shop records. This cannot be undone.</p>
+        <input type="text" id="resetConfirmText" placeholder="Type DELETE to confirm">
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button class="btn btn-danger" style="flex: 1;" onclick="executeMasterReset()">Delete All</button>
+            <button class="btn btn-primary" style="flex: 1;" onclick="closeMasterResetModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
