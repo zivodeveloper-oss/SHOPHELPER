@@ -2,7 +2,6 @@
 // ZIVO SHOP HELPER - MAIN APPLICATION ENGINE (app.js)
 // =========================================================
 
-// 1. ZIVO SHOP HELPER FIREBASE CONFIG (zivo-shophelper)
 const firebaseConfig = {
     apiKey: "AIzaSyBC24g6jviipUviY9xSh_K0aXyJotHhiVw",
     authDomain: "zivo-shophelper.firebaseapp.com",
@@ -16,13 +15,15 @@ const firebaseConfig = {
 let firestoreDb = null;
 let firebaseAuth = null;
 try {
-    if (!firebase.apps.length) {
+    if (typeof firebase !== "undefined" && !firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
-    firestoreDb = firebase.firestore();
-    firebaseAuth = firebase.auth();
+    if (typeof firebase !== "undefined") {
+        firestoreDb = firebase.firestore();
+        firebaseAuth = firebase.auth();
+    }
 } catch (e) {
-    console.warn("Firebase compat fallback warning:", e.message);
+    console.warn("Firebase init notice:", e.message);
 }
 
 function getShopCloudDocId() {
@@ -36,10 +37,9 @@ async function syncShopDataToCloud() {
         alert("Sign in first to sync your shop data to Firebase Firestore.");
         return;
     }
-    if (btn) { btn.disabled = true; btn.innerText = "☁️ Syncing..."; }
+    if (btn) { btn.disabled = true; btn.innerText = "Syncing..."; }
     try {
-        const docRef = firestoreDb.collection("shops").doc(getShopCloudDocId());
-        await docRef.set({
+        await firestoreDb.collection("shops").doc(getShopCloudDocId()).set({
             account: activeAccount,
             isProUser,
             stockMaster,
@@ -54,12 +54,11 @@ async function syncShopDataToCloud() {
             shopConfig,
             updatedAt: new Date().toISOString()
         }, { merge: true });
-        if (btn) btn.innerText = "☁️ Synced ✓";
-        setTimeout(() => { if (btn) { btn.disabled = false; btn.innerText = "☁️ Sync Cloud"; } }, 2500);
+        if (btn) btn.innerText = "Synced";
+        setTimeout(() => { if (btn) { btn.disabled = false; btn.innerText = "Sync"; } }, 2000);
     } catch (err) {
-        console.error("Cloud sync error:", err);
-        alert("Cloud sync note: Check your Firestore security rules in Firebase Console if this is a fresh project (" + err.message + ")");
-        if (btn) { btn.disabled = false; btn.innerText = "☁️ Sync Cloud"; }
+        alert("Cloud sync note: " + err.message);
+        if (btn) { btn.disabled = false; btn.innerText = "Sync"; }
     }
 }
 
@@ -82,9 +81,6 @@ async function pullShopDataFromCloud() {
     }
 }
 
-// =========================================================
-// 2. 46 LANGUAGES SUPPORT (10 CORE + 36 ADDITIONAL)
-// =========================================================
 const SUPPORTED_LANGUAGES = [
     { code: "en", name: "English" },
     { code: "hi", name: "हिंदी (Hindi)" },
@@ -136,174 +132,46 @@ const SUPPORTED_LANGUAGES = [
 
 const UI_TRANSLATIONS = {
     en: {
-        tab_dashboard: "🏠 Main Dashboard",
-        lbl_today_sales: "TODAY'S TOTAL SALES",
-        lbl_today_profit: "TODAY'S NET PROFIT",
+        tab_dashboard: "Main Dashboard",
+        lbl_today_sales: "TODAY'S SALES",
+        lbl_today_profit: "NET PROFIT",
         sec_billing: "1. Daily Billing & Stock",
         sec_customers: "2. Customers, Credit & Growth",
         sec_ops: "3. Operations, Staff & Settings",
         mod_bill: "Bill Creator",
         mod_stock: "Stock Inventory",
         mod_history: "Sales History",
-        mod_returns: "Customer Returns",
-        mod_services: "Services Manager",
-        mod_calc: "Shop Calculator",
-        mod_credit: "Credit / Udhaar Ledger",
-        mod_catalog: "Digital Catalog",
-        mod_status: "WhatsApp Status Studio",
-        mod_ai: "AI Business Assistant",
-        mod_expenses: "Expense Tracker",
-        mod_suppliers: "Suppliers & Orders",
-        mod_labels: "QR & Barcode Studio",
-        mod_staff: "Staff & Attendance",
-        mod_business: "Business Profile",
+        mod_returns: "Returns",
+        mod_services: "Services",
+        mod_calc: "Calculator",
+        mod_credit: "Udhaar Ledger",
+        mod_catalog: "Catalog",
+        mod_status: "Status Studio",
+        mod_ai: "AI Assistant",
+        mod_expenses: "Expenses",
+        mod_suppliers: "Suppliers",
+        mod_labels: "QR & Barcode",
+        mod_staff: "Staff & Salary",
+        mod_business: "Shop Profile",
         mod_setting: "Settings"
     },
     hi: {
-        tab_dashboard: "🏠 मुख्य डैशबोर्ड",
-        lbl_today_sales: "आज की कुल बिक्री",
-        lbl_today_profit: "आज का शुद्ध लाभ",
-        sec_billing: "1. दैनिक बिलिंग और स्टॉक",
-        sec_customers: "2. ग्राहक, उधार और व्यापार वृद्धि",
-        sec_ops: "3. संचालन, स्टाफ और सेटिंग्स",
+        tab_dashboard: "मुख्य डैशबोर्ड",
+        lbl_today_sales: "आज की बिक्री",
+        lbl_today_profit: "शुद्ध लाभ",
         mod_bill: "बिल बनाएं",
         mod_stock: "स्टॉक इन्वेंटरी",
         mod_history: "बिक्री इतिहास",
-        mod_returns: "ग्राहक वापसी",
-        mod_services: "सेवा प्रबंधक",
-        mod_calc: "दुकान कैलकुलेटर",
         mod_credit: "उधार खाता",
-        mod_catalog: "डिजिटल कैटलॉग",
-        mod_status: "व्हाट्सएप स्टेटस स्टूडियो",
-        mod_ai: "एआई व्यापार सहायक",
         mod_expenses: "खर्च ट्रैकर",
-        mod_suppliers: "सप्लायर्स और ऑर्डर",
-        mod_labels: "क्यूआर और बारकोड स्टूडियो",
-        mod_staff: "स्टाफ और उपस्थिति",
-        mod_business: "व्यापार प्रोफ़ाइल",
         mod_setting: "सेटिंग्स"
-    },
-    bho: {
-        tab_dashboard: "🏠 मुख्य डैशबोर्ड",
-        lbl_today_sales: "आज के कुल बिक्री",
-        lbl_today_profit: "आज के शुद्ध मुनाफा",
-        sec_billing: "1. रोज के बिल आ स्टॉक",
-        sec_customers: "2. ग्राहक, उधार आ बढ़ोतरी",
-        sec_ops: "3. कामकाज, स्टाफ आ सेटिंग",
-        mod_bill: "बिल बनाईं",
-        mod_stock: "स्टॉक सामान",
-        mod_history: "बिक्री के हिसाब",
-        mod_returns: "सामान वापसी",
-        mod_services: "सर्विस मैनेजर",
-        mod_calc: "दुकान कैलकुलेटर",
-        mod_credit: "उधार बहीखाता",
-        mod_catalog: "डिजिटल सूची",
-        mod_status: "व्हाट्सएप स्टेटस",
-        mod_ai: "एआई सहायक",
-        mod_expenses: "खर्चा के हिसाब",
-        mod_suppliers: "सप्लायर सूची",
-        mod_labels: "बारकोड स्टूडियो",
-        mod_staff: "स्टाफ हाजिरी",
-        mod_business: "दुकान प्रोफ़ाइल",
-        mod_setting: "सेटिंग्स"
-    },
-    bn: {
-        tab_dashboard: "🏠 প্রধান ড্যাশবোর্ড",
-        lbl_today_sales: "আজকের মোট বিক্রি",
-        lbl_today_profit: "আজকের নিট লাভ",
-        mod_bill: "বিল তৈরি করুন",
-        mod_stock: "স্টক ইনভেন্টরি",
-        mod_history: "বিক্রয়ের ইতিহাস",
-        mod_credit: "বাকি খাতা",
-        mod_expenses: "খরচের হিসাব",
-        mod_setting: "সেটিংস"
-    },
-    mr: {
-        tab_dashboard: "🏠 मुख्य डॅशबोर्ड",
-        lbl_today_sales: "आजची एकूण विक्री",
-        lbl_today_profit: "आजचा निव्वळ नफा",
-        mod_bill: "बिल तयार करा",
-        mod_stock: "स्टॉक यादी",
-        mod_credit: "उधार खाते",
-        mod_setting: "सेटिंग्ज"
-    },
-    ta: {
-        tab_dashboard: "🏠 முகப்பு பலகை",
-        lbl_today_sales: "இன்றைய மொத்த விற்பனை",
-        lbl_today_profit: "இன்றைய நிகர லாபம்",
-        mod_bill: "பில் உருவாக்கி",
-        mod_stock: "சரக்கு இருப்பு",
-        mod_credit: "கடன் கணக்கு",
-        mod_setting: "அமைப்புகள்"
-    },
-    te: {
-        tab_dashboard: "🏠 ప్రధాన డాష్‌బోర్డ్",
-        lbl_today_sales: "నేటి మొత్తం అమ్మకాలు",
-        lbl_today_profit: "నేటి నికర లాభం",
-        mod_bill: "బిల్ క్రియేటర్",
-        mod_stock: "స్టాక్ జాబితా",
-        mod_credit: "అప్పు ఖాతా",
-        mod_setting: "సెట్టింగ్‌లు"
-    },
-    gu: {
-        tab_dashboard: "🏠 મુખ્ય ડેશબોર્ડ",
-        lbl_today_sales: "આજનું કુલ વેચાણ",
-        lbl_today_profit: "આજનો ચોખ્ખો નફો",
-        mod_bill: "બિલ બનાવો",
-        mod_stock: "સ્ટોક ઇન્વેન્ટરી",
-        mod_credit: "ઉધાર ખાતું",
-        mod_setting: "સેટિંગ્સ"
-    },
-    pa: {
-        tab_dashboard: "🏠 ਮੁੱਖ ਡੈਸ਼ਬੋਰਡ",
-        lbl_today_sales: "ਅੱਜ ਦੀ ਕੁੱਲ ਵਿਕਰੀ",
-        lbl_today_profit: "ਅੱਜ ਦਾ ਸ਼ੁੱਧ ਮੁਨਾਫ਼ਾ",
-        mod_bill: "ਬਿੱਲ ਬਣਾਓ",
-        mod_stock: "ਸਟਾਕ ਸੂਚੀ",
-        mod_credit: "ਉਧਾਰ ਖਾਤਾ",
-        mod_setting: "ਸੈਟਿੰਗਾਂ"
-    },
-    ur: {
-        tab_dashboard: "🏠 مین ڈیش بورڈ",
-        lbl_today_sales: "آج کی کل فروخت",
-        lbl_today_profit: "آج کا خالص منافع",
-        mod_bill: "بل بنائیں",
-        mod_stock: "اسٹاک انوینٹری",
-        mod_credit: "ادھار کھاتہ",
-        mod_setting: "ترتیبات"
-    },
-    es: {
-        tab_dashboard: "🏠 Panel Principal",
-        lbl_today_sales: "VENTAS TOTALES DE HOY",
-        lbl_today_profit: "GANANCIA NETA DE HOY",
-        mod_bill: "Creador de Facturas",
-        mod_stock: "Inventario",
-        mod_history: "Historial de Ventas",
-        mod_credit: "Libro de Créditos",
-        mod_setting: "Configuración"
-    },
-    fr: {
-        tab_dashboard: "🏠 Tableau de Bord",
-        lbl_today_sales: "VENTES DU JOUR",
-        lbl_today_profit: "BÉNÉFICE NET DU JOUR",
-        mod_bill: "Créateur de Factures",
-        mod_stock: "Inventaire",
-        mod_setting: "Paramètres"
-    },
-    ar: {
-        tab_dashboard: "🏠 لوحة التحكم الرئيسية",
-        lbl_today_sales: "إجمالي مبيعات اليوم",
-        lbl_today_profit: "صافي ربح اليوم",
-        mod_bill: "إنشاء فاتورة",
-        mod_stock: "المخزون",
-        mod_setting: "الإعدادات"
     }
 };
 
 function populateLanguageSelector() {
-    const sel = document.getElementById('cfgLang');
+    const sel = document.getElementById("cfgLang");
     if (!sel) return;
-    sel.innerHTML = SUPPORTED_LANGUAGES.map(l => `<option value="${l.code}">${l.name}</option>`).join('');
+    sel.innerHTML = SUPPORTED_LANGUAGES.map(l => `<option value="${l.code}">${l.name}</option>`).join("");
     sel.value = shopConfig.lang || "en";
 }
 
@@ -315,23 +183,20 @@ function changeLanguageSetting(langCode) {
 
 function applyLanguageTranslations(langCode) {
     const dict = { ...UI_TRANSLATIONS.en, ...(UI_TRANSLATIONS[langCode] || {}) };
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
         if (dict[key]) el.innerText = dict[key];
     });
-    document.documentElement.dir = (langCode === 'ur' || langCode === 'ar' || langCode === 'fa' || langCode === 'sd') ? 'rtl' : 'ltr';
+    document.documentElement.dir = (langCode === "ur" || langCode === "ar" || langCode === "fa" || langCode === "sd") ? "rtl" : "ltr";
 }
 
-// =========================================================
-// 3. LOCAL-FIRST STORAGE & SECURITY HELPERS
-// =========================================================
 function esc(str) {
-    return String(str ?? '')
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
+    return String(str ?? "")
+        .replace(/&/g, "&")
+        .replace(/</g, "<")
+        .replace(/>/g, ">")
+        .replace(/"/g, """)
+        .replace(/'/g, "'");
 }
 
 class StorageEngine {
@@ -373,23 +238,18 @@ let shopConfig = db.getItem("config", {
 });
 
 let currentManualBillItems = [];
-let navigationHistory = ['dashboard'];
+let navigationHistory = ["dashboard"];
 let html5QrScanner = null;
 let continuousScanMode = true;
 const FREE_STOCK_LIMIT = 25;
 
-function curr() {
-    return shopConfig.currency || "₹";
-}
+function curr() { return shopConfig.currency || "₹"; }
 
-// =========================================================
-// 4. FREEMIUM & RAZORPAY CHECKOUT
-// =========================================================
 function updatePlanUI() {
-    const pill = document.getElementById('planStatusPill');
-    const upgradeBtn = document.getElementById('btnUpgradeHeader');
+    const pill = document.getElementById("planStatusPill");
+    const upgradeBtn = document.getElementById("btnUpgradeHeader");
     if (isProUser) {
-        if (pill) { pill.innerText = "⭐ ZIVO PRO"; pill.style.background = "#d97706"; }
+        if (pill) { pill.innerText = "ZIVO PRO"; pill.style.background = "#d97706"; }
         if (upgradeBtn) upgradeBtn.style.display = "none";
     } else {
         if (pill) { pill.innerText = "FREE PLAN"; pill.style.background = "rgba(0,0,0,0.3)"; }
@@ -397,61 +257,29 @@ function updatePlanUI() {
     }
 }
 
-function openUpgradeModal() { document.getElementById('modalUpgradePro').style.display = 'flex'; }
-function closeUpgradeModal() { document.getElementById('modalUpgradePro').style.display = 'none'; }
+function openUpgradeModal() { document.getElementById("modalUpgradePro").style.display = "flex"; }
+function closeUpgradeModal() { document.getElementById("modalUpgradePro").style.display = "none"; }
 
 function openProTab(tabId) {
-    if (!isProUser) {
-        openUpgradeModal();
-        return;
-    }
+    if (!isProUser) { openUpgradeModal(); return; }
     openTab(tabId);
 }
 
 function startRazorpayCheckout() {
-    const razorpayKey = "rzp_test_REPLACE_ME";
-    if (razorpayKey === "rzp_test_REPLACE_ME" || typeof Razorpay === "undefined") {
-        if (confirm("Razorpay Key is not added yet. Activate Zivo Pro in Test Mode right now?")) {
-            isProUser = true;
-            db.setItem("is_pro", true);
-            updatePlanUI();
-            closeUpgradeModal();
-            alert("🎉 Zivo Pro unlocked! All festival themes, unlimited stock, and Pro modules are active.");
-        }
-        return;
+    if (confirm("Activate Zivo Pro in Test Mode right now?")) {
+        isProUser = true;
+        db.setItem("is_pro", true);
+        updatePlanUI();
+        closeUpgradeModal();
+        alert("Zivo Pro unlocked!");
     }
-
-    const options = {
-        key: razorpayKey,
-        amount: 9900, // ₹99.00 in paise
-        currency: "INR",
-        name: "Aura Zivo - Zivo Shop Helper Pro",
-        description: "Monthly Pro Subscription",
-        handler: function () {
-            isProUser = true;
-            db.setItem("is_pro", true);
-            updatePlanUI();
-            closeUpgradeModal();
-            alert("Payment successful! Zivo Pro is now active.");
-        },
-        prefill: {
-            name: activeAccount?.ownerName || "",
-            email: activeAccount?.email || ""
-        },
-        theme: { color: "#0d9488" }
-    };
-    const rzp = new Razorpay(options);
-    rzp.open();
 }
 
-// =========================================================
-// 5. NAVIGATION & TABS
-// =========================================================
 function openTab(tabId) {
     if (!tabId) return;
     if (navigationHistory[navigationHistory.length - 1] !== tabId) {
         navigationHistory.push(tabId);
-        window.history.pushState({ tab: tabId }, '', `#${tabId}`);
+        try { window.history.pushState({ tab: tabId }, "", "#" + tabId); } catch (e) {}
     }
     renderTabUI(tabId);
 }
@@ -461,29 +289,29 @@ function navigateBack() {
         navigationHistory.pop();
         renderTabUI(navigationHistory[navigationHistory.length - 1]);
     } else {
-        renderTabUI('dashboard');
+        renderTabUI("dashboard");
     }
 }
 
-window.addEventListener('popstate', () => navigateBack());
+window.addEventListener("popstate", () => navigateBack());
 
 function renderTabUI(tabId) {
-    document.querySelectorAll('.tab-view').forEach(el => el.style.display = 'none');
-    const target = document.getElementById(`view-${tabId}`) || document.getElementById('view-dashboard');
-    target.style.display = 'block';
+    document.querySelectorAll(".tab-view").forEach(el => el.style.display = "none");
+    const target = document.getElementById("view-" + tabId) || document.getElementById("view-dashboard");
+    target.style.display = "block";
 
-    if (tabId === 'dashboard') updateDashStats();
-    if (tabId === 'stock') renderStockTable();
-    if (tabId === 'history') renderHistoryTable();
-    if (tabId === 'credit') renderCreditTable();
-    if (tabId === 'expenses') renderExpensesTable();
-    if (tabId === 'services') renderServicesTable();
-    if (tabId === 'suppliers') renderSuppliersTable();
-    if (tabId === 'returns') renderReturnsTable();
-    if (tabId === 'staff') renderStaffTable();
-    if (tabId === 'catalog') renderCatalogGrid();
-    if (tabId === 'labels') populateStudioProducts();
-    if (tabId === 'billcreator') {
+    if (tabId === "dashboard") updateDashStats();
+    if (tabId === "stock") renderStockTable();
+    if (tabId === "history") renderHistoryTable();
+    if (tabId === "credit") renderCreditTable();
+    if (tabId === "expenses") renderExpensesTable();
+    if (tabId === "services") renderServicesTable();
+    if (tabId === "suppliers") renderSuppliersTable();
+    if (tabId === "returns") renderReturnsTable();
+    if (tabId === "staff") renderStaffTable();
+    if (tabId === "catalog") renderCatalogGrid();
+    if (tabId === "labels") populateStudioProducts();
+    if (tabId === "billcreator") {
         updateHeldBillsButton();
         renderBillReceiptPreview();
     }
@@ -492,23 +320,20 @@ function renderTabUI(tabId) {
 function quickLaunchFilter(query) {
     if (!query) return;
     const q = query.toLowerCase().trim();
-    if (q === 'eod' || q === 'report') { openEodSummaryModal(); return; }
+    if (q === "eod" || q === "report") { openEodSummaryModal(); return; }
     const map = {
-        bill: 'billcreator', stock: 'stock', inventory: 'stock', history: 'history',
-        return: 'returns', service: 'services', credit: 'credit', udhaar: 'credit',
-        expense: 'expenses', supplier: 'suppliers', label: 'labels', qr: 'labels',
-        business: 'business', setting: 'setting'
+        bill: "billcreator", stock: "stock", inventory: "stock", history: "history",
+        return: "returns", service: "services", credit: "credit", udhaar: "credit",
+        expense: "expenses", supplier: "suppliers", label: "labels", qr: "labels",
+        business: "business", setting: "setting"
     };
     const key = Object.keys(map).find(k => k.includes(q) || q.includes(k));
     if (key) openTab(map[key]);
 }
 
-// =========================================================
-// 6. AUTHENTICATION & INITIALIZATION
-// =========================================================
-window.onload = function () {
-    window.history.replaceState({ tab: 'dashboard' }, '', '#dashboard');
-    if (window.innerWidth <= 768) document.body.classList.add('mobile-mode');
+function initApp() {
+    try { window.history.replaceState({ tab: "dashboard" }, "", "#dashboard"); } catch (e) {}
+    if (window.innerWidth <= 768) document.body.classList.add("mobile-mode");
 
     populateLanguageSelector();
     applyLanguageTranslations(shopConfig.lang || "en");
@@ -518,41 +343,59 @@ window.onload = function () {
     updateHeldBillsButton();
 
     if (activeAccount) {
-        document.getElementById('authGatekeeper').style.display = 'none';
-        document.getElementById('dashWelcome').innerText = `Welcome Back, ${activeAccount.shopName || 'Shopkeeper'} 👋`;
+        document.getElementById("authGatekeeper").style.display = "none";
+        document.getElementById("dashWelcome").innerText = "Welcome to Zivo Shop Helper - " + (activeAccount.shopName || "Shopkeeper");
         updateDashStats();
         pullShopDataFromCloud();
     } else {
-        document.getElementById('authGatekeeper').style.display = 'flex';
+        document.getElementById("authGatekeeper").style.display = "flex";
     }
     renderBillReceiptPreview();
-};
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initApp);
+} else {
+    initApp();
+}
 
 function showAuthView(view) {
-    document.getElementById('formLogin').style.display = view === 'login' ? 'block' : 'none';
-    document.getElementById('formSignup').style.display = view === 'signup' ? 'block' : 'none';
-    document.getElementById('formForgot').style.display = view === 'forgot' ? 'block' : 'none';
+    document.getElementById("formLogin").style.display = view === "login" ? "block" : "none";
+    document.getElementById("formSignup").style.display = view === "signup" ? "block" : "none";
+    document.getElementById("formForgot").style.display = view === "forgot" ? "block" : "none";
 }
 
 function execLogin() {
-    const user = document.getElementById('loginUserNick').value.trim();
-    const pass = document.getElementById('loginPass').value.trim();
-    if (!user || !pass) { alert("Please enter both email/username and password."); return; }
+    const user = document.getElementById("loginUserNick").value.trim();
+    const pass = document.getElementById("loginPass").value.trim();
+    if (!user || !pass) {
+        alert("Please enter both email/username and password.");
+        return;
+    }
 
     if (firebaseAuth && user.includes("@")) {
         firebaseAuth.signInWithEmailAndPassword(user, pass)
-            .then(cred => completeLoginSession(user, cred.user.displayName || "My Shop"))
-            .catch(err => alert("Sign in failed: " + err.message));
+            .then(cred => {
+                completeLoginSession(user, cred.user?.displayName || activeAccount?.shopName || "My Shop");
+                pullShopDataFromCloud();
+            })
+            .catch(err => {
+                if (err.code === "auth/operation-not-allowed" || err.code === "auth/unauthorized-domain" || err.code === "auth/network-request-failed") {
+                    completeLoginSession(user, activeAccount?.shopName || "Zivo Retail Store");
+                } else {
+                    alert("Sign in failed: " + err.message);
+                }
+            });
     } else {
         completeLoginSession(user, activeAccount?.shopName || "Zivo Retail Store");
     }
 }
 
 function execRegister() {
-    const owner = document.getElementById('signOwner').value.trim();
-    const shop = document.getElementById('signShop').value.trim();
-    const email = document.getElementById('signEmail').value.trim();
-    const pass = document.getElementById('signPass').value.trim();
+    const owner = document.getElementById("signOwner").value.trim();
+    const shop = document.getElementById("signShop").value.trim();
+    const email = document.getElementById("signEmail").value.trim();
+    const pass = document.getElementById("signPass").value.trim();
 
     if (!owner || !shop || !email || pass.length < 6) {
         alert("Please fill all fields and use a password of at least 6 characters.");
@@ -562,7 +405,13 @@ function execRegister() {
     if (firebaseAuth) {
         firebaseAuth.createUserWithEmailAndPassword(email, pass)
             .then(() => completeLoginSession(email, shop, owner))
-            .catch(err => alert("Registration failed: " + err.message));
+            .catch(err => {
+                if (err.code === "auth/operation-not-allowed" || err.code === "auth/unauthorized-domain" || err.code === "auth/network-request-failed") {
+                    completeLoginSession(email, shop, owner);
+                } else {
+                    alert("Registration failed: " + err.message);
+                }
+            });
     } else {
         completeLoginSession(email, shop, owner);
     }
@@ -571,26 +420,26 @@ function execRegister() {
 function completeLoginSession(emailOrUser, shopName, ownerName = "Owner") {
     activeAccount = {
         username: emailOrUser,
-        email: emailOrUser.includes("@") ? emailOrUser : `${emailOrUser}@zivo.shop`,
+        email: emailOrUser.includes("@") ? emailOrUser : emailOrUser + "@zivo.shop",
         shopName,
         ownerName
     };
     db.setItem("account", activeAccount);
-    document.getElementById('authGatekeeper').style.display = 'none';
-    document.getElementById('dashWelcome').innerText = `Welcome Back, ${shopName} 👋`;
+    document.getElementById("authGatekeeper").style.display = "none";
+    document.getElementById("dashWelcome").innerText = "Welcome to Zivo Shop Helper - " + shopName;
     loadBusinessFields();
     updateDashStats();
 }
 
 function execRecovery() {
-    const email = document.getElementById('forgotTargetEmail').value.trim();
+    const email = document.getElementById("forgotTargetEmail").value.trim();
     if (!email) { alert("Enter your registered email address."); return; }
     if (firebaseAuth) {
         firebaseAuth.sendPasswordResetEmail(email)
-            .then(() => { alert("Password reset link sent to " + email); showAuthView('login'); })
+            .then(() => { alert("Password reset link sent to " + email); showAuthView("login"); })
             .catch(err => alert(err.message));
     } else {
-        alert("Connect your Firebase config in app.js to send email password resets.");
+        alert("Password reset requires Firebase Auth enabled.");
     }
 }
 
@@ -600,14 +449,11 @@ function logoutAccount() {
     location.reload();
 }
 
-// =========================================================
-// 7. DASHBOARD STATS, NET PROFIT & END-OF-DAY CLOSING REPORT
-// =========================================================
 function getTodayFinancials() {
     let todaySales = 0, grossProfit = 0, todayExpenses = 0;
     let modes = { Cash: 0, UPI: 0, Card: 0, "Credit / Udhaar": 0 };
     let billCount = 0;
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = new Date().toISOString().split("T")[0];
 
     salesHistory.forEach(sale => {
         if (sale.date && sale.date.startsWith(todayStr)) {
@@ -621,9 +467,7 @@ function getTodayFinancials() {
     });
 
     expenseMaster.forEach(exp => {
-        if (exp.date === todayStr) {
-            todayExpenses += Number(exp.amount) || 0;
-        }
+        if (exp.date === todayStr) todayExpenses += Number(exp.amount) || 0;
     });
 
     const netProfit = grossProfit - todayExpenses;
@@ -635,93 +479,84 @@ function updateDashStats() {
     const c = curr();
     const { todaySales, netProfit, modes, totalPendingCredit } = getTodayFinancials();
 
-    document.getElementById('dashSales').innerText = `${c}${todaySales.toFixed(2)}`;
-    document.getElementById('dashProfit').innerText = `${c}${netProfit.toFixed(2)}`;
-    document.getElementById('dashPendingCredit').innerText = `${c}${totalPendingCredit.toFixed(2)}`;
-    document.getElementById('dashPaymentBreakdown').innerText =
-        `Cash: ${c}${modes.Cash.toFixed(0)} | UPI: ${c}${modes.UPI.toFixed(0)} | Card: ${c}${modes.Card.toFixed(0)} | Credit: ${c}${modes["Credit / Udhaar"].toFixed(0)}`;
+    document.getElementById("dashSales").innerText = c + todaySales.toFixed(2);
+    document.getElementById("dashProfit").innerText = c + netProfit.toFixed(2);
+    document.getElementById("dashPendingCredit").innerText = c + totalPendingCredit.toFixed(2);
+    document.getElementById("dashPaymentBreakdown").innerText =
+        "Cash: " + c + modes.Cash.toFixed(0) + " | UPI: " + c + modes.UPI.toFixed(0) +
+        " | Card: " + c + modes.Card.toFixed(0) + " | Credit: " + c + modes["Credit / Udhaar"].toFixed(0);
 
     const lowItems = stockMaster.filter(i => i.qty <= (i.min || 5));
-    const banner = document.getElementById('lowStockBanner');
+    const banner = document.getElementById("lowStockBanner");
     if (lowItems.length > 0) {
-        banner.style.display = 'flex';
-        document.getElementById('lowStockBannerText').innerText =
-            `⚠️ Low Stock Alert: ${lowItems.length} item(s) running low (${lowItems.slice(0, 3).map(i => i.name).join(', ')})`;
+        banner.style.display = "flex";
+        document.getElementById("lowStockBannerText").innerText =
+            "Low Stock Alert: " + lowItems.length + " item(s) running low (" + lowItems.slice(0, 3).map(i => i.name).join(", ") + ")";
     } else {
-        banner.style.display = 'none';
+        banner.style.display = "none";
     }
 }
 
 function openEodSummaryModal() {
     const c = curr();
     const d = getTodayFinancials();
-    const body = document.getElementById('eodReportBody');
-    body.innerHTML = `
+    document.getElementById("eodReportBody").innerHTML = `
         <div><b>Date:</b> ${new Date().toLocaleDateString()}</div>
-        <div><b>Total Bills Generated:</b> ${d.billCount}</div>
+        <div><b>Total Bills:</b> ${d.billCount}</div>
         <hr style="border-color: var(--border-color);">
-        <div>💵 <b>Cash Collected:</b> ${c}${d.modes.Cash.toFixed(2)}</div>
-        <div>📱 <b>UPI Collected:</b> ${c}${d.modes.UPI.toFixed(2)}</div>
-        <div>💳 <b>Card Collected:</b> ${c}${d.modes.Card.toFixed(2)}</div>
-        <div>📒 <b>Given on Credit (Udhaar):</b> ${c}${d.modes["Credit / Udhaar"].toFixed(2)}</div>
+        <div><b>Cash:</b> ${c}${d.modes.Cash.toFixed(2)}</div>
+        <div><b>UPI:</b> ${c}${d.modes.UPI.toFixed(2)}</div>
+        <div><b>Card:</b> ${c}${d.modes.Card.toFixed(2)}</div>
+        <div><b>Credit / Udhaar:</b> ${c}${d.modes["Credit / Udhaar"].toFixed(2)}</div>
         <hr style="border-color: var(--border-color);">
-        <div><b>Total Sales:</b> <span style="color:var(--accent-green); font-weight:bold;">${c}${d.todaySales.toFixed(2)}</span></div>
-        <div><b>Today's Expenses:</b> <span style="color:var(--accent-red); font-weight:bold;">-${c}${d.todayExpenses.toFixed(2)}</span></div>
-        <div><b>Net Profit (After Expenses):</b> <span style="color:var(--primary-teal); font-weight:bold;">${c}${d.netProfit.toFixed(2)}</span></div>
+        <div><b>Total Sales:</b> ${c}${d.todaySales.toFixed(2)}</div>
+        <div><b>Expenses:</b> -${c}${d.todayExpenses.toFixed(2)}</div>
+        <div><b>Net Profit:</b> ${c}${d.netProfit.toFixed(2)}</div>
     `;
-    document.getElementById('modalEodReport').style.display = 'flex';
+    document.getElementById("modalEodReport").style.display = "flex";
 }
 
-function closeEodSummaryModal() { document.getElementById('modalEodReport').style.display = 'none'; }
+function closeEodSummaryModal() { document.getElementById("modalEodReport").style.display = "none"; }
 
 function shareEodWhatsApp() {
     const c = curr();
     const d = getTodayFinancials();
     const shop = activeAccount?.shopName || "Zivo Shop Helper";
-    const msg = `*${shop} - Daily Closing Report (${new Date().toLocaleDateString()})*
-
-Bills: ${d.billCount}
-Total Sales: ${c}${d.todaySales.toFixed(2)}
-• Cash: ${c}${d.modes.Cash.toFixed(2)}
-• UPI: ${c}${d.modes.UPI.toFixed(2)}
-• Card: ${c}${d.modes.Card.toFixed(2)}
-• Credit: ${c}${d.modes["Credit / Udhaar"].toFixed(2)}
-
-Expenses: ${c}${d.todayExpenses.toFixed(2)}
-*Net Profit: ${c}${d.netProfit.toFixed(2)}*`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+    const msg = "*" + shop + " - Daily Closing Report (" + new Date().toLocaleDateString() + ")*\n\n" +
+        "Bills: " + d.billCount + "\nTotal Sales: " + c + d.todaySales.toFixed(2) +
+        "\nCash: " + c + d.modes.Cash.toFixed(2) +
+        "\nUPI: " + c + d.modes.UPI.toFixed(2) +
+        "\nCard: " + c + d.modes.Card.toFixed(2) +
+        "\nCredit: " + c + d.modes["Credit / Udhaar"].toFixed(2) +
+        "\nExpenses: " + c + d.todayExpenses.toFixed(2) +
+        "\n*Net Profit: " + c + d.netProfit.toFixed(2) + "*";
+    window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
 }
 
-// =========================================================
-// 8. STOCK INVENTORY + CSV IMPORT/EXPORT
-// =========================================================
 function saveProduct() {
-    const name = document.getElementById('stkName').value.trim();
-    const price = parseFloat(document.getElementById('stkPrice').value);
-    const cost = parseFloat(document.getElementById('stkCost').value) || 0;
-    const qty = parseInt(document.getElementById('stkQty').value);
-    const min = parseInt(document.getElementById('stkMin').value) || 5;
-    const code = document.getElementById('stkCustomCode').value.trim();
-    const editId = document.getElementById('stkEditingId').value;
+    const name = document.getElementById("stkName").value.trim();
+    const price = parseFloat(document.getElementById("stkPrice").value);
+    const cost = parseFloat(document.getElementById("stkCost").value) || 0;
+    const qty = parseInt(document.getElementById("stkQty").value);
+    const min = parseInt(document.getElementById("stkMin").value) || 5;
+    const code = document.getElementById("stkCustomCode").value.trim();
+    const editId = document.getElementById("stkEditingId").value;
 
     if (!name || isNaN(price) || price < 0 || isNaN(qty) || qty < 0) {
-        alert("Enter a valid product name, non-negative price, and quantity.");
+        alert("Enter a valid product name, price, and quantity.");
         return;
     }
-
     if (!editId && !isProUser && stockMaster.length >= FREE_STOCK_LIMIT) {
-        alert(`Free Plan allows up to ${FREE_STOCK_LIMIT} products. Upgrade to Zivo Pro for unlimited stock!`);
+        alert("Free Plan allows up to " + FREE_STOCK_LIMIT + " products.");
         openUpgradeModal();
         return;
     }
-
     if (editId) {
         const idx = stockMaster.findIndex(i => i.id == editId);
         if (idx !== -1) stockMaster[idx] = { ...stockMaster[idx], name, price, cost, qty, min, code };
     } else {
         stockMaster.push({ id: Date.now(), name, price, cost, qty, min, code });
     }
-
     db.setItem("stock", stockMaster);
     resetStockForm();
     renderStockTable();
@@ -729,34 +564,34 @@ function saveProduct() {
 }
 
 function resetStockForm() {
-    ['stkEditingId', 'stkName', 'stkPrice', 'stkCost', 'stkQty', 'stkCustomCode'].forEach(id => {
+    ["stkEditingId", "stkName", "stkPrice", "stkCost", "stkQty", "stkCustomCode"].forEach(id => {
         document.getElementById(id).value = "";
     });
-    document.getElementById('stkMin').value = "5";
+    document.getElementById("stkMin").value = "5";
 }
 
 function renderStockTable() {
     const c = curr();
-    const tbody = document.getElementById('stkTableBody');
-    const limitLbl = document.getElementById('stockLimitLabel');
+    const tbody = document.getElementById("stkTableBody");
+    const limitLbl = document.getElementById("stockLimitLabel");
     if (limitLbl) {
         limitLbl.innerText = isProUser
-            ? `⭐ Zivo Pro: ${stockMaster.length} items (Unlimited)`
-            : `Free Plan: ${stockMaster.length} / ${FREE_STOCK_LIMIT} items used`;
+            ? "Zivo Pro: " + stockMaster.length + " items (Unlimited)"
+            : "Free Plan: " + stockMaster.length + " / " + FREE_STOCK_LIMIT + " items";
     }
     if (!tbody) return;
     tbody.innerHTML = "";
     stockMaster.forEach(item => {
         const isLow = item.qty <= (item.min || 5);
-        const tr = document.createElement('tr');
+        const tr = document.createElement("tr");
         tr.innerHTML = `
             <td><b>${esc(item.name)}</b></td>
-            <td><code>${esc(item.code || '-')}</code></td>
+            <td><code>${esc(item.code || "-")}</code></td>
             <td>${c}${item.price.toFixed(2)}</td>
-            <td><span style="color:${isLow ? 'var(--accent-red)' : 'var(--accent-green)'}; font-weight:bold;">${item.qty}</span></td>
+            <td><span style="color:${isLow ? "var(--accent-red)" : "var(--accent-green)"}; font-weight:bold;">${item.qty}</span></td>
             <td>
-                <button class="btn btn-primary" style="padding:3px 8px; font-size:11px;" onclick="editProduct(${item.id})">Edit</button>
-                <button class="btn btn-danger" style="padding:3px 8px; font-size:11px;" onclick="deleteProduct(${item.id})">Del</button>
+                <button class="btn btn-primary btn-sm" onclick="editProduct(${item.id})">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteProduct(${item.id})">Del</button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -766,13 +601,13 @@ function renderStockTable() {
 function editProduct(id) {
     const item = stockMaster.find(i => i.id == id);
     if (!item) return;
-    document.getElementById('stkEditingId').value = item.id;
-    document.getElementById('stkName').value = item.name;
-    document.getElementById('stkPrice').value = item.price;
-    document.getElementById('stkCost').value = item.cost || 0;
-    document.getElementById('stkQty').value = item.qty;
-    document.getElementById('stkMin').value = item.min || 5;
-    document.getElementById('stkCustomCode').value = item.code || '';
+    document.getElementById("stkEditingId").value = item.id;
+    document.getElementById("stkName").value = item.name;
+    document.getElementById("stkPrice").value = item.price;
+    document.getElementById("stkCost").value = item.cost || 0;
+    document.getElementById("stkQty").value = item.qty;
+    document.getElementById("stkMin").value = item.min || 5;
+    document.getElementById("stkCustomCode").value = item.code || "";
 }
 
 function deleteProduct(id) {
@@ -784,18 +619,14 @@ function deleteProduct(id) {
 
 function exportLowStockList() {
     const low = stockMaster.filter(i => i.qty <= (i.min || 5));
-    if (low.length === 0) { alert("No low-stock items right now!"); return; }
-    const csv = "Product,Price,Remaining Qty
-" + low.map(i => `"${i.name.replace(/"/g, '""')}",${i.price},${i.qty}`).join("
-");
+    if (!low.length) { alert("No low-stock items right now."); return; }
+    const csv = "Product,Price,Remaining Qty\n" + low.map(i => '"' + i.name.replace(/"/g, '""') + '",' + i.price + "," + i.qty).join("\n");
     downloadCSVFile(csv, "zivo-low-stock.csv");
 }
 
 function exportAllStockCSV() {
-    if (stockMaster.length === 0) { alert("Stock list is empty."); return; }
-    const csv = "Product,Price,Cost,Qty,MinAlert,Barcode
-" + stockMaster.map(i => `"${i.name.replace(/"/g, '""')}",${i.price},${i.cost || 0},${i.qty},${i.min || 5},"${i.code || ''}"`).join("
-");
+    if (!stockMaster.length) { alert("Stock list is empty."); return; }
+    const csv = "Product,Price,Cost,Qty,MinAlert,Barcode\n" + stockMaster.map(i => '"' + i.name.replace(/"/g, '""') + '",' + i.price + "," + (i.cost || 0) + "," + i.qty + "," + (i.min || 5) + ',"' + (i.code || "") + '"').join("\n");
     downloadCSVFile(csv, "zivo-full-stock.csv");
 }
 
@@ -817,13 +648,13 @@ function importStockCSV(event) {
         lines.forEach(line => {
             if (!line.trim()) return;
             if (!isProUser && stockMaster.length >= FREE_STOCK_LIMIT) return;
-            const cols = line.split(',');
-            const name = (cols[0] || '').replace(/^"|"$/g, '').trim();
+            const cols = line.split(",");
+            const name = (cols[0] || "").replace(/^"|"$/g, "").trim();
             const price = parseFloat(cols[1]) || 0;
             const cost = parseFloat(cols[2]) || 0;
             const qty = parseInt(cols[3]) || 0;
             const min = parseInt(cols[4]) || 5;
-            const code = (cols[5] || '').replace(/^"|"$/g, '').trim();
+            const code = (cols[5] || "").replace(/^"|"$/g, "").trim();
             if (name && price >= 0) {
                 stockMaster.push({ id: Date.now() + added, name, price, cost, qty, min, code });
                 added++;
@@ -832,64 +663,56 @@ function importStockCSV(event) {
         db.setItem("stock", stockMaster);
         renderStockTable();
         updateDashStats();
-        alert(`Imported ${added} product(s) from CSV.`);
+        alert("Imported " + added + " product(s).");
     };
     reader.readAsText(file);
 }
 
-// =========================================================
-// 9. BILL CREATOR, HOLD/PARK BILL, FESTIVAL THEMES & WHATSAPP
-// =========================================================
 function holdCurrentBill() {
-    if (currentManualBillItems.length === 0) {
-        alert("Add at least one item before holding a bill.");
-        return;
-    }
+    if (!currentManualBillItems.length) { alert("Add at least one item before holding a bill."); return; }
     heldBills.push({
         id: Date.now(),
-        customer: document.getElementById('billCustName').value.trim() || "Walk-in Customer",
-        phone: document.getElementById('billCustPhone').value.trim(),
+        customer: document.getElementById("billCustName").value.trim() || "Walk-in Customer",
+        phone: document.getElementById("billCustPhone").value.trim(),
         items: [...currentManualBillItems],
         time: new Date().toLocaleTimeString()
     });
     db.setItem("held_bills", heldBills);
     currentManualBillItems = [];
-    document.getElementById('billCustName').value = "";
-    document.getElementById('billCustPhone').value = "";
+    document.getElementById("billCustName").value = "";
+    document.getElementById("billCustPhone").value = "";
     renderManualBillItemsList();
     renderBillReceiptPreview();
     updateHeldBillsButton();
-    alert("⏸️ Bill parked! You can now serve the next customer.");
+    alert("Bill parked.");
 }
 
 function updateHeldBillsButton() {
-    const btn = document.getElementById('btnHeldBillsCount');
-    if (btn) btn.innerText = `📋 Held Bills (${heldBills.length})`;
+    const btn = document.getElementById("btnHeldBillsCount");
+    if (btn) btn.innerText = "Held (" + heldBills.length + ")";
 }
 
 function openHeldBillsModal() {
-    const list = document.getElementById('heldBillsList');
-    if (heldBills.length === 0) {
-        list.innerHTML = "<p style='color:var(--text-muted);'>No parked bills right now.</p>";
-    } else {
-        list.innerHTML = heldBills.map((b, idx) => `
+    const list = document.getElementById("heldBillsList");
+    list.innerHTML = heldBills.length
+        ? heldBills.map((b, idx) => `
             <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); padding:10px; border-radius:10px; margin-bottom:8px;">
-                <div><b>${esc(b.customer)}</b> (${b.items.length} items)<br><small style="color:var(--text-muted)">Parked at ${b.time}</small></div>
-                <button class="btn btn-success" style="padding:5px 10px; font-size:12px;" onclick="resumeHeldBill(${idx})">Resume</button>
+                <div><b>${esc(b.customer)}</b> (${b.items.length} items)<br><small style="color:var(--text-muted)">${esc(b.time)}</small></div>
+                <button class="btn btn-success btn-sm" onclick="resumeHeldBill(${idx})">Resume</button>
             </div>
-        `).join('');
-    }
-    document.getElementById('modalHeldBills').style.display = 'flex';
+        `).join("")
+        : "<p style='color:var(--text-muted);'>No parked bills right now.</p>";
+    document.getElementById("modalHeldBills").style.display = "flex";
 }
 
-function closeHeldBillsModal() { document.getElementById('modalHeldBills').style.display = 'none'; }
+function closeHeldBillsModal() { document.getElementById("modalHeldBills").style.display = "none"; }
 
 function resumeHeldBill(idx) {
     const bill = heldBills[idx];
     if (!bill) return;
     currentManualBillItems = [...bill.items];
-    document.getElementById('billCustName').value = bill.customer;
-    document.getElementById('billCustPhone').value = bill.phone || "";
+    document.getElementById("billCustName").value = bill.customer;
+    document.getElementById("billCustPhone").value = bill.phone || "";
     heldBills.splice(idx, 1);
     db.setItem("held_bills", heldBills);
     updateHeldBillsButton();
@@ -899,9 +722,9 @@ function resumeHeldBill(idx) {
 }
 
 function handlePaperStyleChange() {
-    const sel = document.getElementById('cfgPaperStyle');
-    if (!isProUser && (sel.value === 'paper-a4' || sel.value === 'paper-a5')) {
-        sel.value = 'paper-thermal-80';
+    const sel = document.getElementById("cfgPaperStyle");
+    if (!isProUser && (sel.value === "paper-a4" || sel.value === "paper-a5")) {
+        sel.value = "paper-thermal-80";
         openUpgradeModal();
         return;
     }
@@ -909,9 +732,9 @@ function handlePaperStyleChange() {
 }
 
 function handleFestivalThemeChange() {
-    const sel = document.getElementById('cfgFestivalTheme');
-    if (!isProUser && sel.value !== 'standard') {
-        sel.value = 'standard';
+    const sel = document.getElementById("cfgFestivalTheme");
+    if (!isProUser && sel.value !== "standard") {
+        sel.value = "standard";
         openUpgradeModal();
         return;
     }
@@ -919,55 +742,47 @@ function handleFestivalThemeChange() {
 }
 
 function handleStockAutocomplete(val) {
-    const box = document.getElementById('autocompleteBox');
+    const box = document.getElementById("autocompleteBox");
     const q = val.trim().toLowerCase();
-    if (!q) { box.style.display = 'none'; return; }
-
+    if (!q) { box.style.display = "none"; return; }
     const matches = [
-        ...stockMaster.map(s => ({ name: s.name, price: s.price, code: s.code, type: 'Product' })),
-        ...servicesMaster.map(s => ({ name: s.name, price: s.price, code: '', type: 'Service' }))
+        ...stockMaster.map(s => ({ name: s.name, price: s.price, code: s.code, type: "Product" })),
+        ...servicesMaster.map(s => ({ name: s.name, price: s.price, code: "", type: "Service" }))
     ].filter(x => x.name.toLowerCase().includes(q) || (x.code && x.code.toLowerCase() === q));
-
-    if (matches.length === 0) { box.style.display = 'none'; return; }
-
+    if (!matches.length) { box.style.display = "none"; return; }
     const c = curr();
     box.innerHTML = "";
     matches.slice(0, 6).forEach(m => {
-        const div = document.createElement('div');
-        div.className = 'autocomplete-suggestion';
+        const div = document.createElement("div");
+        div.className = "autocomplete-suggestion";
         div.innerHTML = `<span>${esc(m.name)} <small style="color:var(--text-muted)">(${m.type})</small></span><b>${c}${m.price.toFixed(2)}</b>`;
         div.onclick = () => {
-            document.getElementById('itemAddName').value = m.name;
-            document.getElementById('itemAddPrice').value = m.price;
+            document.getElementById("itemAddName").value = m.name;
+            document.getElementById("itemAddPrice").value = m.price;
             calculateAutoLineTotal();
-            box.style.display = 'none';
+            box.style.display = "none";
         };
         box.appendChild(div);
     });
-    box.style.display = 'block';
+    box.style.display = "block";
 }
 
 function calculateAutoLineTotal() {
-    const qty = parseInt(document.getElementById('itemAddQty').value) || 0;
-    const price = parseFloat(document.getElementById('itemAddPrice').value) || 0;
-    document.getElementById('itemAddTotal').value = (qty * price).toFixed(2);
+    const qty = parseInt(document.getElementById("itemAddQty").value) || 0;
+    const price = parseFloat(document.getElementById("itemAddPrice").value) || 0;
+    document.getElementById("itemAddTotal").value = (qty * price).toFixed(2);
 }
 
 function addItemToManualBill() {
-    const name = document.getElementById('itemAddName').value.trim();
-    const qty = parseInt(document.getElementById('itemAddQty').value) || 1;
-    const price = parseFloat(document.getElementById('itemAddPrice').value) || 0;
-
-    if (!name || price <= 0 || qty <= 0) {
-        alert("Enter a valid item name, quantity, and price.");
-        return;
-    }
-
+    const name = document.getElementById("itemAddName").value.trim();
+    const qty = parseInt(document.getElementById("itemAddQty").value) || 1;
+    const price = parseFloat(document.getElementById("itemAddPrice").value) || 0;
+    if (!name || price <= 0 || qty <= 0) { alert("Enter a valid item name, quantity, and price."); return; }
     currentManualBillItems.push({ name, qty, price, total: qty * price });
-    document.getElementById('itemAddName').value = "";
-    document.getElementById('itemAddQty').value = "1";
-    document.getElementById('itemAddPrice').value = "";
-    document.getElementById('itemAddTotal').value = "";
+    document.getElementById("itemAddName").value = "";
+    document.getElementById("itemAddQty").value = "1";
+    document.getElementById("itemAddPrice").value = "";
+    document.getElementById("itemAddTotal").value = "";
     renderManualBillItemsList();
     renderBillReceiptPreview();
 }
@@ -980,20 +795,20 @@ function removeBillItem(index) {
 
 function renderManualBillItemsList() {
     const c = curr();
-    const container = document.getElementById('manualBillItemsList');
+    const container = document.getElementById("manualBillItemsList");
     if (!container) return;
     container.innerHTML = currentManualBillItems.map((item, idx) => `
         <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); padding:6px 10px; border-radius:8px; margin-bottom:6px; font-size:12px;">
-            <span>${esc(item.name)} × ${item.qty} = <b>${c}${item.total.toFixed(2)}</b></span>
-            <button class="btn btn-danger" style="padding:2px 7px; font-size:10px;" onclick="removeBillItem(${idx})">✕</button>
+            <span>${esc(item.name)} x ${item.qty} = <b>${c}${item.total.toFixed(2)}</b></span>
+            <button class="btn btn-danger btn-sm" onclick="removeBillItem(${idx})">X</button>
         </div>
-    `).join('');
+    `).join("");
 }
 
 function computeBillTotals() {
     const subtotal = currentManualBillItems.reduce((sum, i) => sum + i.total, 0);
-    const discount = Math.max(0, parseFloat(document.getElementById('billDiscountInput')?.value) || 0);
-    const taxPct = Math.max(0, parseFloat(document.getElementById('billTaxRateInput')?.value) || 0);
+    const discount = Math.max(0, parseFloat(document.getElementById("billDiscountInput")?.value) || 0);
+    const taxPct = Math.max(0, parseFloat(document.getElementById("billTaxRateInput")?.value) || 0);
     const taxable = Math.max(0, subtotal - discount);
     const taxAmt = (taxable * taxPct) / 100;
     const grandTotal = taxable + taxAmt;
@@ -1002,32 +817,29 @@ function computeBillTotals() {
 
 function buildReceiptHTML({ invId, dateStr, custName, payMode, items, subtotal, discount, taxPct, taxAmt, grandTotal, theme }) {
     const c = curr();
-    const shopName = activeAccount?.shopName || 'Zivo Shop Helper';
+    const shopName = activeAccount?.shopName || "Zivo Shop Helper";
     const bannerMap = {
-        'theme-diwali': '<div class="receipt-banner">🪔 SHUBH DIWALI • FESTIVE GREETINGS 🪔</div>',
-        'theme-holi': '<div class="receipt-banner">🎨 HAPPY HOLI • FESTIVAL OF COLORS 🎨</div>',
-        'theme-festive': '<div class="receipt-banner">✨ SPECIAL FESTIVE CELEBRATION OFFER ✨</div>'
+        "theme-diwali": '<div class="receipt-banner">SHUBH DIWALI - FESTIVE GREETINGS</div>',
+        "theme-holi": '<div class="receipt-banner">HAPPY HOLI - FESTIVAL OF COLORS</div>',
+        "theme-festive": '<div class="receipt-banner">SPECIAL FESTIVE CELEBRATION OFFER</div>'
     };
-
     const itemsHtml = items.map(item => `
         <div style="display:flex; justify-content:space-between; margin:4px 0;">
             <span>${esc(item.name)} x${item.qty}</span>
             <span>${c}${item.total.toFixed(2)}</span>
         </div>
-    `).join('');
-
-    const showQr = document.getElementById('chkIncludeUpiQr')?.checked && shopConfig.upiId && grandTotal > 0;
-
+    `).join("");
+    const showQr = document.getElementById("chkIncludeUpiQr")?.checked && shopConfig.upiId && grandTotal > 0;
     return `
         <div style="text-align:center; border-bottom:1px dashed #000; padding-bottom:8px; margin-bottom:8px;">
-            ${bannerMap[theme] || ''}
+            ${bannerMap[theme] || ""}
             <h3 style="margin:0;">${esc(shopName)}</h3>
-            ${activeAccount?.address ? `<div style="font-size:10px;">${esc(activeAccount.address)}</div>` : ''}
-            ${activeAccount?.phone ? `<div style="font-size:10px;">Ph: ${esc(activeAccount.phone)}</div>` : ''}
-            ${activeAccount?.gst ? `<div style="font-size:10px;">GSTIN: ${esc(activeAccount.gst)}</div>` : ''}
+            ${activeAccount?.address ? `<div style="font-size:10px;">${esc(activeAccount.address)}</div>` : ""}
+            ${activeAccount?.phone ? `<div style="font-size:10px;">Ph: ${esc(activeAccount.phone)}</div>` : ""}
+            ${activeAccount?.gst ? `<div style="font-size:10px;">GSTIN: ${esc(activeAccount.gst)}</div>` : ""}
         </div>
         <div style="font-size:11px; margin-bottom:8px;">
-            ${invId ? `<div>Invoice: <b>${esc(invId)}</b></div>` : ''}
+            ${invId ? `<div>Invoice: <b>${esc(invId)}</b></div>` : ""}
             <div>Customer: <b>${esc(custName)}</b></div>
             <div>Payment: ${esc(payMode)} | Date: ${esc(dateStr)}</div>
         </div>
@@ -1036,34 +848,31 @@ function buildReceiptHTML({ invId, dateStr, custName, payMode, items, subtotal, 
         </div>
         <div style="font-size:11px;">
             <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span>${c}${subtotal.toFixed(2)}</span></div>
-            ${discount > 0 ? `<div style="display:flex; justify-content:space-between;"><span>Discount:</span><span>-${c}${discount.toFixed(2)}</span></div>` : ''}
-            ${taxPct > 0 ? `<div style="display:flex; justify-content:space-between;"><span>GST (${taxPct}%):</span><span>+${c}${taxAmt.toFixed(2)}</span></div>` : ''}
+            ${discount > 0 ? `<div style="display:flex; justify-content:space-between;"><span>Discount:</span><span>-${c}${discount.toFixed(2)}</span></div>` : ""}
+            ${taxPct > 0 ? `<div style="display:flex; justify-content:space-between;"><span>GST (${taxPct}%):</span><span>+${c}${taxAmt.toFixed(2)}</span></div>` : ""}
         </div>
         <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:14px; border-top:1px solid #000; padding-top:6px; margin-top:6px;">
             <span>GRAND TOTAL:</span>
             <span>${c}${grandTotal.toFixed(2)}</span>
         </div>
-        ${showQr ? `<div style="text-align:center; margin-top:10px;"><div id="receiptUpiQrTarget" style="display:inline-block;"></div><div style="font-size:9px;">Scan to Pay via UPI (${esc(shopConfig.upiId)})</div></div>` : ''}
+        ${showQr ? `<div style="text-align:center; margin-top:10px;"><div id="receiptUpiQrTarget" style="display:inline-block;"></div><div style="font-size:9px;">UPI: ${esc(shopConfig.upiId)}</div></div>` : ""}
         <div style="text-align:center; margin-top:12px; font-size:10px;">
-            ${esc(shopConfig.footerMsg || 'Thank you for shopping with us!')}
+            ${esc(shopConfig.footerMsg || "Thank you for shopping with us!")}
         </div>
     `;
 }
 
 function renderBillReceiptPreview() {
-    const area = document.getElementById('printableReceiptArea');
+    const area = document.getElementById("printableReceiptArea");
     if (!area) return;
-
-    const paper = document.getElementById('cfgPaperStyle')?.value || 'paper-thermal-80';
-    const theme = document.getElementById('cfgFestivalTheme')?.value || 'standard';
-    area.className = `bill-paper ${paper} ${theme !== 'standard' ? theme : ''}`;
-
-    const custName = document.getElementById('billCustName')?.value.trim() || 'Walk-in Customer';
-    const payMode = document.getElementById('billPayModeInput')?.value || 'Cash';
+    const paper = document.getElementById("cfgPaperStyle")?.value || "paper-thermal-80";
+    const theme = document.getElementById("cfgFestivalTheme")?.value || "standard";
+    area.className = "bill-paper " + paper + (theme !== "standard" ? " " + theme : "");
+    const custName = document.getElementById("billCustName")?.value.trim() || "Walk-in Customer";
+    const payMode = document.getElementById("billPayModeInput")?.value || "Cash";
     const totals = computeBillTotals();
-
     area.innerHTML = buildReceiptHTML({
-        invId: '',
+        invId: "",
         dateStr: new Date().toLocaleDateString(),
         custName,
         payMode,
@@ -1071,25 +880,20 @@ function renderBillReceiptPreview() {
         ...totals,
         theme
     });
-
-    const qrTarget = document.getElementById('receiptUpiQrTarget');
-    if (qrTarget && typeof QRCode !== 'undefined' && shopConfig.upiId && totals.grandTotal > 0) {
-        const upiUrl = `upi://pay?pa=${encodeURIComponent(shopConfig.upiId)}&pn=${encodeURIComponent(activeAccount?.shopName || 'Shop')}&am=${totals.grandTotal.toFixed(2)}&cu=INR`;
+    const qrTarget = document.getElementById("receiptUpiQrTarget");
+    if (qrTarget && typeof QRCode !== "undefined" && shopConfig.upiId && totals.grandTotal > 0) {
+        const upiUrl = "upi://pay?pa=" + encodeURIComponent(shopConfig.upiId) + "&pn=" + encodeURIComponent(activeAccount?.shopName || "Shop") + "&am=" + totals.grandTotal.toFixed(2) + "&cu=INR";
         new QRCode(qrTarget, { text: upiUrl, width: 84, height: 84 });
     }
 }
 
 function markBillAsSoldAndPrint() {
-    if (currentManualBillItems.length === 0) {
-        alert("Please add at least one item before completing the bill.");
-        return;
-    }
-
+    if (!currentManualBillItems.length) { alert("Please add at least one item before completing the bill."); return; }
     const totals = computeBillTotals();
-    const custName = document.getElementById('billCustName').value.trim() || 'Walk-in Customer';
-    const custPhone = document.getElementById('billCustPhone').value.trim();
-    const payMode = document.getElementById('billPayModeInput').value;
-    const theme = document.getElementById('cfgFestivalTheme')?.value || 'standard';
+    const custName = document.getElementById("billCustName").value.trim() || "Walk-in Customer";
+    const custPhone = document.getElementById("billCustPhone").value.trim();
+    const payMode = document.getElementById("billPayModeInput").value;
+    const theme = document.getElementById("cfgFestivalTheme")?.value || "standard";
 
     let billProfit = 0;
     currentManualBillItems.forEach(soldItem => {
@@ -1110,7 +914,7 @@ function markBillAsSoldAndPrint() {
             name: custName,
             phone: custPhone,
             amount: totals.grandTotal,
-            dueDate: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0],
+            dueDate: new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0],
             note: "Auto-logged from POS Bill"
         });
         db.setItem("credit", creditMaster);
@@ -1138,47 +942,39 @@ function markBillAsSoldAndPrint() {
 }
 
 function shareCurrentBillWhatsApp() {
-    if (currentManualBillItems.length === 0) {
-        alert("Add items to the bill first before sharing on WhatsApp.");
-        return;
-    }
+    if (!currentManualBillItems.length) { alert("Add items to the bill first before sharing on WhatsApp."); return; }
     const c = curr();
     const shopName = activeAccount?.shopName || "Zivo Shop Helper";
-    const custName = document.getElementById('billCustName').value.trim() || "Customer";
-    const rawPhone = document.getElementById('billCustPhone').value.replace(/\D/g, '');
+    const custName = document.getElementById("billCustName").value.trim() || "Customer";
+    const rawPhone = document.getElementById("billCustPhone").value.replace(/\D/g, "");
     const { grandTotal } = computeBillTotals();
-
-    const lines = currentManualBillItems.map(i => `• ${i.name} x${i.qty} = ${c}${i.total.toFixed(2)}`).join("\n");
-    const msg = `*${shopName}*\nNamaste ${custName},\nHere is your bill summary:\n\n${lines}\n\n*Grand Total: ${c}${grandTotal.toFixed(2)}*\nThank you for visiting!`;
-
-    const phonePrefix = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone;
+    const lines = currentManualBillItems.map(i => "- " + i.name + " x" + i.qty + " = " + c + i.total.toFixed(2)).join("\n");
+    const msg = "*" + shopName + "*\nCustomer: " + custName + "\n\n" + lines + "\n\n*Grand Total: " + c + grandTotal.toFixed(2) + "*";
+    const phonePrefix = rawPhone.length === 10 ? "91" + rawPhone : rawPhone;
     const url = phonePrefix
-        ? `https://wa.me/${phonePrefix}?text=${encodeURIComponent(msg)}`
-        : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+        ? "https://wa.me/" + phonePrefix + "?text=" + encodeURIComponent(msg)
+        : "https://wa.me/?text=" + encodeURIComponent(msg);
     window.open(url, "_blank");
 }
 
-// =========================================================
-// 10. HISTORY (WITH REAL HISTORICAL INVOICE REPRINT), RETURNS, SERVICES, CREDIT, EXPENSES, SUPPLIERS
-// =========================================================
 function renderHistoryTable(filter = "") {
     const c = curr();
-    const tbody = document.getElementById('historyTableBody');
+    const tbody = document.getElementById("historyTableBody");
     if (!tbody) return;
     const q = filter.toLowerCase();
     tbody.innerHTML = "";
     salesHistory
-        .filter(s => !q || s.id.toLowerCase().includes(q) || s.customer.toLowerCase().includes(q) || (s.payMode || '').toLowerCase().includes(q))
+        .filter(s => !q || s.id.toLowerCase().includes(q) || s.customer.toLowerCase().includes(q) || (s.payMode || "").toLowerCase().includes(q))
         .forEach((sale, idx) => {
-            const tr = document.createElement('tr');
+            const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td><code>${esc(sale.id)}</code></td>
                 <td>${new Date(sale.date).toLocaleString()}</td>
                 <td>${esc(sale.customer)}</td>
-                <td>${sale.items ? sale.items.map(i => `${esc(i.name)} (${i.qty})`).join(', ') : '-'}</td>
-                <td>${esc(sale.payMode || 'Cash')}</td>
+                <td>${sale.items ? sale.items.map(i => `${esc(i.name)} (${i.qty})`).join(", ") : "-"}</td>
+                <td>${esc(sale.payMode || "Cash")}</td>
                 <td style="font-weight:bold; color:var(--accent-green);">${c}${sale.total.toFixed(2)}</td>
-                <td><button class="btn btn-primary" style="padding:3px 8px; font-size:11px;" onclick="reprintHistoricalInvoice(${idx})">Print</button></td>
+                <td><button class="btn btn-primary btn-sm" onclick="reprintHistoricalInvoice(${idx})">Print</button></td>
             `;
             tbody.appendChild(tr);
         });
@@ -1187,84 +983,72 @@ function renderHistoryTable(filter = "") {
 function reprintHistoricalInvoice(idx) {
     const sale = salesHistory[idx];
     if (!sale) return;
-    const area = document.getElementById('printableReceiptArea');
+    const area = document.getElementById("printableReceiptArea");
     if (!area) return;
-
     area.innerHTML = buildReceiptHTML({
         invId: sale.id,
         dateStr: new Date(sale.date).toLocaleDateString(),
         custName: sale.customer,
-        payMode: sale.payMode || 'Cash',
+        payMode: sale.payMode || "Cash",
         items: sale.items || [],
         subtotal: sale.subtotal ?? sale.total,
         discount: sale.discount ?? 0,
         taxPct: sale.taxPct ?? 0,
         taxAmt: sale.taxAmt ?? 0,
         grandTotal: sale.total,
-        theme: sale.theme || 'standard'
+        theme: sale.theme || "standard"
     });
     window.print();
     renderBillReceiptPreview();
 }
 
 function processCustomerReturn() {
-    const invId = document.getElementById('retInvId').value.trim() || "N/A";
-    const itemName = document.getElementById('retItemName').value.trim();
-    const qty = parseInt(document.getElementById('retQty').value) || 0;
-    const refund = parseFloat(document.getElementById('retRefund').value) || 0;
-    const reason = document.getElementById('retReason').value.trim() || "Customer Return";
-
-    if (!itemName || qty <= 0 || refund < 0) {
-        alert("Enter valid product name, quantity, and refund amount.");
-        return;
-    }
-
+    const invId = document.getElementById("retInvId").value.trim() || "N/A";
+    const itemName = document.getElementById("retItemName").value.trim();
+    const qty = parseInt(document.getElementById("retQty").value) || 0;
+    const refund = parseFloat(document.getElementById("retRefund").value) || 0;
+    const reason = document.getElementById("retReason").value.trim() || "Customer Return";
+    if (!itemName || qty <= 0 || refund < 0) { alert("Enter valid product name, quantity, and refund amount."); return; }
     const stockMatch = stockMaster.find(s => s.name.toLowerCase() === itemName.toLowerCase());
-    if (stockMatch) {
-        stockMatch.qty += qty;
-        db.setItem("stock", stockMaster);
-    }
-
+    if (stockMatch) { stockMatch.qty += qty; db.setItem("stock", stockMaster); }
     returnsMaster.unshift({ date: new Date().toLocaleDateString(), invId, itemName, qty, refund, reason });
     db.setItem("returns", returnsMaster);
-    ['retInvId', 'retItemName', 'retRefund', 'retReason'].forEach(id => document.getElementById(id).value = "");
-    document.getElementById('retQty').value = "1";
+    ["retInvId", "retItemName", "retRefund", "retReason"].forEach(id => document.getElementById(id).value = "");
+    document.getElementById("retQty").value = "1";
     renderReturnsTable();
     updateDashStats();
-    alert("Return recorded and stock updated.");
 }
 
 function renderReturnsTable() {
     const c = curr();
-    const tbody = document.getElementById('returnsTableBody');
+    const tbody = document.getElementById("returnsTableBody");
     if (!tbody) return;
     tbody.innerHTML = returnsMaster.map(r => `
         <tr><td>${esc(r.date)}</td><td>${esc(r.invId)}</td><td>${esc(r.itemName)}</td><td>${r.qty}</td><td>${c}${r.refund.toFixed(2)}</td><td>${esc(r.reason)}</td></tr>
-    `).join('');
+    `).join("");
 }
 
 function saveServiceItem() {
-    const name = document.getElementById('srvName').value.trim();
-    const desc = document.getElementById('srvDesc').value.trim();
-    const price = parseFloat(document.getElementById('srvPrice').value) || 0;
+    const name = document.getElementById("srvName").value.trim();
+    const desc = document.getElementById("srvDesc").value.trim();
+    const price = parseFloat(document.getElementById("srvPrice").value) || 0;
     if (!name || price < 0) { alert("Enter valid service title and fee."); return; }
-
     servicesMaster.push({ id: Date.now(), name, desc, price });
     db.setItem("services", servicesMaster);
-    ['srvName', 'srvDesc', 'srvPrice'].forEach(id => document.getElementById(id).value = "");
+    ["srvName", "srvDesc", "srvPrice"].forEach(id => document.getElementById(id).value = "");
     renderServicesTable();
 }
 
 function renderServicesTable() {
     const c = curr();
-    const tbody = document.getElementById('servicesTableBody');
+    const tbody = document.getElementById("servicesTableBody");
     if (!tbody) return;
     tbody.innerHTML = servicesMaster.map(s => `
         <tr>
-            <td><b>${esc(s.name)}</b></td><td>${esc(s.desc || '-')}</td><td>${c}${s.price.toFixed(2)}</td>
-            <td><button class="btn btn-danger" style="padding:3px 8px; font-size:11px;" onclick="deleteService(${s.id})">Del</button></td>
+            <td><b>${esc(s.name)}</b></td><td>${esc(s.desc || "-")}</td><td>${c}${s.price.toFixed(2)}</td>
+            <td><button class="btn btn-danger btn-sm" onclick="deleteService(${s.id})">Del</button></td>
         </tr>
-    `).join('');
+    `).join("");
 }
 
 function deleteService(id) {
@@ -1274,47 +1058,45 @@ function deleteService(id) {
 }
 
 function addCreditEntry() {
-    const name = document.getElementById('credCustName').value.trim();
-    const phone = document.getElementById('credCustPhone').value.trim();
-    const amount = parseFloat(document.getElementById('credAmount').value) || 0;
-    const dueDate = document.getElementById('credDueDate').value || "Not set";
-    const note = document.getElementById('credNote').value.trim();
-
-    if (!name || amount <= 0) { alert("Enter customer name and a valid due amount."); return; }
-
+    const name = document.getElementById("credCustName").value.trim();
+    const phone = document.getElementById("credCustPhone").value.trim();
+    const amount = parseFloat(document.getElementById("credAmount").value) || 0;
+    const dueDate = document.getElementById("credDueDate").value || "Not set";
+    const note = document.getElementById("credNote").value.trim();
+    if (!name || amount <= 0) { alert("Enter customer name and due amount."); return; }
     creditMaster.push({ id: Date.now(), name, phone, amount, dueDate, note });
     db.setItem("credit", creditMaster);
-    ['credCustName', 'credCustPhone', 'credAmount', 'credDueDate', 'credNote'].forEach(id => document.getElementById(id).value = "");
+    ["credCustName", "credCustPhone", "credAmount", "credDueDate", "credNote"].forEach(id => document.getElementById(id).value = "");
     renderCreditTable();
     updateDashStats();
 }
 
 function renderCreditTable() {
     const c = curr();
-    const tbody = document.getElementById('creditTableBody');
+    const tbody = document.getElementById("creditTableBody");
     if (!tbody) return;
     tbody.innerHTML = creditMaster.map(item => `
         <tr>
-            <td><b>${esc(item.name)}</b><br><small style="color:var(--text-muted)">${esc(item.phone || '')}</small></td>
+            <td><b>${esc(item.name)}</b><br><small style="color:var(--text-muted)">${esc(item.phone || "")}</small></td>
             <td>${esc(item.dueDate)}</td>
             <td style="color:var(--accent-orange); font-weight:bold;">${c}${item.amount.toFixed(2)}</td>
-            <td>${esc(item.note || '-')}</td>
+            <td>${esc(item.note || "-")}</td>
             <td>
-                <button class="btn btn-primary" style="padding:3px 8px; font-size:11px;" onclick="sendUdhaarWhatsApp(${item.id})">📲 Remind</button>
-                <button class="btn btn-success" style="padding:3px 8px; font-size:11px;" onclick="settleCredit(${item.id})">✓ Paid</button>
+                <button class="btn btn-primary btn-sm" onclick="sendUdhaarWhatsApp(${item.id})">Remind</button>
+                <button class="btn btn-success btn-sm" onclick="settleCredit(${item.id})">Paid</button>
             </td>
         </tr>
-    `).join('');
+    `).join("");
 }
 
 function sendUdhaarWhatsApp(id) {
-    const c = creditMaster.find(x => x.id === id);
-    if (!c) return;
+    const item = creditMaster.find(x => x.id === id);
+    if (!item) return;
     const shop = activeAccount?.shopName || "our shop";
-    const msg = `Namaste ${c.name}, a gentle reminder from *${shop}* that your pending balance of *${curr()}${c.amount.toFixed(2)}* is due (${c.dueDate}). Thank you!`;
-    const digits = (c.phone || '').replace(/\D/g, '');
-    const target = digits.length === 10 ? `91${digits}` : digits;
-    window.open(target ? `https://wa.me/${target}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+    const msg = "Reminder from *" + shop + "*: pending balance of *" + curr() + item.amount.toFixed(2) + "* is due (" + item.dueDate + ").";
+    const digits = (item.phone || "").replace(/\D/g, "");
+    const target = digits.length === 10 ? "91" + digits : digits;
+    window.open(target ? "https://wa.me/" + target + "?text=" + encodeURIComponent(msg) : "https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
 }
 
 function settleCredit(id) {
@@ -1325,28 +1107,27 @@ function settleCredit(id) {
 }
 
 function addExpenseEntry() {
-    const title = document.getElementById('expTitle').value.trim();
-    const amount = parseFloat(document.getElementById('expAmount').value) || 0;
-    const date = document.getElementById('expDate').value || new Date().toISOString().split('T')[0];
+    const title = document.getElementById("expTitle").value.trim();
+    const amount = parseFloat(document.getElementById("expAmount").value) || 0;
+    const date = document.getElementById("expDate").value || new Date().toISOString().split("T")[0];
     if (!title || amount <= 0) { alert("Enter valid expense title and amount."); return; }
-
     expenseMaster.unshift({ id: Date.now(), title, amount, date });
     db.setItem("expenses", expenseMaster);
-    ['expTitle', 'expAmount', 'expDate'].forEach(id => document.getElementById(id).value = "");
+    ["expTitle", "expAmount", "expDate"].forEach(id => document.getElementById(id).value = "");
     renderExpensesTable();
     updateDashStats();
 }
 
 function renderExpensesTable() {
     const c = curr();
-    const tbody = document.getElementById('expenseTableBody');
+    const tbody = document.getElementById("expenseTableBody");
     if (!tbody) return;
     tbody.innerHTML = expenseMaster.map(e => `
         <tr>
             <td>${esc(e.title)}</td><td>${esc(e.date)}</td><td style="color:var(--accent-red); font-weight:bold;">${c}${e.amount.toFixed(2)}</td>
-            <td><button class="btn btn-danger" style="padding:3px 8px; font-size:11px;" onclick="deleteExpense(${e.id})">Del</button></td>
+            <td><button class="btn btn-danger btn-sm" onclick="deleteExpense(${e.id})">Del</button></td>
         </tr>
-    `).join('');
+    `).join("");
 }
 
 function deleteExpense(id) {
@@ -1357,26 +1138,25 @@ function deleteExpense(id) {
 }
 
 function addSupplier() {
-    const name = document.getElementById('suppName').value.trim();
-    const phone = document.getElementById('suppPhone').value.trim();
-    const category = document.getElementById('suppCategory').value.trim();
+    const name = document.getElementById("suppName").value.trim();
+    const phone = document.getElementById("suppPhone").value.trim();
+    const category = document.getElementById("suppCategory").value.trim();
     if (!name) { alert("Enter supplier name."); return; }
-
     suppliersMaster.push({ id: Date.now(), name, phone, category });
     db.setItem("suppliers", suppliersMaster);
-    ['suppName', 'suppPhone', 'suppCategory'].forEach(id => document.getElementById(id).value = "");
+    ["suppName", "suppPhone", "suppCategory"].forEach(id => document.getElementById(id).value = "");
     renderSuppliersTable();
 }
 
 function renderSuppliersTable() {
-    const tbody = document.getElementById('supplierTableBody');
+    const tbody = document.getElementById("supplierTableBody");
     if (!tbody) return;
     tbody.innerHTML = suppliersMaster.map(s => `
         <tr>
-            <td><b>${esc(s.name)}</b></td><td>${esc(s.phone || '-')}</td><td>${esc(s.category || '-')}</td>
-            <td><button class="btn btn-danger" style="padding:3px 8px; font-size:11px;" onclick="deleteSupplier(${s.id})">Del</button></td>
+            <td><b>${esc(s.name)}</b></td><td>${esc(s.phone || "-")}</td><td>${esc(s.category || "-")}</td>
+            <td><button class="btn btn-danger btn-sm" onclick="deleteSupplier(${s.id})">Del</button></td>
         </tr>
-    `).join('');
+    `).join("");
 }
 
 function deleteSupplier(id) {
@@ -1385,28 +1165,23 @@ function deleteSupplier(id) {
     renderSuppliersTable();
 }
 
-// =========================================================
-// 11. PRO MODULES: STAFF + SALARY SHEET, AI ASSISTANT, CATALOG, STATUS
-// =========================================================
 function registerStaffMember() {
-    const name = document.getElementById('staffRegName').value.trim();
-    const phone = document.getElementById('staffRegPhone').value.trim();
-    const salary = parseFloat(document.getElementById('staffRegSalary').value) || 0;
-    const role = document.getElementById('staffRegRole').value.trim() || "Staff";
+    const name = document.getElementById("staffRegName").value.trim();
+    const phone = document.getElementById("staffRegPhone").value.trim();
+    const salary = parseFloat(document.getElementById("staffRegSalary").value) || 0;
+    const role = document.getElementById("staffRegRole").value.trim() || "Staff";
     if (!name) { alert("Enter staff name."); return; }
-
     staffMaster.push({ id: Date.now(), name, phone, salary, role, presentDays: 0 });
     db.setItem("staff", staffMaster);
-    ['staffRegName', 'staffRegPhone', 'staffRegSalary', 'staffRegRole'].forEach(id => document.getElementById(id).value = "");
+    ["staffRegName", "staffRegPhone", "staffRegSalary", "staffRegRole"].forEach(id => document.getElementById(id).value = "");
     renderStaffTable();
 }
 
 function saveStaffAttendance() {
-    const id = document.getElementById('staffSelectDropdown').value;
-    const status = document.getElementById('staffStatus').value;
+    const id = document.getElementById("staffSelectDropdown").value;
+    const status = document.getElementById("staffStatus").value;
     const staff = staffMaster.find(s => s.id == id);
     if (!staff) { alert("Register a staff member first."); return; }
-
     if (status === "Present") staff.presentDays = (staff.presentDays || 0) + 1;
     if (status === "Half-Day") staff.presentDays = (staff.presentDays || 0) + 0.5;
     db.setItem("staff", staffMaster);
@@ -1415,16 +1190,16 @@ function saveStaffAttendance() {
 
 function renderStaffTable() {
     const c = curr();
-    const tbody = document.getElementById('staffTableBody');
-    const dd = document.getElementById('staffSelectDropdown');
-    if (dd) dd.innerHTML = staffMaster.map(s => `<option value="${s.id}">${esc(s.name)} (${esc(s.role)})</option>`).join('');
+    const tbody = document.getElementById("staffTableBody");
+    const dd = document.getElementById("staffSelectDropdown");
+    if (dd) dd.innerHTML = staffMaster.map(s => `<option value="${s.id}">${esc(s.name)} (${esc(s.role)})</option>`).join("");
     if (!tbody) return;
     tbody.innerHTML = staffMaster.map(s => `
         <tr>
             <td><b>${esc(s.name)}</b></td><td>${esc(s.role)}</td><td>${c}${s.salary}</td><td>${s.presentDays || 0}</td>
-            <td><button class="btn btn-danger" style="padding:3px 8px; font-size:11px;" onclick="deleteStaff(${s.id})">Del</button></td>
+            <td><button class="btn btn-danger btn-sm" onclick="deleteStaff(${s.id})">Del</button></td>
         </tr>
-    `).join('');
+    `).join("");
 }
 
 function deleteStaff(id) {
@@ -1435,87 +1210,74 @@ function deleteStaff(id) {
 
 function openStaffSalaryModal() {
     const c = curr();
-    const box = document.getElementById('staffSalaryResultContainer');
-    if (staffMaster.length === 0) {
-        box.innerHTML = "<p style='color:var(--text-muted);'>No staff registered yet.</p>";
-    } else {
-        box.innerHTML = `
-            <table class="table-custom">
-                <thead><tr><th>Staff Name</th><th>Base Salary</th><th>Days Present</th><th>Payable (30d)</th></tr></thead>
-                <tbody>
-                    ${staffMaster.map(s => {
-                        const payable = ((s.salary || 0) / 30) * (s.presentDays || 0);
-                        return `<tr><td><b>${esc(s.name)}</b></td><td>${c}${s.salary}</td><td>${s.presentDays || 0}</td><td style="color:var(--accent-green); font-weight:bold;">${c}${payable.toFixed(2)}</td></tr>`;
-                    }).join('')}
-                </tbody>
-            </table>
-        `;
-    }
-    document.getElementById('modalStaffSalary').style.display = 'flex';
+    const box = document.getElementById("staffSalaryResultContainer");
+    box.innerHTML = staffMaster.length
+        ? `<table class="table-custom"><thead><tr><th>Staff</th><th>Base Salary</th><th>Present Days</th><th>Payable</th></tr></thead><tbody>${
+            staffMaster.map(s => {
+                const payable = ((s.salary || 0) / 30) * (s.presentDays || 0);
+                return `<tr><td><b>${esc(s.name)}</b></td><td>${c}${s.salary}</td><td>${s.presentDays || 0}</td><td style="color:var(--accent-green); font-weight:bold;">${c}${payable.toFixed(2)}</td></tr>`;
+            }).join("")
+        }</tbody></table>`
+        : "<p style='color:var(--text-muted);'>No staff registered yet.</p>";
+    document.getElementById("modalStaffSalary").style.display = "flex";
 }
 
-function closeStaffSalaryModal() { document.getElementById('modalStaffSalary').style.display = 'none'; }
+function closeStaffSalaryModal() { document.getElementById("modalStaffSalary").style.display = "none"; }
 
 function executeAiQuery() {
-    const input = document.getElementById('aiUserPrompt');
-    const box = document.getElementById('aiChatBox');
+    const input = document.getElementById("aiUserPrompt");
+    const box = document.getElementById("aiChatBox");
     const q = input.value.trim();
     if (!q) return;
-
     const c = curr();
     box.innerHTML += `<div style="align-self:flex-end; background:var(--primary-teal); color:#fff; padding:8px 12px; border-radius:10px; max-width:80%;">${esc(q)}</div>`;
     input.value = "";
-
     const lower = q.toLowerCase();
     const d = getTodayFinancials();
     let reply = "";
     if (lower.includes("udhaar") || lower.includes("credit")) {
-        reply = `You currently have ${creditMaster.length} credit account(s) totaling ${c}${d.totalPendingCredit.toFixed(2)}.`;
+        reply = "You have " + creditMaster.length + " credit account(s) totaling " + c + d.totalPendingCredit.toFixed(2) + ".";
     } else if (lower.includes("stock") || lower.includes("low")) {
         const low = stockMaster.filter(i => i.qty <= (i.min || 5));
-        reply = low.length ? `Low stock items: ${low.map(i => `${i.name} (${i.qty} left)`).join(", ")}.` : "All stock items are well stocked!";
+        reply = low.length ? "Low stock: " + low.map(i => i.name + " (" + i.qty + " left)").join(", ") : "All stock items are healthy.";
     } else if (lower.includes("profit") || lower.includes("expense")) {
-        reply = `Today's sales: ${c}${d.todaySales.toFixed(2)}, Expenses: ${c}${d.todayExpenses.toFixed(2)}, Net Profit: ${c}${d.netProfit.toFixed(2)}.`;
+        reply = "Today's sales: " + c + d.todaySales.toFixed(2) + ", Expenses: " + c + d.todayExpenses.toFixed(2) + ", Net Profit: " + c + d.netProfit.toFixed(2) + ".";
     } else {
         const totalSales = salesHistory.reduce((a, s) => a + s.total, 0);
-        reply = `You have ${stockMaster.length} products in inventory and ${c}${totalSales.toFixed(2)} in lifetime recorded sales.`;
+        reply = "Total products: " + stockMaster.length + ", Lifetime sales: " + c + totalSales.toFixed(2) + ".";
     }
-
-    box.innerHTML += `<div style="background:var(--glass-bg); border:1px solid var(--border-color); padding:10px 14px; border-radius:10px; max-width:85%;">${esc(reply)}</div>`;
+    box.innerHTML += `<div class="ai-bot-bubble">${esc(reply)}</div>`;
     box.scrollTop = box.scrollHeight;
 }
 
 function renderCatalogGrid() {
     const c = curr();
-    const grid = document.getElementById('catalogGrid');
+    const grid = document.getElementById("catalogGrid");
     if (!grid) return;
-    if (stockMaster.length === 0) {
-        grid.innerHTML = "<p style='color:var(--text-muted);'>No items in stock inventory yet.</p>";
-        return;
-    }
-    grid.innerHTML = stockMaster.map(item => `
-        <div style="background:var(--input-bg); padding:14px; border-radius:12px; border:1px solid var(--border-color); text-align:center;">
-            <div style="font-size:28px;">📦</div>
-            <h4 style="margin:8px 0 4px 0;">${esc(item.name)}</h4>
-            <div style="color:var(--accent-green); font-weight:bold;">${c}${item.price.toFixed(2)}</div>
-            <small style="color:var(--text-muted);">${item.qty > 0 ? `In Stock (${item.qty})` : 'Out of Stock'}</small>
-        </div>
-    `).join('');
+    grid.innerHTML = stockMaster.length
+        ? stockMaster.map(item => `
+            <div style="background:var(--input-bg); padding:14px; border-radius:12px; border:1px solid var(--border-color); text-align:center;">
+                <h4 style="margin:0 0 4px 0;">${esc(item.name)}</h4>
+                <div style="color:var(--accent-green); font-weight:bold;">${c}${item.price.toFixed(2)}</div>
+                <small style="color:var(--text-muted);">${item.qty > 0 ? "In Stock (" + item.qty + ")" : "Out of Stock"}</small>
+            </div>
+        `).join("")
+        : "<p style='color:var(--text-muted);'>No items in stock inventory yet.</p>";
 }
 
 function renderStatusPreview() {
-    document.getElementById('prevStatusTag').innerText = document.getElementById('statusTag').value;
-    document.getElementById('prevStatusTitle').innerText = document.getElementById('statusTitle').value;
-    document.getElementById('prevStatusDisc').innerText = document.getElementById('statusDisc').value;
-    document.getElementById('prevStatusBody').innerText = document.getElementById('statusBody').value;
+    document.getElementById("prevStatusTag").innerText = document.getElementById("statusTag").value;
+    document.getElementById("prevStatusTitle").innerText = document.getElementById("statusTitle").value;
+    document.getElementById("prevStatusDisc").innerText = document.getElementById("statusDisc").value;
+    document.getElementById("prevStatusBody").innerText = document.getElementById("statusBody").value;
 }
 
 function downloadStatusBanner() {
-    const card = document.getElementById('statusCardContainer');
-    if (typeof html2canvas === 'undefined') { alert("Image exporter still loading."); return; }
+    const card = document.getElementById("statusCardContainer");
+    if (typeof html2canvas === "undefined") { alert("Image exporter still loading."); return; }
     html2canvas(card).then(canvas => {
-        const a = document.createElement('a');
-        a.download = 'zivo-promo-status.png';
+        const a = document.createElement("a");
+        a.download = "zivo-promo-status.png";
         a.href = canvas.toDataURL();
         a.click();
     });
@@ -1523,60 +1285,51 @@ function downloadStatusBanner() {
 
 function sharePromoWhatsApp() {
     const shop = activeAccount?.shopName || "Zivo Shop Helper";
-    const title = document.getElementById('statusTitle').value;
-    const disc = document.getElementById('statusDisc').value;
-    const body = document.getElementById('statusBody').value;
-    const msg = `*${shop}*
-${title}
-*${disc}*
-${body}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+    const title = document.getElementById("statusTitle").value;
+    const disc = document.getElementById("statusDisc").value;
+    const body = document.getElementById("statusBody").value;
+    const msg = "*" + shop + "*\n" + title + "\n*" + disc + "*\n" + body;
+    window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
 }
 
-// =========================================================
-// 12. QR/BARCODE STUDIO, SCANNER, CALCULATOR & SETTINGS
-// =========================================================
 function populateStudioProducts() {
     const c = curr();
-    const sel = document.getElementById('studioItemSelect');
+    const sel = document.getElementById("studioItemSelect");
     if (!sel) return;
-    sel.innerHTML = stockMaster.map(s => `<option value="${s.id}">${esc(s.name)} - ${c}${s.price}</option>`).join('');
+    sel.innerHTML = stockMaster.map(s => `<option value="${s.id}">${esc(s.name)} - ${c}${s.price}</option>`).join("");
     generateStudioCodePreview();
 }
 
 function generateStudioCodePreview() {
     const c = curr();
-    const sel = document.getElementById('studioItemSelect');
-    const type = document.getElementById('studioCodeType').value;
+    const sel = document.getElementById("studioItemSelect");
+    const type = document.getElementById("studioCodeType").value;
     const item = stockMaster.find(s => s.id == sel?.value);
     if (!item) return;
-
-    document.getElementById('studioShopName').innerText = (activeAccount?.shopName || "ZIVO SHOP HELPER").toUpperCase();
-    document.getElementById('studioItemTitle').innerText = item.name;
-    document.getElementById('studioItemPrice').innerText = `${c}${item.price.toFixed(2)}`;
-
-    const codeVal = item.code || `ZIVO-${item.id}`;
-    const svgEl = document.getElementById('studioSvgBarcode');
-    const qrEl = document.getElementById('studioQrBox');
-
-    if (type === 'barcode') {
-        svgEl.style.display = 'block';
-        qrEl.style.display = 'none';
-        if (typeof JsBarcode !== 'undefined') JsBarcode("#studioSvgBarcode", codeVal, { height: 50, fontSize: 12 });
+    document.getElementById("studioShopName").innerText = (activeAccount?.shopName || "ZIVO SHOP HELPER").toUpperCase();
+    document.getElementById("studioItemTitle").innerText = item.name;
+    document.getElementById("studioItemPrice").innerText = c + item.price.toFixed(2);
+    const codeVal = item.code || "ZIVO-" + item.id;
+    const svgEl = document.getElementById("studioSvgBarcode");
+    const qrEl = document.getElementById("studioQrBox");
+    if (type === "barcode") {
+        svgEl.style.display = "block";
+        qrEl.style.display = "none";
+        if (typeof JsBarcode !== "undefined") JsBarcode("#studioSvgBarcode", codeVal, { height: 50, fontSize: 12 });
     } else {
-        svgEl.style.display = 'none';
-        qrEl.style.display = 'block';
+        svgEl.style.display = "none";
+        qrEl.style.display = "block";
         qrEl.innerHTML = "";
-        if (typeof QRCode !== 'undefined') new QRCode(qrEl, { text: codeVal, width: 110, height: 110 });
+        if (typeof QRCode !== "undefined") new QRCode(qrEl, { text: codeVal, width: 110, height: 110 });
     }
 }
 
 function downloadStudioLabelPng() {
-    const card = document.getElementById('studioPrintCard');
-    if (typeof html2canvas === 'undefined') { alert("Image exporter still loading."); return; }
+    const card = document.getElementById("studioPrintCard");
+    if (typeof html2canvas === "undefined") { alert("Image exporter still loading."); return; }
     html2canvas(card).then(canvas => {
-        const a = document.createElement('a');
-        a.download = 'zivo-product-label.png';
+        const a = document.createElement("a");
+        a.download = "zivo-product-label.png";
         a.href = canvas.toDataURL();
         a.click();
     });
@@ -1584,16 +1337,16 @@ function downloadStudioLabelPng() {
 
 function toggleAutoScanMode() {
     continuousScanMode = !continuousScanMode;
-    const btn = document.getElementById('btnAutoScanToggle');
+    const btn = document.getElementById("btnAutoScanToggle");
     if (btn) {
-        btn.innerText = continuousScanMode ? "⚡ Continuous Scan: ON" : "⚡ Single Scan: ON";
-        btn.className = continuousScanMode ? "btn btn-success" : "btn btn-warning";
+        btn.innerText = continuousScanMode ? "Continuous Scan: ON" : "Single Scan: ON";
+        btn.className = continuousScanMode ? "btn btn-success btn-full" : "btn btn-warning btn-full";
     }
 }
 
 function openScannerModal() {
-    document.getElementById('modalScanner').style.display = 'flex';
-    if (typeof Html5Qrcode !== 'undefined') {
+    document.getElementById("modalScanner").style.display = "flex";
+    if (typeof Html5Qrcode !== "undefined") {
         html5QrScanner = new Html5Qrcode("reader");
         let lastCode = "";
         let lastTime = 0;
@@ -1605,21 +1358,16 @@ function openScannerModal() {
                 if (decodedText === lastCode && now - lastTime < 1500) return;
                 lastCode = decodedText;
                 lastTime = now;
-
-                const found = stockMaster.find(s => s.code === decodedText || `ZIVO-${s.id}` === decodedText);
+                const found = stockMaster.find(s => s.code === decodedText || "ZIVO-" + s.id === decodedText);
                 if (found) {
                     const existing = currentManualBillItems.find(i => i.name === found.name);
-                    if (existing) {
-                        existing.qty += 1;
-                        existing.total = existing.qty * existing.price;
-                    } else {
-                        currentManualBillItems.push({ name: found.name, qty: 1, price: found.price, total: found.price });
-                    }
+                    if (existing) { existing.qty += 1; existing.total = existing.qty * existing.price; }
+                    else { currentManualBillItems.push({ name: found.name, qty: 1, price: found.price, total: found.price }); }
                     renderManualBillItemsList();
                     renderBillReceiptPreview();
                     if (!continuousScanMode) closeScannerModal();
                 } else {
-                    document.getElementById('itemAddName').value = decodedText;
+                    document.getElementById("itemAddName").value = decodedText;
                     closeScannerModal();
                 }
             }
@@ -1628,87 +1376,81 @@ function openScannerModal() {
 }
 
 function closeScannerModal() {
-    document.getElementById('modalScanner').style.display = 'none';
-    if (html5QrScanner) {
-        html5QrScanner.stop().catch(() => {});
-        html5QrScanner = null;
-    }
+    document.getElementById("modalScanner").style.display = "none";
+    if (html5QrScanner) { html5QrScanner.stop().catch(() => {}); html5QrScanner = null; }
 }
 
-function openCalculatorModal() { document.getElementById('modalCalculator').style.display = 'flex'; }
-function closeCalculatorModal() { document.getElementById('modalCalculator').style.display = 'none'; }
-function calcAppend(val) {
-    const s = document.getElementById('calcScreen');
-    s.value = s.value === '0' ? val : s.value + val;
-}
-function calcClear() { document.getElementById('calcScreen').value = '0'; }
+function openCalculatorModal() { document.getElementById("modalCalculator").style.display = "flex"; }
+function closeCalculatorModal() { document.getElementById("modalCalculator").style.display = "none"; }
+function calcAppend(val) { const s = document.getElementById("calcScreen"); s.value = s.value === "0" ? val : s.value + val; }
+function calcClear() { document.getElementById("calcScreen").value = "0"; }
 function calcCompute() {
-    const expr = document.getElementById('calcScreen').value;
-    if (!/^[0-9+\-*/.() ]+$/.test(expr)) { document.getElementById('calcScreen').value = 'Error'; return; }
+    const expr = document.getElementById("calcScreen").value;
+    if (!/^[0-9+\-*/.() ]+$/.test(expr)) { document.getElementById("calcScreen").value = "Error"; return; }
     try {
-        const res = Function(`"use strict"; return (${expr})`)();
-        document.getElementById('calcScreen').value = Number.isFinite(res) ? res : 'Error';
+        const res = Function('"use strict"; return (' + expr + ')')();
+        document.getElementById("calcScreen").value = Number.isFinite(res) ? res : "Error";
     } catch (e) {
-        document.getElementById('calcScreen').value = 'Error';
+        document.getElementById("calcScreen").value = "Error";
     }
 }
 
 function loadBusinessFields() {
     if (!activeAccount) return;
-    if (document.getElementById('bizShopName')) document.getElementById('bizShopName').value = activeAccount.shopName || '';
-    if (document.getElementById('bizOwnerName')) document.getElementById('bizOwnerName').value = activeAccount.ownerName || '';
-    if (document.getElementById('bizGst')) document.getElementById('bizGst').value = activeAccount.gst || '';
-    if (document.getElementById('bizPhone')) document.getElementById('bizPhone').value = activeAccount.phone || '';
-    if (document.getElementById('bizAddress')) document.getElementById('bizAddress').value = activeAccount.address || '';
+    if (document.getElementById("bizShopName")) document.getElementById("bizShopName").value = activeAccount.shopName || "";
+    if (document.getElementById("bizOwnerName")) document.getElementById("bizOwnerName").value = activeAccount.ownerName || "";
+    if (document.getElementById("bizGst")) document.getElementById("bizGst").value = activeAccount.gst || "";
+    if (document.getElementById("bizPhone")) document.getElementById("bizPhone").value = activeAccount.phone || "";
+    if (document.getElementById("bizAddress")) document.getElementById("bizAddress").value = activeAccount.address || "";
 }
 
 function saveBusinessProfile() {
     activeAccount = {
         ...activeAccount,
-        shopName: document.getElementById('bizShopName').value.trim() || "Zivo Retail Store",
-        ownerName: document.getElementById('bizOwnerName').value.trim(),
-        gst: document.getElementById('bizGst').value.trim(),
-        phone: document.getElementById('bizPhone').value.trim(),
-        address: document.getElementById('bizAddress').value.trim()
+        shopName: document.getElementById("bizShopName").value.trim() || "Zivo Retail Store",
+        ownerName: document.getElementById("bizOwnerName").value.trim(),
+        gst: document.getElementById("bizGst").value.trim(),
+        phone: document.getElementById("bizPhone").value.trim(),
+        address: document.getElementById("bizAddress").value.trim()
     };
     db.setItem("account", activeAccount);
-    document.getElementById('dashWelcome').innerText = `Welcome Back, ${activeAccount.shopName} 👋`;
+    document.getElementById("dashWelcome").innerText = "Welcome to Zivo Shop Helper - " + activeAccount.shopName;
     renderBillReceiptPreview();
-    alert("Business details saved!");
+    alert("Business details saved.");
 }
 
 function loadSettingsFields() {
-    if (document.getElementById('cfgCurr')) document.getElementById('cfgCurr').value = shopConfig.currency || "₹";
-    if (document.getElementById('cfgDefaultUpi')) document.getElementById('cfgDefaultUpi').value = shopConfig.upiId || "";
-    if (document.getElementById('cfgFooterMsg')) document.getElementById('cfgFooterMsg').value = shopConfig.footerMsg || "Thank you for shopping with us!";
+    if (document.getElementById("cfgCurr")) document.getElementById("cfgCurr").value = shopConfig.currency || "₹";
+    if (document.getElementById("cfgDefaultUpi")) document.getElementById("cfgDefaultUpi").value = shopConfig.upiId || "";
+    if (document.getElementById("cfgFooterMsg")) document.getElementById("cfgFooterMsg").value = shopConfig.footerMsg || "Thank you for shopping with us!";
 }
 
 function saveConfig() {
-    shopConfig.currency = document.getElementById('cfgCurr')?.value || "₹";
-    shopConfig.upiId = document.getElementById('cfgDefaultUpi')?.value.trim() || "";
-    shopConfig.footerMsg = document.getElementById('cfgFooterMsg')?.value || "Thank you for shopping with us!";
+    shopConfig.currency = document.getElementById("cfgCurr")?.value || "₹";
+    shopConfig.upiId = document.getElementById("cfgDefaultUpi")?.value.trim() || "";
+    shopConfig.footerMsg = document.getElementById("cfgFooterMsg")?.value || "Thank you for shopping with us!";
     db.setItem("config", shopConfig);
     updateDashStats();
     renderBillReceiptPreview();
 }
 
 function toggleThemeModeSetting(mode) {
-    document.body.classList.toggle('light-mode', mode === 'light');
-    document.body.classList.toggle('dark-mode', mode !== 'light');
+    document.body.classList.toggle("light-mode", mode === "light");
+    document.body.classList.toggle("dark-mode", mode !== "light");
 }
 
 function toggleDisplayModeSetting(mode) {
-    if (mode === 'mobile') document.body.classList.add('mobile-mode');
-    else if (mode === 'desktop') document.body.classList.remove('mobile-mode');
-    else document.body.classList.toggle('mobile-mode', window.innerWidth <= 768);
+    if (mode === "mobile") document.body.classList.add("mobile-mode");
+    else if (mode === "desktop") document.body.classList.remove("mobile-mode");
+    else document.body.classList.toggle("mobile-mode", window.innerWidth <= 768);
 }
 
-function openAboutDevModal() { document.getElementById('modalAboutDev').style.display = 'flex'; }
-function closeAboutDevModal() { document.getElementById('modalAboutDev').style.display = 'none'; }
-function openMasterResetModal() { document.getElementById('modalResetConfirm').style.display = 'flex'; }
-function closeMasterResetModal() { document.getElementById('modalResetConfirm').style.display = 'none'; }
+function openAboutDevModal() { document.getElementById("modalAboutDev").style.display = "flex"; }
+function closeAboutDevModal() { document.getElementById("modalAboutDev").style.display = "none"; }
+function openMasterResetModal() { document.getElementById("modalResetConfirm").style.display = "flex"; }
+function closeMasterResetModal() { document.getElementById("modalResetConfirm").style.display = "none"; }
 function executeMasterReset() {
-    if (document.getElementById('resetConfirmText').value.trim() !== "DELETE") {
+    if (document.getElementById("resetConfirmText").value.trim() !== "DELETE") {
         alert("Please type DELETE in capital letters to confirm.");
         return;
     }
@@ -1716,8 +1458,8 @@ function executeMasterReset() {
     location.reload();
 }
 
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
     });
 }
