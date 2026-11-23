@@ -49,6 +49,26 @@
       display: none !important;
     }
 
+    /* Welcome & terms first-run screen */
+    .welcome-overlay { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 18px; background: radial-gradient(circle at 10% 0%, rgba(13,148,136,.22), transparent 40%), rgba(2,6,23,.97); overflow-y: auto; }
+    .welcome-panel { width: min(100%, 980px); margin: auto; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 22px; box-shadow: 0 28px 80px rgba(0,0,0,.5); padding: clamp(18px, 4vw, 34px); }
+    .welcome-hero { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .welcome-logo { width: 58px; height: 58px; flex: 0 0 58px; display:grid; place-items:center; border-radius: 17px; color:white; font-size:28px; font-weight:900; background: linear-gradient(135deg,#0d9488,#0284c7); box-shadow:0 10px 30px rgba(13,148,136,.28); }
+    .welcome-title { font-size: clamp(22px,4vw,32px); font-weight:900; margin:0; }
+    .welcome-sub { color:var(--text-muted); margin:5px 0 0; font-size:13px; }
+    .welcome-features { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin:18px 0; }
+    .welcome-feature { border:1px solid var(--border-color); border-radius:13px; padding:13px; background:var(--bg-soft); }
+    .welcome-feature strong { display:block; margin-bottom:5px; }
+    .welcome-feature span { color:var(--text-muted); font-size:12px; line-height:1.5; }
+    .terms-box { max-height: 34vh; overflow:auto; border:1px solid var(--border-color); border-radius:13px; padding:16px; background:rgba(15,23,42,.35); font-size:12px; line-height:1.65; }
+    .terms-box h3 { margin:12px 0 4px; font-size:13px; }
+    .terms-box h3:first-child { margin-top:0; }
+    .terms-accept { display:flex; gap:10px; align-items:flex-start; margin:16px 0; font-size:13px; }
+    .terms-accept input { width:18px; height:18px; margin-top:1px; accent-color:#0d9488; flex:0 0 auto; }
+    .welcome-actions { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .welcome-actions .btn { min-height:42px; }
+    @media(max-width:600px){ .welcome-hero{align-items:flex-start;} .terms-box{max-height:38vh;} .welcome-actions .btn{width:100%;} }
+
     /* Auth Gatekeeper */
     .auth-overlay {
       position: fixed;
@@ -846,6 +866,38 @@
   </style>
 </head>
 <body>
+  <!-- First-run Welcome, Terms & Consent -->
+  <div id="welcomeTerms" class="welcome-overlay">
+    <section class="welcome-panel" aria-labelledby="welcomeTitle">
+      <div class="welcome-hero"><div class="welcome-logo">Z</div><div><h1 id="welcomeTitle" class="welcome-title">Welcome to Zivo Shop Helper</h1><p class="welcome-sub">Retail tools designed for simpler daily shop operations.</p></div></div>
+      <div class="welcome-features">
+        <div class="welcome-feature"><strong>🧾 Billing & Receipts</strong><span>Create bills, calculate totals and print customer receipts.</span></div>
+        <div class="welcome-feature"><strong>📦 Inventory</strong><span>Track stock, prices, quantities, codes and low-stock items.</span></div>
+        <div class="welcome-feature"><strong>👥 Customers & Khata</strong><span>Maintain customer records and credit/debit balances.</span></div>
+        <div class="welcome-feature"><strong>📊 Reports & EOD</strong><span>Review sales totals and end-of-day summaries.</span></div>
+        <div class="welcome-feature"><strong>🧮 Utilities & Studio</strong><span>Use quick calculator and shop tools from the dashboard.</span></div>
+        <div class="welcome-feature"><strong>⚙️ Shop Settings</strong><span>Customize shop details, receipt settings, PIN and appearance.</span></div>
+      </div>
+      <div class="terms-box" tabindex="0" aria-label="Terms and conditions">
+        <h3>Terms & Conditions</h3>
+        <p><strong>1. Acceptance.</strong> By continuing, you confirm that you have read and agree to these terms. If you do not agree, do not use this application.</p>
+        <h3>2. Intended use</h3><p>Zivo Shop Helper is a retail management utility for billing, inventory, customer ledgers, reports and shop administration. You are responsible for ensuring that your use complies with applicable laws and regulations.</p>
+        <h3>3. Accuracy and responsibility</h3><p>Check product names, prices, quantities, taxes, discounts, customer balances and receipts before finalizing a sale. The app may contain calculation, display, device, browser or storage errors. It is your responsibility to verify records and totals and maintain appropriate business records.</p>
+        <h3>4. Data and backups</h3><p>Until cloud sync is explicitly configured and tested, information may be stored only in this browser/device. Clearing browser data, device loss, storage failure, private browsing, or app updates may cause loss of data. Export and securely back up your records regularly. Do not assume data is synced between devices.</p>
+        <h3>5. Privacy and sensitive information</h3><p>Only enter information you are authorized to store. Protect customer details, staff PINs and business records. Do not share your device or credentials with unauthorized people. Data privacy practices may change when online services are connected; review any service-specific notices before enabling them.</p>
+        <h3>6. Accounts and security</h3><p>Local shop access controls are not a substitute for a secure online account system. Do not rely on a local PIN as strong identity verification. If you enable access controls, keep credentials private and sign out or lock shared devices.</p>
+        <h3>7. No warranty</h3><p>The app is provided as-is and as-available, without guarantees that it will be uninterrupted, error-free, compatible with every device, or suitable for a particular business or legal requirement. You should not use it as the sole record of important financial information.</p>
+        <h3>8. Limitation of liability</h3><p>To the extent permitted by applicable law, the developer is not liable for losses arising from inaccurate records, missed backups, business interruptions, unauthorized access, device or browser issues, or reliance on reports and calculations. This does not exclude liability that cannot legally be excluded.</p>
+        <h3>9. Changes and support</h3><p>Features, terms and interface may change as the application evolves. For assistance, feedback or bug reports, contact <a href="mailto:zivo.developer@gmail.com">zivo.developer@gmail.com</a>. Include a description of the issue and app/device details; avoid sending passwords or sensitive customer data.</p>
+        <h3>10. Consent</h3><p>Accepting these terms allows you to proceed into the application. You can contact the developer with questions before use.</p>
+        <p><em>These are practical in-app terms and not legal advice. Have them reviewed for your business and applicable jurisdiction before public/commercial release.</em></p>
+      </div>
+      <label class="terms-accept"><input id="termsAcceptCheckbox" type="checkbox" /> <span>I have read and agree to the Terms & Conditions. I understand that local data may require manual backup and cloud sync is not enabled unless configured.</span></label>
+      <div class="welcome-actions"><button id="termsContinueBtn" class="btn btn-primary" type="button" disabled>Accept & Continue</button><a class="btn btn-dark" href="mailto:zivo.developer@gmail.com">✉ Help & Contact</a></div>
+    </section>
+  </div>
+
+
   <!-- Auth Gatekeeper -->
   <div id="authGatekeeper" class="auth-overlay hidden">
     <div class="auth-card">
@@ -2460,6 +2512,22 @@
 
       // Auth Gatekeeper
       const gate = document.getElementById("authGatekeeper");
+      // Terms acceptance is required before the shop UI is available.
+      const termsScreen = document.getElementById("welcomeTerms");
+      const termsCheckbox = document.getElementById("termsAcceptCheckbox");
+      const termsContinue = document.getElementById("termsContinueBtn");
+      const TERMS_ACCEPTED_KEY = "zivo_terms_accepted_v1";
+      try {
+        if (localStorage.getItem(TERMS_ACCEPTED_KEY) === "yes") termsScreen.classList.add("hidden");
+      } catch (e) { /* consent will be requested for this session */ }
+      termsCheckbox.addEventListener("change", () => { termsContinue.disabled = !termsCheckbox.checked; });
+      termsContinue.addEventListener("click", () => {
+        if (!termsCheckbox.checked) return;
+        try { localStorage.setItem(TERMS_ACCEPTED_KEY, "yes"); } catch (e) { /* session continues even if storage is unavailable */ }
+        termsScreen.classList.add("hidden");
+        if (state.settings.lockPin) gate.classList.remove("hidden");
+      });
+
       if (state.settings.lockPin) {
         gate.classList.remove("hidden");
       }
