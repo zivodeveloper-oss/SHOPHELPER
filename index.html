@@ -170,7 +170,6 @@
       color: #2dd4bf;
     }
 
-    /* Windows / Desktop Distinct UI Polish */
     body.platform-windows .top-navbar {
       border-bottom: 2px solid var(--teal-header);
     }
@@ -434,7 +433,6 @@
       padding: 16px 22px 54px;
     }
 
-    /* Search & Quick Context Strip */
     .search-strip-box {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -460,7 +458,6 @@
       outline: none;
     }
 
-    /* Wide Live Shop Command Banner */
     .live-command-bar {
       background: linear-gradient(90deg, #0f766e 0%, #115e59 55%, var(--bg-card) 100%);
       border: 1px solid var(--border-color);
@@ -553,7 +550,6 @@
       font-weight: 700;
     }
 
-    /* Section Headings */
     .section-group-title {
       font-size: 14px;
       font-weight: 900;
@@ -568,7 +564,6 @@
       margin-top: 4px;
     }
 
-    /* 3-Column Floating Cards Grid */
     .three-col-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -614,7 +609,6 @@
       margin-top: 2px;
     }
 
-    /* Inner Module Views */
     .view-head {
       display: flex;
       flex-wrap: wrap;
@@ -998,7 +992,7 @@
           This tool is provided free of cost as a shop helper without paid plan lock-ins. Please double-check item prices, quantities, GST percentages, discounts, customer credit balances, and payment modes manually before saving or sharing any bill, and be cautious of third-party scams, phishing links, or fake payment requests.
         </p>
         <p>
-          By default, your shop records are stored locally in your browser on your current device, so please export a JSON backup regularly to protect against browser data resets. If you connect your own Firebase Cloud config in Firebase Sync, your shop records can also sync to Cloud Firestore under your chosen sync key. For a personalized experience, your username, email, and shop name are used in the app, and the creator of Zivo ShopHelper can view account and cloud details when cloud sync or account features are used. For support or bug reports, contact <strong>zivo.developer@gmail.com</strong>.
+          By default, your shop records are stored locally in your browser on your current device, so please export a JSON backup regularly to protect against browser data resets. If you connect Firebase Cloud Sync, your shop records can also sync to Cloud Firestore under your chosen sync key. For a personalized experience, your username, email, and shop name are used in the app, and the creator of Zivo ShopHelper can view account and cloud details when cloud sync or account features are used. For support or bug reports, contact <strong>zivo.developer@gmail.com</strong>.
         </p>
       </div>
 
@@ -1085,7 +1079,6 @@
 
   <!-- STAGE 3: MAIN SHOP APP SHELL -->
   <div id="appShell">
-    <!-- TOP HEADER BAR -->
     <header class="top-navbar">
       <div class="top-navbar-inner">
         <div id="headerBrandHome" class="nav-left" title="Main Dashboard">
@@ -1107,19 +1100,15 @@
       </div>
     </header>
 
-    <!-- MAIN WORKSPACE -->
     <main class="workspace">
-      <!-- Fixed Search Strip (Items, Customers, Bills, Catalog & Modules) -->
       <div class="search-strip-box">
-        <span id="cloudStatusBadge" class="free-pill-badge">Local Mode</span>
+        <span id="cloudStatusBadge" class="free-pill-badge">Firebase Ready</span>
         <input id="moduleSearchInput" type="search" placeholder="Search items, customers, bills, catalog, or modules..." autocomplete="off" />
         <button id="btnClearSearch" class="btn btn-dark btn-sm" type="button">Clear</button>
         <div id="moduleSearchDropdown" class="dropdown-list hidden"></div>
       </div>
 
-      <!-- MAIN DASHBOARD VIEW -->
       <section id="view-home" class="app-view">
-        <!-- Wide Bar (Like Top Bar) for Live Shop Command + Shop Name + Sales + Actions -->
         <div class="live-command-bar">
           <div class="command-left">
             <div id="uiModeKicker" class="command-left-kicker">LIVE SHOP COMMAND • WINDOWS UI</div>
@@ -1157,7 +1146,6 @@
           <button id="btnBannerRestock" class="btn btn-amber btn-sm" type="button">View Stock</button>
         </div>
 
-        <!-- SECTION 1: CORE OPERATIONS -->
         <h2 class="section-group-title">Core Operations</h2>
 
         <div class="three-col-grid">
@@ -1208,7 +1196,6 @@
           </div>
         </div>
 
-        <!-- SECTION 2: GROWTH & TOOLS -->
         <h2 class="section-group-title">Growth & Tools</h2>
 
         <div class="three-col-grid">
@@ -1254,7 +1241,7 @@
             <div class="floating-card-icon">🔥</div>
             <div>
               <div class="floating-card-title">Firebase Cloud Sync</div>
-              <div class="floating-card-sub">Sync data to Cloud Firestore</div>
+              <div class="floating-card-sub">zivo-shophelper Cloud Firestore</div>
             </div>
           </div>
         </div>
@@ -1957,39 +1944,25 @@
       <section id="view-firebase" class="app-view hidden">
         <div class="view-head">
           <h2>🔥 Firebase Cloud Sync</h2>
-          <span id="fbStatePill" class="free-pill-badge">Not Connected</span>
+          <span id="fbStatePill" class="free-pill-badge">zivo-shophelper</span>
         </div>
         <div class="panel-box">
-          <h3>Connect Your Firebase Firestore Config</h3>
+          <h3>Cloud Firestore Sync (zivo-shophelper)</h3>
           <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
-            Paste your Firebase project JSON config (or fill the fields below) to sync your shop records to Cloud Firestore under a document key. Local storage continues working offline even without Firebase.
+            Pre-configured with your <code>zivo-shophelper</code> Firebase project. Set your Shop Cloud Sync Key below and push or pull shop records anytime.
           </p>
-          <div class="field">
-            <label for="fbJsonInput">Paste Firebase Config JSON (Optional Auto-Fill)</label>
-            <textarea id="fbJsonInput" rows="3" placeholder='{"apiKey":"...","authDomain":"...","projectId":"...","appId":"..."}'></textarea>
-          </div>
           <div class="grid-2">
-            <div class="field">
-              <label for="fbApiKey">API Key</label>
-              <input id="fbApiKey" type="text" placeholder="AIza..." />
-            </div>
             <div class="field">
               <label for="fbProjectId">Project ID</label>
-              <input id="fbProjectId" type="text" placeholder="your-project-id" />
-            </div>
-          </div>
-          <div class="grid-2">
-            <div class="field">
-              <label for="fbAppId">App ID</label>
-              <input id="fbAppId" type="text" placeholder="1:123456:web:abcdef" />
+              <input id="fbProjectId" type="text" value="zivo-shophelper" />
             </div>
             <div class="field">
               <label for="fbDocKey">Shop Cloud Sync Key / ID</label>
-              <input id="fbDocKey" type="text" placeholder="e.g. zivo_shop_patna_01" />
+              <input id="fbDocKey" type="text" placeholder="e.g. zivo_shop_01" />
             </div>
           </div>
           <div class="btn-row">
-            <button id="btnSaveFirebaseCfg" class="btn btn-teal" type="button">💾 Save Firebase Config</button>
+            <button id="btnSaveFirebaseCfg" class="btn btn-teal" type="button">💾 Save Sync Key</button>
             <button id="btnPushFirebase" class="btn btn-green" type="button">☁️ Push Data to Cloud</button>
             <button id="btnPullFirebase" class="btn btn-dark" type="button">⬇️ Pull Data from Cloud</button>
           </div>
@@ -1998,7 +1971,6 @@
       </section>
     </main>
 
-    <!-- ANDROID BOTTOM BAR (SHOWN ONLY WHEN ANDROID UI IS ACTIVE) -->
     <nav class="android-bottom-nav" aria-label="Android Quick Navigation">
       <button class="android-nav-btn active" data-bnav="home" type="button">🏠<span>Home</span></button>
       <button class="android-nav-btn" data-bnav="billing" type="button">🧾<span>Bill</span></button>
@@ -2074,15 +2046,50 @@
 
   <div id="toastMsg" class="toast"></div>
 
+  <!-- FIREBASE CDN v13.4.0 INITIALIZATION (SAFE & NON-BLOCKING) -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-analytics.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
 
+    const firebaseConfig = {
+      apiKey: "AIzaSyBC24g6jviipUviY9xSh_K0aXyJotHhiVw",
+      authDomain: "zivo-shophelper.firebaseapp.com",
+      projectId: "zivo-shophelper",
+      storageBucket: "zivo-shophelper.firebasestorage.app",
+      messagingSenderId: "247526924763",
+      appId: "1:247526924763:web:78dd4a26ad01761a4bc7fe",
+      measurementId: "G-H83N3MZ8F0"
+    };
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      if (typeof window !== "undefined" && window.location.protocol !== "file:") {
+        try { getAnalytics(app); } catch {}
+      }
+      const db = getFirestore(app);
+      window.__zivoCloud = {
+        pushShopData: async (docKey, payload) => {
+          const safeKey = String(docKey || "default_shop").trim() || "default_shop";
+          await setDoc(doc(db, "zivo_shops", safeKey), payload);
+        },
+        pullShopData: async (docKey) => {
+          const safeKey = String(docKey || "default_shop").trim() || "default_shop";
+          const snap = await getDoc(doc(db, "zivo_shops", safeKey));
+          return snap.exists() ? snap.data() : null;
+        }
+      };
+    } catch (e) {
+      console.warn("Firebase SDK notice:", e);
+    }
+  </script>
+
+  <!-- CORE APP & GATE SCRIPT (RUNS IMMEDIATELY SO ACCEPT & GO TO LOGIN ALWAYS WORKS) -->
+  <script>
     (function () {
-      const STORAGE_KEY = "zivo_shophelper_free_v4";
-      const TERMS_KEY = "zivo_shophelper_terms_accepted_v4";
+      const STORAGE_KEY = "zivo_shophelper_free_v5";
+      const TERMS_KEY = "zivo_shophelper_terms_accepted_v5";
 
-      // Resolve favicon reliably whether hosted on root, subpath, or GitHub raw
       const LOGO_CANDIDATES = [
         "favicon.png",
         "./favicon.png",
@@ -2148,9 +2155,7 @@
           uiMode: detectDefaultUiMode()
         },
         firebase: {
-          apiKey: "",
-          projectId: "",
-          appId: "",
+          projectId: "zivo-shophelper",
           docKey: "",
           lastSync: ""
         },
@@ -2175,8 +2180,8 @@
         try {
           const raw =
             localStorage.getItem(STORAGE_KEY) ||
-            localStorage.getItem("zivo_shophelper_free_v3") ||
-            localStorage.getItem("zivo_shophelper_saas_v1");
+            localStorage.getItem("zivo_shophelper_free_v4") ||
+            localStorage.getItem("zivo_shophelper_free_v3");
           if (!raw) return structuredClone(defaultState);
           const p = JSON.parse(raw);
           const acc = p.account ? { ...p.account } : null;
@@ -2185,7 +2190,7 @@
             account: acc,
             sessionUnlocked: Boolean(p.sessionUnlocked && acc),
             shop: { ...defaultState.shop, ...(p.shop || {}) },
-            firebase: { ...defaultState.firebase, ...(p.firebase || {}) },
+            firebase: { ...defaultState.firebase, ...(p.firebase || {}), projectId: "zivo-shophelper" },
             inventory: Array.isArray(p.inventory) ? p.inventory : [],
             services: Array.isArray(p.services) ? p.services : [],
             returns: Array.isArray(p.returns) ? p.returns : [],
@@ -2236,7 +2241,19 @@
         }
       }
 
-      // Strictly enforce separate stages: Terms -> Login -> App (never merged)
+      const tabSignupBtn = document.getElementById("tabSignupBtn");
+      const tabLoginBtn = document.getElementById("tabLoginBtn");
+      const signupFields = document.getElementById("signupFields");
+      const loginFields = document.getElementById("loginFields");
+
+      function showAuthTab(mode) {
+        const isLogin = mode === "login";
+        tabLoginBtn.classList.toggle("active", isLogin);
+        tabSignupBtn.classList.toggle("active", !isLogin);
+        loginFields.classList.toggle("hidden", !isLogin);
+        signupFields.classList.toggle("hidden", isLogin);
+      }
+
       function syncStage() {
         document.body.classList.remove("stage-terms", "stage-auth", "stage-app");
         if (!hasAcceptedTerms()) {
@@ -2245,7 +2262,9 @@
           document.body.classList.add("stage-auth");
           if (state.account) {
             document.getElementById("loginEmail").value = state.account.email || "";
-            tabLoginBtn.click();
+            showAuthTab("login");
+          } else {
+            showAuthTab("signup");
           }
         } else {
           document.body.classList.add("stage-app");
@@ -2298,24 +2317,8 @@
       });
 
       // Stage 2: Login / Create Profile Gate
-      const tabSignupBtn = document.getElementById("tabSignupBtn");
-      const tabLoginBtn = document.getElementById("tabLoginBtn");
-      const signupFields = document.getElementById("signupFields");
-      const loginFields = document.getElementById("loginFields");
-
-      tabSignupBtn.addEventListener("click", () => {
-        tabSignupBtn.classList.add("active");
-        tabLoginBtn.classList.remove("active");
-        signupFields.classList.remove("hidden");
-        loginFields.classList.add("hidden");
-      });
-
-      tabLoginBtn.addEventListener("click", () => {
-        tabLoginBtn.classList.add("active");
-        tabSignupBtn.classList.remove("active");
-        loginFields.classList.remove("hidden");
-        signupFields.classList.add("hidden");
-      });
+      tabSignupBtn.addEventListener("click", () => showAuthTab("signup"));
+      tabLoginBtn.addEventListener("click", () => showAuthTab("login"));
 
       document.getElementById("btnCreateAccount").addEventListener("click", () => {
         const userName = document.getElementById("regUserName").value.trim();
@@ -2350,7 +2353,7 @@
 
         if (!state.account) {
           toast("No profile saved yet — create one first");
-          tabSignupBtn.click();
+          showAuthTab("signup");
           return;
         }
         const matchUser =
@@ -2474,7 +2477,7 @@
         }
       });
 
-      // Fixed Search Across Items, Customers, Bills, Catalog & Modules
+      // Fixed Search
       const moduleSearchInput = document.getElementById("moduleSearchInput");
       const moduleSearchDropdown = document.getElementById("moduleSearchDropdown");
       const btnClearSearch = document.getElementById("btnClearSearch");
@@ -2578,7 +2581,6 @@
         moduleSearchDropdown.classList.add("hidden");
       });
 
-      // Dashboard & Metrics
       function getTodayDateStr() {
         const d = new Date();
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -2632,11 +2634,11 @@
           banner.classList.add("hidden");
         }
 
-        const fbReady = Boolean(state.firebase.apiKey && state.firebase.projectId && state.firebase.appId);
-        document.getElementById("cloudStatusBadge").textContent = fbReady ? "Firebase Cloud Ready" : "Local Mode";
+        document.getElementById("cloudStatusBadge").textContent = state.firebase.docKey
+          ? `Cloud: ${state.firebase.docKey}`
+          : "Firebase Ready";
       }
 
-      // Catalog View
       document.getElementById("catalogFilterInput").addEventListener("input", renderCatalog);
 
       function renderCatalog() {
@@ -2694,7 +2696,6 @@
         });
       }
 
-      // Inventory
       document.getElementById("invFilterSelect").addEventListener("change", renderInventory);
 
       function resetInvForm() {
@@ -2803,7 +2804,6 @@
         }
       });
 
-      // Services
       document.getElementById("btnAddService").addEventListener("click", () => {
         const name = document.getElementById("srvName").value.trim();
         const fee = Math.max(0, Number(document.getElementById("srvFee").value) || 0);
@@ -2859,7 +2859,6 @@
         }
       });
 
-      // Billing + Undo Support
       function pushCartUndo() {
         cartUndoStack.push(structuredClone(state.cart));
         if (cartUndoStack.length > 20) cartUndoStack.shift();
@@ -3212,7 +3211,6 @@
         );
       });
 
-      // Returns
       document.getElementById("btnRecordReturn").addEventListener("click", () => {
         const item = document.getElementById("retItem").value.trim();
         const qty = Math.max(1, Number(document.getElementById("retQty").value) || 1);
@@ -3266,7 +3264,6 @@
         }
       });
 
-      // Credit Manager
       document.getElementById("btnAddKhata").addEventListener("click", () => {
         const name = document.getElementById("khataName").value.trim();
         const phone = document.getElementById("khataPhone").value.trim();
@@ -3349,7 +3346,6 @@
         }
       });
 
-      // Sales History
       document.getElementById("historyModeFilter").addEventListener("change", renderHistory);
       document.getElementById("historySearchInput").addEventListener("input", renderHistory);
 
@@ -3432,7 +3428,6 @@
         setTimeout(() => URL.revokeObjectURL(url), 1000);
       });
 
-      // Suppliers
       document.getElementById("btnAddSupplier").addEventListener("click", () => {
         const supplier = document.getElementById("supName").value.trim();
         const items = document.getElementById("supItems").value.trim();
@@ -3490,7 +3485,6 @@
         }
       });
 
-      // Status & Price Tags
       ["promoHeading", "promoSub"].forEach((id) => {
         document.getElementById(id).addEventListener("input", () => {
           document.getElementById("promoPreviewTitle").textContent = document.getElementById("promoHeading").value;
@@ -3520,7 +3514,6 @@
         });
       });
 
-      // AI Assistant
       function askAi(q) {
         const feed = document.getElementById("aiFeed");
         const u = document.createElement("div");
@@ -3568,7 +3561,6 @@
       });
       document.querySelectorAll(".ai-chip").forEach((c) => c.addEventListener("click", () => askAi(c.getAttribute("data-q"))));
 
-      // Settings & Backup
       document.getElementById("btnSaveSetup").addEventListener("click", () => {
         if (!state.account) {
           state.account = {
@@ -3614,7 +3606,7 @@
               account: acc,
               sessionUnlocked: Boolean(acc),
               shop: { ...defaultState.shop, ...(p.shop || {}) },
-              firebase: { ...defaultState.firebase, ...(p.firebase || {}) },
+              firebase: { ...defaultState.firebase, ...(p.firebase || {}), projectId: "zivo-shophelper" },
               inventory: Array.isArray(p.inventory) ? p.inventory : [],
               services: Array.isArray(p.services) ? p.services : [],
               returns: Array.isArray(p.returns) ? p.returns : [],
@@ -3668,53 +3660,25 @@
         toast("Shop records reset");
       });
 
-      // Firebase Cloud Firestore Sync
-      document.getElementById("fbJsonInput").addEventListener("input", () => {
-        const raw = document.getElementById("fbJsonInput").value.trim();
-        if (!raw) return;
-        try {
-          const parsed = JSON.parse(raw);
-          if (parsed.apiKey) document.getElementById("fbApiKey").value = parsed.apiKey;
-          if (parsed.projectId) document.getElementById("fbProjectId").value = parsed.projectId;
-          if (parsed.appId) document.getElementById("fbAppId").value = parsed.appId;
-        } catch {}
-      });
-
-      function readFirebaseInputs() {
-        return {
-          apiKey: document.getElementById("fbApiKey").value.trim(),
-          projectId: document.getElementById("fbProjectId").value.trim(),
-          appId: document.getElementById("fbAppId").value.trim(),
-          docKey: document.getElementById("fbDocKey").value.trim() || "default_shop",
-          lastSync: state.firebase.lastSync || ""
-        };
-      }
-
+      // Firebase Cloud Sync Actions
       document.getElementById("btnSaveFirebaseCfg").addEventListener("click", () => {
-        state.firebase = readFirebaseInputs();
+        state.firebase.projectId = document.getElementById("fbProjectId").value.trim() || "zivo-shophelper";
+        state.firebase.docKey = document.getElementById("fbDocKey").value.trim() || "default_shop";
         saveState();
         renderFirebaseView();
-        toast("Firebase config saved");
+        renderHome();
+        toast("Cloud sync key saved");
       });
 
-      function getFirestoreRef(cfg) {
-        if (!cfg.apiKey || !cfg.projectId || !cfg.appId) {
-          throw new Error("Enter API Key, Project ID, and App ID first");
-        }
-        const appName = "zivo_sync_" + cfg.projectId + "_" + cfg.docKey;
-        const app = initializeApp(
-          { apiKey: cfg.apiKey, projectId: cfg.projectId, appId: cfg.appId },
-          appName
-        );
-        const db = getFirestore(app);
-        return doc(db, "zivo_shops", cfg.docKey);
-      }
-
       document.getElementById("btnPushFirebase").addEventListener("click", async () => {
+        if (!window.__zivoCloud?.pushShopData) {
+          toast("Firebase Cloud module not ready yet");
+          return;
+        }
         try {
-          const cfg = readFirebaseInputs();
-          const ref = getFirestoreRef(cfg);
-          const payload = {
+          const docKey = document.getElementById("fbDocKey").value.trim() || "default_shop";
+          state.firebase.docKey = docKey;
+          await window.__zivoCloud.pushShopData(docKey, {
             updatedAt: new Date().toISOString(),
             account: state.account,
             shop: state.shop,
@@ -3725,28 +3689,30 @@
             customers: state.customers,
             bills: state.bills,
             billSeq: state.billSeq
-          };
-          await setDoc(ref, payload);
-          cfg.lastSync = new Date().toLocaleString("en-IN");
-          state.firebase = cfg;
+          });
+          state.firebase.lastSync = new Date().toLocaleString("en-IN");
           saveState();
           renderFirebaseView();
-          toast("Synced to Firebase Cloud");
+          renderHome();
+          toast("Pushed shop data to Firebase");
         } catch (err) {
           toast(err?.message || "Firebase push failed");
         }
       });
 
       document.getElementById("btnPullFirebase").addEventListener("click", async () => {
+        if (!window.__zivoCloud?.pullShopData) {
+          toast("Firebase Cloud module not ready yet");
+          return;
+        }
         try {
-          const cfg = readFirebaseInputs();
-          const ref = getFirestoreRef(cfg);
-          const snap = await getDoc(ref);
-          if (!snap.exists()) {
-            toast("No cloud record found for this key");
+          const docKey = document.getElementById("fbDocKey").value.trim() || "default_shop";
+          state.firebase.docKey = docKey;
+          const d = await window.__zivoCloud.pullShopData(docKey);
+          if (!d) {
+            toast("No cloud document found for this key");
             return;
           }
-          const d = snap.data();
           if (d.account) state.account = d.account;
           if (d.shop) state.shop = { ...state.shop, ...d.shop };
           state.inventory = Array.isArray(d.inventory) ? d.inventory : state.inventory;
@@ -3756,8 +3722,7 @@
           state.customers = Array.isArray(d.customers) ? d.customers : state.customers;
           state.bills = Array.isArray(d.bills) ? d.bills : state.bills;
           state.billSeq = Math.max(1, Number(d.billSeq) || state.billSeq);
-          cfg.lastSync = new Date().toLocaleString("en-IN");
-          state.firebase = cfg;
+          state.firebase.lastSync = new Date().toLocaleString("en-IN");
           saveState();
           renderAll();
           toast("Pulled latest data from Firebase");
@@ -3767,18 +3732,13 @@
       });
 
       function renderFirebaseView() {
-        document.getElementById("fbApiKey").value = state.firebase.apiKey || "";
-        document.getElementById("fbProjectId").value = state.firebase.projectId || "";
-        document.getElementById("fbAppId").value = state.firebase.appId || "";
+        document.getElementById("fbProjectId").value = state.firebase.projectId || "zivo-shophelper";
         document.getElementById("fbDocKey").value = state.firebase.docKey || "";
-        const ready = Boolean(state.firebase.apiKey && state.firebase.projectId && state.firebase.appId);
-        document.getElementById("fbStatePill").textContent = ready ? "Configured" : "Not Connected";
         document.getElementById("fbLastSyncText").textContent = state.firebase.lastSync
           ? `Last Cloud Sync: ${state.firebase.lastSync}`
           : "No cloud sync performed yet.";
       }
 
-      // Calculator & EOD
       document.querySelectorAll(".calc-key").forEach((btn) => {
         btn.addEventListener("click", () => {
           const k = btn.getAttribute("data-k");
