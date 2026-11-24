@@ -4,35 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0d9488" />
-  <title>Zivo ShopHelper — Free Local Shop POS, Stock & Khata</title>
+  <title>Zivo ShopHelper — Smart Shop Management</title>
   <link id="faviconLink" rel="icon" type="image/png" href="favicon.png" />
   <link id="shortcutIconLink" rel="shortcut icon" type="image/png" href="favicon.png" />
   <style>
     :root {
-      --bg-page: #181b20;
-      --bg-card: #22262e;
-      --bg-card-hover: #292e38;
-      --bg-soft: #2e333d;
-      --text-main: #f3f4f6;
-      --text-muted: #a1a8b5;
-      --border-color: #363c48;
-      --teal-header: #0d9488;
-      --cyan-top: #22d3ee;
-      --green-sales: #22c55e;
-      --cyan-profit: #06b6d4;
+      --bg-page: #070b12;
+      --bg-card: #0e1624;
+      --bg-card-hover: #142033;
+      --bg-soft: #172236;
+      --text-main: #f3f6fa;
+      --text-muted: #94a3b8;
+      --border-color: #1e2d46;
+      --teal-bar: #0d9488;
+      --cyan-accent: #22d3ee;
+      --green-val: #22c55e;
+      --cyan-val: #06b6d4;
       --purple-dev: #8b5cf6;
       --red-logout: #e11d48;
       --amber-warn: #f59e0b;
     }
 
     body.light-mode {
-      --bg-page: #e2e6ec;
-      --bg-card: #eef1f5;
-      --bg-card-hover: #f7f9fb;
-      --bg-soft: #d5dbe3;
-      --text-main: #1e242d;
-      --text-muted: #525b68;
-      --border-color: #bcc4cf;
+      --bg-page: #e5eaf2;
+      --bg-card: #f8fafc;
+      --bg-card-hover: #ffffff;
+      --bg-soft: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border-color: #cbd5e1;
     }
 
     * {
@@ -80,55 +80,49 @@
 
     /* Android vs Windows Distinct UI Modes */
     body.platform-android {
-      --bg-page: #0f172a;
-      --bg-card: #162033;
-      --bg-card-hover: #1d2942;
-      --bg-soft: #1e2d47;
-      --border-color: #293b5c;
+      --bg-page: #09121e;
+      --bg-card: #101e33;
+      --bg-card-hover: #162844;
+      --bg-soft: #172945;
+      --border-color: #233b5e;
       padding-bottom: 78px;
     }
 
     body.platform-android.light-mode {
-      --bg-page: #e7eef8;
+      --bg-page: #e3edf8;
       --bg-card: #f8fafc;
       --bg-card-hover: #ffffff;
-      --bg-soft: #dbe6f5;
-      --border-color: #b8c9e0;
+      --bg-soft: #dbe7f5;
+      --border-color: #b6c8e0;
       --text-main: #0f172a;
       --text-muted: #475569;
     }
 
     body.platform-android .top-navbar {
-      background: linear-gradient(90deg, #0f766e 0%, #134e4a 100%);
-      border-bottom: none;
-      padding: 12px 16px;
+      background: linear-gradient(90deg, #0f766e 0%, #115e59 100%);
       border-bottom-left-radius: 18px;
       border-bottom-right-radius: 18px;
-    }
-
-    body.platform-android .top-navbar .brand-name-label,
-    body.platform-android .top-navbar .brand-sub-label {
-      color: #ffffff;
-    }
-
-    body.platform-android .top-navbar .brand-sub-label {
-      opacity: 0.88;
+      padding: 12px 16px;
     }
 
     body.platform-android .workspace {
-      padding: 14px 14px 32px;
+      padding: 14px 14px 28px;
     }
 
-    body.platform-android .floating-card {
+    body.platform-android .module-tile {
       border-top: none;
       border-left: 4px solid #34d399;
       border-radius: 18px;
+      flex-direction: row;
+      justify-content: flex-start;
+      text-align: left;
+      gap: 14px;
       padding: 16px;
     }
 
-    body.platform-android .btn {
-      border-radius: 12px;
-      min-height: 38px;
+    body.platform-android .module-tile .tile-icon {
+      font-size: 28px;
+      margin-bottom: 0;
     }
 
     .android-bottom-nav {
@@ -147,7 +141,7 @@
       grid-template-columns: repeat(4, 1fr);
       padding: 6px 8px;
       gap: 4px;
-      box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.4);
     }
 
     .android-nav-btn {
@@ -166,18 +160,17 @@
     }
 
     .android-nav-btn.active {
-      background: rgba(13, 148, 136, 0.18);
+      background: rgba(13, 148, 136, 0.22);
       color: #2dd4bf;
     }
 
-    body.platform-windows .top-navbar {
-      border-bottom: 2px solid var(--teal-header);
-    }
-
-    body.platform-windows .panel-box,
-    body.platform-windows .floating-card,
-    body.platform-windows .cmd-metric-pill {
-      border-radius: 8px;
+    body.platform-windows .module-tile {
+      border-top: 3px solid var(--cyan-accent);
+      border-radius: 12px;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      padding: 22px 16px;
     }
 
     /* Fullscreen Gate Overlays */
@@ -185,7 +178,7 @@
       position: fixed;
       inset: 0;
       z-index: 10000;
-      background: rgba(15, 18, 23, 0.97);
+      background: radial-gradient(circle at top, #10192b 0%, #070a10 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -196,12 +189,12 @@
     .gate-panel {
       width: min(100%, 880px);
       margin: auto;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-top: 3px solid var(--cyan-top);
+      background: #131923;
+      border: 1px solid #263244;
+      border-top: 3px solid var(--cyan-accent);
       border-radius: 16px;
-      padding: clamp(18px, 3vw, 26px);
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+      padding: clamp(18px, 3vw, 28px);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.65);
     }
 
     .gate-header {
@@ -210,7 +203,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .gate-brand {
@@ -220,19 +213,19 @@
     }
 
     .favicon-img {
-      width: 40px;
-      height: 40px;
-      border-radius: 9px;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
       object-fit: cover;
-      background: #0b1120;
-      border: 1px solid var(--border-color);
+      background: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 2px;
       flex-shrink: 0;
     }
 
     .free-pill-badge {
-      background: rgba(34, 197, 94, 0.14);
-      border: 1px solid rgba(34, 197, 94, 0.35);
+      background: rgba(34, 197, 94, 0.16);
+      border: 1px solid rgba(34, 197, 94, 0.4);
       color: #4ade80;
       padding: 5px 12px;
       border-radius: 999px;
@@ -250,16 +243,17 @@
     .terms-box {
       max-height: 48vh;
       overflow-y: auto;
-      background: var(--bg-soft);
-      border: 1px solid var(--border-color);
+      background: #1a2230;
+      border: 1px solid #2a374b;
       border-radius: 12px;
-      padding: 16px;
-      font-size: 12.5px;
-      line-height: 1.7;
+      padding: 18px;
+      font-size: 13px;
+      line-height: 1.72;
+      color: #e2e8f0;
     }
 
     .terms-box p {
-      margin-bottom: 11px;
+      margin-bottom: 12px;
     }
 
     .terms-box p:last-child {
@@ -270,8 +264,9 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin: 14px 0;
-      font-size: 12.5px;
+      margin: 16px 0;
+      font-size: 13px;
+      color: #e2e8f0;
     }
 
     .consent-label {
@@ -285,36 +280,37 @@
       width: 18px;
       height: 18px;
       margin-top: 2px;
-      accent-color: #0d9488;
+      accent-color: #10b981;
       flex-shrink: 0;
     }
 
     .auth-panel {
       width: min(100%, 460px);
       margin: auto;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-top: 3px solid var(--cyan-top);
+      background: #131923;
+      border: 1px solid #263244;
+      border-top: 3px solid var(--cyan-accent);
       border-radius: 16px;
       padding: 24px;
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.65);
+      color: #f3f6fa;
     }
 
     .auth-tabs {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      background: var(--bg-soft);
+      background: #1a2230;
       padding: 5px;
       border-radius: 10px;
-      border: 1px solid var(--border-color);
+      border: 1px solid #2a374b;
       margin-bottom: 16px;
     }
 
     .auth-tab-btn {
       background: transparent;
       border: none;
-      color: var(--text-muted);
+      color: #94a3b8;
       padding: 8px;
       border-radius: 8px;
       font-weight: 700;
@@ -323,24 +319,23 @@
     }
 
     .auth-tab-btn.active {
-      background: var(--teal-header);
+      background: var(--teal-bar);
       color: #ffffff;
     }
 
-    /* Top Header Bar */
+    /* Teal Top Header Bar (Matching Screenshot) */
     .top-navbar {
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border-color);
-      color: var(--text-main);
+      background: var(--teal-bar);
+      color: #ffffff;
       padding: 10px 22px;
       position: sticky;
       top: 0;
       z-index: 600;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
     }
 
     .top-navbar-inner {
-      max-width: 1320px;
+      max-width: 1360px;
       margin: 0 auto;
       display: flex;
       flex-wrap: wrap;
@@ -357,24 +352,25 @@
       min-width: 0;
     }
 
-    .brand-title-wrap {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
     .brand-name-label {
-      font-size: 16px;
-      font-weight: 800;
-      line-height: 1.2;
+      font-size: 18px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.2px;
     }
 
-    .brand-sub-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .header-dash-pill {
+      background: #0b1220;
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
     }
 
     .nav-right {
@@ -389,9 +385,9 @@
       color: #ffffff;
       border: none;
       border-radius: 8px;
-      padding: 6px 13px;
+      padding: 7px 14px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -403,9 +399,9 @@
       color: #ffffff;
       border: none;
       border-radius: 8px;
-      padding: 6px 13px;
+      padding: 7px 14px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -413,57 +409,91 @@
     }
 
     .btn-header-sub {
-      background: var(--bg-soft);
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
+      background: rgba(11, 18, 32, 0.72);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 8px;
-      padding: 6px 12px;
+      padding: 6px 11px;
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     /* Main Workspace */
     .workspace {
-      max-width: 1320px;
+      max-width: 1360px;
       margin: 0 auto;
       padding: 16px 22px 54px;
     }
 
-    .search-strip-box {
+    /* Toolbar Strip (Back / Home / Refresh + Active Pill + Search Modules) */
+    .toolbar-strip {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 6px 12px;
-      margin-bottom: 16px;
+      border-radius: 12px;
+      padding: 8px 12px;
+      margin-bottom: 18px;
       display: flex;
       align-items: center;
       gap: 10px;
       position: relative;
     }
 
-    .search-strip-box input {
+    .tool-icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .tool-icon-btn:hover {
+      border-color: var(--cyan-accent);
+    }
+
+    .active-status-pill {
+      background: rgba(34, 197, 94, 0.14);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: #4ade80;
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 11.5px;
+      font-weight: 800;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .toolbar-strip input {
       background: transparent;
       border: none;
       color: var(--text-main);
       font-size: 13px;
       width: 100%;
-      padding: 6px 4px;
+      padding: 6px 6px;
     }
 
-    .search-strip-box input:focus {
+    .toolbar-strip input:focus {
       outline: none;
     }
 
-    .live-command-bar {
-      background: linear-gradient(90deg, #0f766e 0%, #115e59 55%, var(--bg-card) 100%);
+    /* Welcome Banner Card (Matching Screenshot) */
+    .welcome-banner {
+      background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 16px 22px;
-      margin-bottom: 18px;
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -471,65 +501,45 @@
       gap: 16px;
     }
 
-    body.light-mode .live-command-bar {
-      background: linear-gradient(90deg, #0d9488 0%, #0f766e 65%, #1e293b 100%);
-      color: #ffffff;
-    }
-
-    .command-left-kicker {
-      font-size: 10.5px;
-      font-weight: 800;
-      letter-spacing: 0.7px;
-      text-transform: uppercase;
-      color: #99f6e4;
-      margin-bottom: 2px;
-    }
-
-    .command-left h1 {
-      font-size: 21px;
+    .welcome-banner h1 {
+      font-size: 24px;
       font-weight: 900;
-      color: #ffffff;
+      color: var(--text-main);
       margin-bottom: 4px;
     }
 
-    .command-left p {
-      font-size: 12px;
-      color: #e2e8f0;
+    .welcome-banner p {
+      font-size: 13px;
+      color: var(--text-muted);
     }
 
-    .command-actions {
+    .welcome-sub-strip {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .welcome-kpis {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 8px;
-      margin-top: 10px;
+      gap: 24px;
     }
 
-    .command-metrics {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 14px;
+    .kpi-box {
+      text-align: right;
     }
 
-    .cmd-metric-pill {
-      background: rgba(15, 20, 28, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 10px;
-      padding: 10px 16px;
-      min-width: 145px;
-    }
-
-    .cmd-metric-label {
-      font-size: 10px;
+    .kpi-label {
+      font-size: 10.5px;
       font-weight: 800;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
       text-transform: uppercase;
-      color: #cbd5e1;
+      color: var(--text-muted);
     }
 
-    .cmd-metric-val {
-      font-size: 19px;
+    .kpi-value {
+      font-size: 22px;
       font-weight: 900;
       margin-top: 2px;
     }
@@ -550,65 +560,83 @@
       font-weight: 700;
     }
 
-    .section-group-title {
-      font-size: 14px;
-      font-weight: 900;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
+    .section-heading {
+      font-size: 17px;
+      font-weight: 800;
       color: var(--text-main);
-      margin: 18px 0 12px;
-      padding-left: 4px;
+      margin: 8px 0 14px;
     }
 
-    .section-group-title:first-of-type {
-      margin-top: 4px;
-    }
-
-    .three-col-grid {
+    /* 5-Column Floating Module Tiles Grid (Matching Screenshot) */
+    .modules-grid-5 {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 8px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
     }
 
-    .floating-card {
+    .module-tile {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-top: 3px solid var(--cyan-top);
-      border-radius: 12px;
-      padding: 18px 16px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 14px;
-      text-align: left;
+      justify-content: center;
+      text-align: center;
       cursor: pointer;
+      min-height: 116px;
       transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .floating-card:hover {
-      transform: translateY(-2px);
+    .module-tile:hover {
+      transform: translateY(-3px);
       background: var(--bg-card-hover);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
     }
 
-    .floating-card-icon {
-      font-size: 26px;
+    .tile-icon {
+      font-size: 28px;
       line-height: 1;
-      flex-shrink: 0;
+      margin-bottom: 10px;
     }
 
-    .floating-card-title {
+    .tile-title {
       font-size: 14px;
       font-weight: 800;
       color: var(--text-main);
     }
 
-    .floating-card-sub {
-      font-size: 11.5px;
+    .tile-meta {
+      font-size: 11px;
       color: var(--text-muted);
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
+    /* Floating Quick Bill FAB */
+    .floating-fab {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 750;
+      background: var(--teal-bar);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      padding: 11px 18px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 26px rgba(13, 148, 136, 0.45);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    body.platform-android .floating-fab {
+      bottom: 76px;
+    }
+
+    /* Inner Views */
     .view-head {
       display: flex;
       flex-wrap: wrap;
@@ -687,7 +715,7 @@
     input:focus,
     select:focus,
     textarea:focus {
-      border-color: var(--cyan-top);
+      border-color: var(--cyan-accent);
     }
 
     .checkbox-row {
@@ -725,45 +753,14 @@
       cursor: not-allowed;
     }
 
-    .btn-sm {
-      padding: 6px 10px;
-      font-size: 11.5px;
-    }
-
-    .btn-xs {
-      padding: 3px 8px;
-      font-size: 11px;
-    }
-
-    .btn-full {
-      width: 100%;
-    }
-
-    .btn-teal {
-      background: var(--teal-header);
-      color: #fff;
-    }
-
-    .btn-green {
-      background: #16a34a;
-      color: #fff;
-    }
-
-    .btn-amber {
-      background: var(--amber-warn);
-      color: #111827;
-    }
-
-    .btn-red {
-      background: var(--red-logout);
-      color: #fff;
-    }
-
-    .btn-dark {
-      background: var(--bg-soft);
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-    }
+    .btn-sm { padding: 6px 10px; font-size: 11.5px; }
+    .btn-xs { padding: 3px 8px; font-size: 11px; }
+    .btn-full { width: 100%; }
+    .btn-teal { background: var(--teal-bar); color: #fff; }
+    .btn-green { background: #16a34a; color: #fff; }
+    .btn-amber { background: var(--amber-warn); color: #111827; }
+    .btn-red { background: var(--red-logout); color: #fff; }
+    .btn-dark { background: var(--bg-soft); color: var(--text-main); border: 1px solid var(--border-color); }
 
     .btn-row {
       display: flex;
@@ -777,7 +774,7 @@
       right: 0;
       top: calc(100% + 4px);
       background: var(--bg-card);
-      border: 1px solid var(--cyan-top);
+      border: 1px solid var(--cyan-accent);
       border-radius: 10px;
       z-index: 500;
       max-height: 240px;
@@ -799,29 +796,10 @@
       background: var(--bg-soft);
     }
 
-    .table-scroll {
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12.5px;
-    }
-
-    th,
-    td {
-      text-align: left;
-      padding: 9px 10px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    th {
-      color: var(--text-muted);
-      font-size: 11px;
-      text-transform: uppercase;
-    }
+    .table-scroll { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--border-color); }
+    th { color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
 
     .qty-stepper {
       display: inline-flex;
@@ -866,7 +844,7 @@
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 18, 23, 0.84);
+      background: rgba(7, 10, 16, 0.84);
       backdrop-filter: blur(4px);
       display: none;
       align-items: center;
@@ -875,19 +853,17 @@
       z-index: 9000;
     }
 
-    .modal-overlay.open {
-      display: flex;
-    }
+    .modal-overlay.open { display: flex; }
 
     .modal-box {
       width: 100%;
       max-width: 480px;
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-top: 3px solid var(--cyan-top);
+      border-top: 3px solid var(--cyan-accent);
       border-radius: 14px;
       padding: 20px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
     }
 
     .modal-top {
@@ -900,11 +876,11 @@
     .toast {
       position: fixed;
       bottom: 20px;
-      right: 20px;
+      left: 22px;
       z-index: 11000;
       background: var(--bg-card);
       color: var(--text-main);
-      border: 1px solid var(--cyan-top);
+      border: 1px solid var(--cyan-accent);
       border-radius: 10px;
       padding: 10px 15px;
       font-size: 12.5px;
@@ -927,9 +903,9 @@
       transform: translateY(0);
     }
 
-    @media (max-width: 920px) {
-      .three-col-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    @media (max-width: 1080px) {
+      .modules-grid-5 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
 
@@ -940,25 +916,26 @@
       }
     }
 
-    @media (max-width: 560px) {
-      .three-col-grid,
+    @media (max-width: 600px) {
+      .modules-grid-5,
       .grid-2 {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
       }
-      .search-strip-box {
-        flex-direction: column;
-        align-items: stretch;
+      .toolbar-strip {
+        flex-wrap: wrap;
+      }
+      .welcome-kpis {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .kpi-box {
+        text-align: left;
       }
     }
 
     @media print {
-      body * {
-        visibility: hidden;
-      }
-      #printableReceiptArea,
-      #printableReceiptArea * {
-        visibility: visible;
-      }
+      body * { visibility: hidden; }
+      #printableReceiptArea, #printableReceiptArea * { visibility: visible; }
       #printableReceiptArea {
         position: fixed;
         left: 0;
@@ -977,8 +954,8 @@
         <div class="gate-brand">
           <img src="favicon.png" alt="Zivo Logo" class="zivo-logo-img favicon-img" />
           <div>
-            <h1 style="font-size:20px;font-weight:900;">Zivo ShopHelper — Terms & Conditions</h1>
-            <p style="font-size:12px;color:var(--text-muted);">Step 1 of 3 • Accept terms first before login or shop app</p>
+            <h1 style="font-size:21px;font-weight:900;color:#ffffff;">Zivo ShopHelper — Terms & Conditions</h1>
+            <p style="font-size:12px;color:#94a3b8;">Step 1 of 3 • Accept terms first before login or shop app</p>
           </div>
         </div>
         <span class="free-pill-badge">100% FREE UTILITY • 18+</span>
@@ -1020,8 +997,8 @@
       <div class="gate-brand" style="margin-bottom:14px;">
         <img src="favicon.png" alt="Zivo Logo" class="zivo-logo-img favicon-img" />
         <div>
-          <h2 style="font-size:18px;font-weight:900;">Zivo ShopHelper — Login</h2>
-          <p style="font-size:11.5px;color:var(--text-muted);">Step 2 of 3 • Sign in or create profile (18+ only)</p>
+          <h2 style="font-size:18px;font-weight:900;color:#ffffff;">Zivo ShopHelper — Login</h2>
+          <p style="font-size:11.5px;color:#94a3b8;">Step 2 of 3 • Sign in or create profile (18+ only)</p>
         </div>
       </div>
 
@@ -1053,7 +1030,7 @@
             <input id="regPin" type="password" placeholder="Create PIN" />
           </div>
         </div>
-        <p style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">
+        <p style="font-size:11px;color:#94a3b8;margin-bottom:12px;">
           I know that I am 18 plus. We ask for your email, shop name, and username for a personalized experience; note that the creator of Zivo ShopHelper can see your details.
         </p>
         <button id="btnCreateAccount" class="btn btn-teal btn-full" type="button">Create Free Shop Profile</button>
@@ -1081,17 +1058,18 @@
   <div id="appShell">
     <header class="top-navbar">
       <div class="top-navbar-inner">
-        <div id="headerBrandHome" class="nav-left" title="Main Dashboard">
-          <img src="favicon.png" alt="Zivo Logo" class="zivo-logo-img favicon-img" />
-          <div class="brand-title-wrap">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
+          <div id="headerBrandHome" class="nav-left" title="Main Dashboard">
+            <img src="favicon.png" alt="Zivo Logo" class="zivo-logo-img favicon-img" />
             <span class="brand-name-label">Zivo ShopHelper</span>
-            <span id="headerContextLabel" class="brand-sub-label">Main Dashboard • Free Shop Utility</span>
           </div>
+          <button id="headerDashPill" class="header-dash-pill" type="button">
+            <span>🏠</span>
+            <span id="headerContextLabel">Main Dashboard</span>
+          </button>
         </div>
 
         <div class="nav-right">
-          <button id="btnHeaderHome" class="btn-header-sub" type="button">🏠 Home</button>
-          <button id="btnHeaderBack" class="btn-header-sub" type="button">◀ Back</button>
           <button id="btnHeaderUiMode" class="btn-header-sub" type="button">📱 Android UI</button>
           <button id="btnHeaderTheme" class="btn-header-sub" type="button">☀️ Light</button>
           <button id="btnOpenAboutDev" class="btn-about-dev" type="button">👤 About Developer</button>
@@ -1101,42 +1079,36 @@
     </header>
 
     <main class="workspace">
-      <div class="search-strip-box">
-        <span id="cloudStatusBadge" class="free-pill-badge">Firebase Ready</span>
-        <input id="moduleSearchInput" type="search" placeholder="Search items, customers, bills, catalog, or modules..." autocomplete="off" />
+      <!-- Navigation & Module Search Strip -->
+      <div class="toolbar-strip">
+        <button id="btnHeaderBack" class="tool-icon-btn" type="button" title="Back">◀</button>
+        <button id="btnHeaderHome" class="tool-icon-btn" type="button" title="Home">🏠</button>
+        <button id="btnHeaderRefresh" class="tool-icon-btn" type="button" title="Refresh">🔄</button>
+        <span id="cloudStatusBadge" class="active-status-pill">● Active Users: 1 Online</span>
+        <input id="moduleSearchInput" type="search" placeholder="Search Modules, items, customers, or bills..." autocomplete="off" />
         <button id="btnClearSearch" class="btn btn-dark btn-sm" type="button">Clear</button>
         <div id="moduleSearchDropdown" class="dropdown-list hidden"></div>
       </div>
 
+      <!-- DASHBOARD HOME VIEW -->
       <section id="view-home" class="app-view">
-        <div class="live-command-bar">
-          <div class="command-left">
-            <div id="uiModeKicker" class="command-left-kicker">LIVE SHOP COMMAND • WINDOWS UI</div>
-            <h1 id="welcomeShopHeading">Zivo Shop Helper</h1>
-            <p id="welcomeBreakdown">Today's Sales: ₹0.00 • Cash: ₹0.00 • UPI: ₹0.00 • Udhaar: ₹0.00</p>
-            <div class="command-actions">
-              <button id="btnQuickNewBill" class="btn btn-green btn-sm" type="button">+ New Bill</button>
-              <button id="btnQuickAddItem" class="btn btn-amber btn-sm" type="button">+ Add Item</button>
-              <button id="btnQuickCatalog" class="btn btn-dark btn-sm" type="button">📚 Catalog</button>
+        <div class="welcome-banner">
+          <div>
+            <h1 id="welcomeShopHeading">Welcome Back, Zivo Retail Store 👋</h1>
+            <p>Select a feature below to begin.</p>
+            <div id="welcomeBreakdown" class="welcome-sub-strip">
+              Cash: ₹0.00 • UPI: ₹0.00 • Udhaar: ₹0.00 • UI Mode: Windows
             </div>
           </div>
 
-          <div class="command-metrics">
-            <div class="cmd-metric-pill">
-              <div class="cmd-metric-label">TODAY'S SALES</div>
-              <div id="dashTodaySales" class="cmd-metric-val" style="color:#4ade80;">₹0.00</div>
+          <div class="welcome-kpis">
+            <div class="kpi-box">
+              <div class="kpi-label">TODAY'S TOTAL SALES</div>
+              <div id="dashTodaySales" class="kpi-value" style="color:var(--green-val);">₹0.00</div>
             </div>
-            <div class="cmd-metric-pill">
-              <div class="cmd-metric-label">TODAY'S PROFIT</div>
-              <div id="dashTodayProfit" class="cmd-metric-val" style="color:#22d3ee;">₹0.00</div>
-            </div>
-            <div class="cmd-metric-pill">
-              <div class="cmd-metric-label">PENDING UDHAAR</div>
-              <div id="dashPendingUdhaar" class="cmd-metric-val" style="color:#fbbf24;">₹0.00</div>
-            </div>
-            <div class="cmd-metric-pill">
-              <div class="cmd-metric-label">LOW STOCK ITEMS</div>
-              <div id="dashLowStockCount" class="cmd-metric-val" style="color:#f8fafc;">0</div>
+            <div class="kpi-box">
+              <div class="kpi-label">TODAY'S TOTAL PROFIT</div>
+              <div id="dashTodayProfit" class="kpi-value" style="color:var(--cyan-val);">₹0.00</div>
             </div>
           </div>
         </div>
@@ -1146,159 +1118,127 @@
           <button id="btnBannerRestock" class="btn btn-amber btn-sm" type="button">View Stock</button>
         </div>
 
-        <h2 class="section-group-title">Core Operations</h2>
+        <h2 class="section-heading">Shop Management Modules</h2>
 
-        <div class="three-col-grid">
-          <div class="floating-card" data-view="billing">
-            <div class="floating-card-icon">🧾</div>
+        <div class="modules-grid-5">
+          <div class="module-tile" data-view="inventory">
+            <div class="tile-icon">📦</div>
             <div>
-              <div class="floating-card-title">POS Billing</div>
-              <div class="floating-card-sub">Create bills, GST & print receipts</div>
+              <div class="tile-title">Stock Inventory</div>
+              <div id="subInvCount" class="tile-meta">0 items</div>
             </div>
           </div>
-          <div class="floating-card" data-view="inventory">
-            <div class="floating-card-icon">📦</div>
+          <div class="module-tile" data-view="services">
+            <div class="tile-icon">🛠️</div>
             <div>
-              <div class="floating-card-title">Stock Inventory</div>
-              <div id="subInvCount" class="floating-card-sub">0 items in stock</div>
+              <div class="tile-title">Services Manager</div>
+              <div id="subSrvCount" class="tile-meta">0 services</div>
             </div>
           </div>
-          <div class="floating-card" data-view="customers">
-            <div class="floating-card-icon">💰</div>
+          <div class="module-tile" data-view="billing">
+            <div class="tile-icon">🧾</div>
             <div>
-              <div class="floating-card-title">Customer Khata</div>
-              <div id="subKhataCount" class="floating-card-sub">0 credit accounts</div>
+              <div class="tile-title">Bill Creator</div>
+              <div class="tile-meta">POS & GST receipts</div>
+            </div>
+          </div>
+          <div class="module-tile" data-view="returns">
+            <div class="tile-icon">🔄</div>
+            <div>
+              <div class="tile-title">Customer Returns</div>
+              <div id="subRetCount" class="tile-meta">0 returns</div>
+            </div>
+          </div>
+          <div class="module-tile" data-view="ai">
+            <div class="tile-icon">🤖</div>
+            <div>
+              <div class="tile-title">AI Business Assistant</div>
+              <div class="tile-meta">Smart shop insights</div>
             </div>
           </div>
         </div>
 
-        <div class="three-col-grid">
-          <div class="floating-card" data-view="services">
-            <div class="floating-card-icon">🛠️</div>
+        <div class="modules-grid-5">
+          <div class="module-tile" data-view="customers">
+            <div class="tile-icon">💰</div>
             <div>
-              <div class="floating-card-title">Services Manager</div>
-              <div id="subSrvCount" class="floating-card-sub">0 shop services</div>
+              <div class="tile-title">Credit Manager</div>
+              <div id="subKhataCount" class="tile-meta">₹0.00 udhaar</div>
             </div>
           </div>
-          <div class="floating-card" data-view="returns">
-            <div class="floating-card-icon">🔄</div>
+          <div class="module-tile" data-view="history">
+            <div class="tile-icon">📜</div>
             <div>
-              <div class="floating-card-title">Customer Returns</div>
-              <div id="subRetCount" class="floating-card-sub">0 returns recorded</div>
+              <div class="tile-title">Sales History</div>
+              <div id="subBillsCount" class="tile-meta">0 bills</div>
             </div>
           </div>
-          <div class="floating-card" data-view="history">
-            <div class="floating-card-icon">📜</div>
+          <div class="module-tile" data-view="suppliers">
+            <div class="tile-icon">🚚</div>
             <div>
-              <div class="floating-card-title">Sales History & Bills</div>
-              <div id="subBillsCount" class="floating-card-sub">0 saved bills</div>
+              <div class="tile-title">Suppliers & Orders</div>
+              <div id="subSupCount" class="tile-meta">0 orders</div>
             </div>
           </div>
-        </div>
-
-        <h2 class="section-group-title">Growth & Tools</h2>
-
-        <div class="three-col-grid">
-          <div class="floating-card" data-view="catalog">
-            <div class="floating-card-icon">📚</div>
+          <div class="module-tile" data-view="studio">
+            <div class="tile-icon">📱</div>
             <div>
-              <div class="floating-card-title">Product Catalog</div>
-              <div class="floating-card-sub">Browse, filter & quick-bill items</div>
+              <div class="tile-title">Status Creator</div>
+              <div class="tile-meta">WhatsApp updates</div>
             </div>
           </div>
-          <div class="floating-card" data-view="suppliers">
-            <div class="floating-card-icon">🚚</div>
+          <div class="module-tile" data-view="settings">
+            <div class="tile-icon">🏪</div>
             <div>
-              <div class="floating-card-title">Suppliers & Orders</div>
-              <div id="subSupCount" class="floating-card-sub">0 purchase orders</div>
-            </div>
-          </div>
-          <div class="floating-card" data-view="ai">
-            <div class="floating-card-icon">🤖</div>
-            <div>
-              <div class="floating-card-title">AI Business Assistant</div>
-              <div class="floating-card-sub">Sales, low stock & udhaar helper</div>
+              <div class="tile-title">Business Setup</div>
+              <div class="tile-meta">Shop & JSON backup</div>
             </div>
           </div>
         </div>
 
-        <div class="three-col-grid">
-          <div class="floating-card" data-view="studio">
-            <div class="floating-card-icon">📱</div>
+        <div class="modules-grid-5">
+          <div class="module-tile" data-view="quicksettings">
+            <div class="tile-icon">⚙️</div>
             <div>
-              <div class="floating-card-title">Status Creator</div>
-              <div class="floating-card-sub">WhatsApp shop updates & offers</div>
+              <div class="tile-title">Quick Settings</div>
+              <div class="tile-meta">UI, theme & reset</div>
             </div>
           </div>
-          <div class="floating-card" data-view="labels">
-            <div class="floating-card-icon">🏷️</div>
+          <div class="module-tile" data-view="catalog">
+            <div class="tile-icon">📚</div>
             <div>
-              <div class="floating-card-title">Price Tags & Offers</div>
-              <div class="floating-card-sub">Shelf price labels</div>
+              <div class="tile-title">Product Catalog</div>
+              <div class="tile-meta">Quick item lookup</div>
             </div>
           </div>
-          <div class="floating-card" data-view="firebase">
-            <div class="floating-card-icon">🔥</div>
+          <div class="module-tile" data-view="labels">
+            <div class="tile-icon">🏷️</div>
             <div>
-              <div class="floating-card-title">Firebase Cloud Sync</div>
-              <div class="floating-card-sub">zivo-shophelper Cloud Firestore</div>
+              <div class="tile-title">Price Tags & Offers</div>
+              <div class="tile-meta">Shelf labels</div>
             </div>
           </div>
-        </div>
-
-        <div class="three-col-grid">
-          <div class="floating-card" data-view="billing">
-            <div class="floating-card-icon">🧮</div>
+          <div class="module-tile" data-modal="eodModal">
+            <div class="tile-icon">💵</div>
             <div>
-              <div class="floating-card-title">Billing Counter</div>
-              <div class="floating-card-sub">Quick counter invoice screen</div>
+              <div class="tile-title">Cash & EOD Report</div>
+              <div class="tile-meta">Daily closing</div>
             </div>
           </div>
-          <div class="floating-card" data-modal="calcModal">
-            <div class="floating-card-icon">🔢</div>
+          <div class="module-tile" data-view="firebase">
+            <div class="tile-icon">🔥</div>
             <div>
-              <div class="floating-card-title">Calculator</div>
-              <div class="floating-card-sub">Fast math pad</div>
-            </div>
-          </div>
-          <div class="floating-card" data-modal="eodModal">
-            <div class="floating-card-icon">💵</div>
-            <div>
-              <div class="floating-card-title">EOD Report</div>
-              <div class="floating-card-sub">End-of-day cash & sales summary</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="three-col-grid">
-          <div class="floating-card" data-view="settings">
-            <div class="floating-card-icon">🖥️</div>
-            <div>
-              <div class="floating-card-title">Desktop & Shop Setup</div>
-              <div class="floating-card-sub">Shop details, UPI & JSON backup</div>
-            </div>
-          </div>
-          <div class="floating-card" data-view="quicksettings">
-            <div class="floating-card-icon">⚙️</div>
-            <div>
-              <div class="floating-card-title">Settings & Preferences</div>
-              <div class="floating-card-sub">Android/Windows UI, theme & reset</div>
-            </div>
-          </div>
-          <div class="floating-card" data-modal="aboutDevModal">
-            <div class="floating-card-icon">👨‍💻</div>
-            <div>
-              <div class="floating-card-title">About Developer</div>
-              <div class="floating-card-sub">11-yr solo AI app builder</div>
+              <div class="tile-title">Firebase Cloud Sync</div>
+              <div class="tile-meta">zivo-shophelper</div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- PRODUCT CATALOG VIEW -->
+      <!-- CATALOG VIEW -->
       <section id="view-catalog" class="app-view hidden">
         <div class="view-head">
-          <h2>📚 Product & Service Catalog</h2>
+          <h2>📚 Product Catalog</h2>
           <div class="btn-row">
             <input id="catalogFilterInput" type="search" placeholder="Filter catalog items..." style="width:220px;" />
             <button id="btnGoInvFromCatalog" class="btn btn-teal btn-sm" type="button">+ Add Product</button>
@@ -1323,7 +1263,7 @@
         </div>
       </section>
 
-      <!-- STOCK INVENTORY VIEW -->
+      <!-- INVENTORY VIEW -->
       <section id="view-inventory" class="app-view hidden">
         <div class="view-head">
           <h2>📦 Stock Inventory</h2>
@@ -1407,7 +1347,7 @@
         </div>
       </section>
 
-      <!-- SERVICES MANAGER VIEW -->
+      <!-- SERVICES VIEW -->
       <section id="view-services" class="app-view hidden">
         <div class="view-head">
           <h2>🛠️ Services Manager</h2>
@@ -1457,7 +1397,7 @@
       <!-- BILL CREATOR VIEW -->
       <section id="view-billing" class="app-view hidden">
         <div class="view-head">
-          <h2>🧾 POS Billing</h2>
+          <h2>🧾 Bill Creator</h2>
           <div class="btn-row">
             <button id="btnUndoCart" class="btn btn-dark btn-sm" type="button">↩ Undo</button>
             <button id="btnClearCart" class="btn btn-red btn-sm" type="button">Clear Bill</button>
@@ -1623,7 +1563,7 @@
         </div>
       </section>
 
-      <!-- CUSTOMER RETURNS VIEW -->
+      <!-- RETURNS VIEW -->
       <section id="view-returns" class="app-view hidden">
         <div class="view-head">
           <h2>🔄 Customer Returns</h2>
@@ -1669,7 +1609,7 @@
         </div>
       </section>
 
-      <!-- AI BUSINESS ASSISTANT VIEW -->
+      <!-- AI ASSISTANT VIEW -->
       <section id="view-ai" class="app-view hidden">
         <div class="view-head">
           <h2>🤖 AI Business Assistant</h2>
@@ -1682,7 +1622,7 @@
         </div>
         <div class="panel-box">
           <div id="aiFeed" style="min-height:200px;max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
-            <div style="background:var(--bg-soft);border-left:3px solid var(--cyan-top);padding:10px 12px;border-radius:10px;font-size:12.5px;">
+            <div style="background:var(--bg-soft);border-left:3px solid var(--cyan-accent);padding:10px 12px;border-radius:10px;font-size:12.5px;">
               Hello! Ask me about today's sales, net profit, low stock items, pending customer credit, or overall shop status.
             </div>
           </div>
@@ -1697,7 +1637,7 @@
       <!-- CREDIT MANAGER VIEW -->
       <section id="view-customers" class="app-view hidden">
         <div class="view-head">
-          <h2>💰 Customer Khata</h2>
+          <h2>💰 Credit Manager</h2>
           <span id="khataTotalBadge" class="free-pill-badge">Total Udhaar: ₹0.00</span>
         </div>
         <div class="panel-box">
@@ -1740,7 +1680,7 @@
       <!-- SALES HISTORY VIEW -->
       <section id="view-history" class="app-view hidden">
         <div class="view-head">
-          <h2>📜 Sales History & Bills</h2>
+          <h2>📜 Sales History</h2>
           <div class="btn-row">
             <input id="historySearchInput" type="search" placeholder="Filter bill # or customer..." style="width:200px;" />
             <select id="historyModeFilter" style="width:auto;">
@@ -1878,7 +1818,7 @@
       <!-- BUSINESS SETUP VIEW -->
       <section id="view-settings" class="app-view hidden">
         <div class="view-head">
-          <h2>🖥️ Desktop & Shop Setup</h2>
+          <h2>🏪 Business Setup</h2>
         </div>
         <div class="panel-box">
           <h3>Store Profile & Account Details</h3>
@@ -1923,10 +1863,10 @@
         </div>
       </section>
 
-      <!-- QUICK PREFERENCES VIEW -->
+      <!-- QUICK SETTINGS VIEW -->
       <section id="view-quicksettings" class="app-view hidden">
         <div class="view-head">
-          <h2>⚙️ Settings & Preferences</h2>
+          <h2>⚙️ Quick Settings</h2>
         </div>
         <div class="panel-box">
           <h3>Account, Platform UI & Storage Summary</h3>
@@ -1949,7 +1889,7 @@
         <div class="panel-box">
           <h3>Cloud Firestore Sync (zivo-shophelper)</h3>
           <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
-            Pre-configured with your <code>zivo-shophelper</code> Firebase project. Set your Shop Cloud Sync Key below and push or pull shop records anytime.
+            Connected with your <code>zivo-shophelper</code> Firebase project. Enter your Shop Cloud Sync Key below and push or pull shop records anytime.
           </p>
           <div class="grid-2">
             <div class="field">
@@ -1970,6 +1910,12 @@
         </div>
       </section>
     </main>
+
+    <!-- Floating Quick Bill Button -->
+    <button id="btnFloatingBill" class="floating-fab" type="button" title="Quick New Bill">
+      <span>🧾</span>
+      <span>New Bill</span>
+    </button>
 
     <nav class="android-bottom-nav" aria-label="Android Quick Navigation">
       <button class="android-nav-btn active" data-bnav="home" type="button">🏠<span>Home</span></button>
@@ -1995,7 +1941,7 @@
         </p>
         <p>
           <strong>For help or support contact:</strong><br />
-          <a href="mailto:zivo.developer@gmail.com" style="color:var(--cyan-top);font-weight:800;">zivo.developer@gmail.com</a>
+          <a href="mailto:zivo.developer@gmail.com" style="color:var(--cyan-accent);font-weight:800;">zivo.developer@gmail.com</a>
         </p>
       </div>
     </div>
@@ -2046,7 +1992,7 @@
 
   <div id="toastMsg" class="toast"></div>
 
-  <!-- FIREBASE CDN v13.4.0 INITIALIZATION (SAFE & NON-BLOCKING) -->
+  <!-- FIREBASE CDN v13.4.0 INITIALIZATION -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-analytics.js";
@@ -2084,11 +2030,11 @@
     }
   </script>
 
-  <!-- CORE APP & GATE SCRIPT (RUNS IMMEDIATELY SO ACCEPT & GO TO LOGIN ALWAYS WORKS) -->
+  <!-- CORE APP & STAGE SCRIPT -->
   <script>
     (function () {
-      const STORAGE_KEY = "zivo_shophelper_free_v5";
-      const TERMS_KEY = "zivo_shophelper_terms_accepted_v5";
+      const STORAGE_KEY = "zivo_shophelper_free_v6";
+      const TERMS_KEY = "zivo_shophelper_terms_accepted_v6";
 
       const LOGO_CANDIDATES = [
         "favicon.png",
@@ -2122,19 +2068,19 @@
       initLogoFallback();
 
       const VIEW_TITLES = {
-        home: "Main Dashboard • Free Shop Utility",
-        catalog: "Product & Service Catalog",
+        home: "Main Dashboard",
+        catalog: "Product Catalog",
         inventory: "Stock Inventory",
         services: "Services Manager",
-        billing: "POS Billing",
+        billing: "Bill Creator",
         returns: "Customer Returns",
         ai: "AI Business Assistant",
-        customers: "Customer Khata",
-        history: "Sales History & Bills",
+        customers: "Credit Manager",
+        history: "Sales History",
         suppliers: "Suppliers & Orders",
         studio: "Status Creator",
-        settings: "Desktop & Shop Setup",
-        quicksettings: "Settings & Preferences",
+        settings: "Business Setup",
+        quicksettings: "Quick Settings",
         labels: "Price Tags & Offers",
         firebase: "Firebase Cloud Sync"
       };
@@ -2180,8 +2126,8 @@
         try {
           const raw =
             localStorage.getItem(STORAGE_KEY) ||
-            localStorage.getItem("zivo_shophelper_free_v4") ||
-            localStorage.getItem("zivo_shophelper_free_v3");
+            localStorage.getItem("zivo_shophelper_free_v5") ||
+            localStorage.getItem("zivo_shophelper_free_v4");
           if (!raw) return structuredClone(defaultState);
           const p = JSON.parse(raw);
           const acc = p.account ? { ...p.account } : null;
@@ -2281,9 +2227,6 @@
 
         document.getElementById("btnHeaderTheme").textContent = isLight ? "🌙 Dark" : "☀️ Light";
         document.getElementById("btnHeaderUiMode").textContent = isAndroid ? "🖥️ Windows UI" : "📱 Android UI";
-        document.getElementById("uiModeKicker").textContent = isAndroid
-          ? "LIVE SHOP COMMAND • ANDROID UI"
-          : "LIVE SHOP COMMAND • WINDOWS UI";
       }
 
       // Stage 1: Terms Gate
@@ -2344,7 +2287,7 @@
         saveState();
         syncStage();
         renderAll();
-        toast(`Welcome, ${userName}!`);
+        toast(`Welcome back, ${shopName}!`);
       });
 
       document.getElementById("btnLoginAccount").addEventListener("click", () => {
@@ -2367,7 +2310,7 @@
         saveState();
         syncStage();
         renderAll();
-        toast(`Signed in to ${state.account.shopName}`);
+        toast(`Welcome back, ${state.account.shopName}!`);
       });
 
       // Stage 3: Navigation
@@ -2391,10 +2334,10 @@
         renderAll();
       }
 
-      document.querySelectorAll(".floating-card").forEach((card) => {
-        card.addEventListener("click", () => {
-          const v = card.getAttribute("data-view");
-          const m = card.getAttribute("data-modal");
+      document.querySelectorAll(".module-tile").forEach((tile) => {
+        tile.addEventListener("click", () => {
+          const v = tile.getAttribute("data-view");
+          const m = tile.getAttribute("data-modal");
           if (v) navigateTo(v);
           else if (m) openModal(m);
         });
@@ -2407,7 +2350,12 @@
       });
 
       document.getElementById("headerBrandHome").addEventListener("click", () => navigateTo("home"));
+      document.getElementById("headerDashPill").addEventListener("click", () => navigateTo("home"));
       document.getElementById("btnHeaderHome").addEventListener("click", () => navigateTo("home"));
+      document.getElementById("btnHeaderRefresh").addEventListener("click", () => {
+        renderAll();
+        toast("Dashboard refreshed");
+      });
       document.getElementById("btnHeaderBack").addEventListener("click", () => {
         if (viewHistory.length > 1) {
           viewHistory.pop();
@@ -2417,10 +2365,13 @@
         }
       });
 
+      document.getElementById("btnFloatingBill").addEventListener("click", () => navigateTo("billing"));
+
       function toggleUiMode() {
         state.shop.uiMode = state.shop.uiMode === "android" ? "windows" : "android";
         saveState();
         applyThemeAndPlatform();
+        renderHome();
         toast(state.shop.uiMode === "android" ? "Switched to Android UI" : "Switched to Windows UI");
       }
 
@@ -2433,9 +2384,6 @@
         applyThemeAndPlatform();
       });
 
-      document.getElementById("btnQuickNewBill").addEventListener("click", () => navigateTo("billing"));
-      document.getElementById("btnQuickAddItem").addEventListener("click", () => navigateTo("inventory"));
-      document.getElementById("btnQuickCatalog").addEventListener("click", () => navigateTo("catalog"));
       document.getElementById("btnBannerRestock").addEventListener("click", () => navigateTo("inventory"));
       document.getElementById("btnGoInvFromCatalog").addEventListener("click", () => navigateTo("inventory"));
 
@@ -2472,12 +2420,12 @@
       });
 
       document.addEventListener("click", (e) => {
-        if (!e.target.closest(".field") && !e.target.closest(".search-strip-box")) {
+        if (!e.target.closest(".field") && !e.target.closest(".toolbar-strip")) {
           document.querySelectorAll(".dropdown-list").forEach((d) => d.classList.add("hidden"));
         }
       });
 
-      // Fixed Search
+      // Module & Record Search
       const moduleSearchInput = document.getElementById("moduleSearchInput");
       const moduleSearchDropdown = document.getElementById("moduleSearchDropdown");
       const btnClearSearch = document.getElementById("btnClearSearch");
@@ -2556,7 +2504,7 @@
         });
 
         if (!results.length) {
-          moduleSearchDropdown.innerHTML = `<div class="dropdown-item"><span>No item, customer, bill, or module matches "${esc(q)}"</span></div>`;
+          moduleSearchDropdown.innerHTML = `<div class="dropdown-item"><span>No module, item, customer, or bill matches "${esc(q)}"</span></div>`;
         } else {
           moduleSearchDropdown.innerHTML = results
             .slice(0, 10)
@@ -2587,8 +2535,8 @@
       }
 
       function renderHome() {
-        const shopName = state.account?.shopName || "Zivo Shop Helper";
-        document.getElementById("welcomeShopHeading").textContent = shopName;
+        const shopName = state.account?.shopName || "Zivo Retail Store";
+        document.getElementById("welcomeShopHeading").textContent = `Welcome Back, ${shopName} 👋`;
 
         const today = getTodayDateStr();
         const todayBills = state.bills.filter((b) => (b.date || "").slice(0, 10) === today);
@@ -2610,20 +2558,19 @@
 
         const totalUdhaar = state.customers.reduce((s, c) => s + (Number(c.balance) || 0), 0);
         const lowItems = state.inventory.filter((i) => Number(i.stock) <= Number(i.lowThreshold ?? 5));
+        const uiName = state.shop.uiMode === "android" ? "Android UI" : "Windows UI";
 
         document.getElementById("welcomeBreakdown").textContent =
-          `Today's Sales: ${formatINR(salesSum)} • Cash: ${formatINR(cashSum)} • UPI: ${formatINR(upiSum)} • Udhaar: ${formatINR(udhaarBillSum)}`;
+          `Cash: ${formatINR(cashSum)} • UPI: ${formatINR(upiSum)} • Today Udhaar: ${formatINR(udhaarBillSum)} • Low Stock: ${lowItems.length} • ${uiName}`;
         document.getElementById("dashTodaySales").textContent = formatINR(salesSum);
         document.getElementById("dashTodayProfit").textContent = formatINR(profitSum);
-        document.getElementById("dashPendingUdhaar").textContent = formatINR(totalUdhaar);
-        document.getElementById("dashLowStockCount").textContent = String(lowItems.length);
 
-        document.getElementById("subInvCount").textContent = `${state.inventory.length} items in stock`;
-        document.getElementById("subKhataCount").textContent = `${state.customers.length} credit accounts`;
-        document.getElementById("subSrvCount").textContent = `${state.services.length} shop services`;
-        document.getElementById("subRetCount").textContent = `${state.returns.length} returns recorded`;
-        document.getElementById("subBillsCount").textContent = `${state.bills.length} saved bills`;
-        document.getElementById("subSupCount").textContent = `${state.suppliers.length} purchase orders`;
+        document.getElementById("subInvCount").textContent = `${state.inventory.length} items`;
+        document.getElementById("subKhataCount").textContent = `${formatINR(totalUdhaar)} udhaar`;
+        document.getElementById("subSrvCount").textContent = `${state.services.length} services`;
+        document.getElementById("subRetCount").textContent = `${state.returns.length} returns`;
+        document.getElementById("subBillsCount").textContent = `${state.bills.length} bills`;
+        document.getElementById("subSupCount").textContent = `${state.suppliers.length} orders`;
 
         const banner = document.getElementById("lowStockBanner");
         if (lowItems.length > 0) {
@@ -2635,8 +2582,8 @@
         }
 
         document.getElementById("cloudStatusBadge").textContent = state.firebase.docKey
-          ? `Cloud: ${state.firebase.docKey}`
-          : "Firebase Ready";
+          ? `● Cloud: ${state.firebase.docKey}`
+          : "● Active Users: 1 Online";
       }
 
       document.getElementById("catalogFilterInput").addEventListener("input", renderCatalog);
@@ -3373,7 +3320,7 @@
                   <td>${esc(b.customerName)}</td>
                   <td>${esc(b.mode)}</td>
                   <td>${formatINR(b.grandTotal)}</td>
-                  <td style="color:var(--cyan-top);">${formatINR(b.profit || 0)}</td>
+                  <td style="color:var(--cyan-val);">${formatINR(b.profit || 0)}</td>
                   <td>
                     <div class="btn-row">
                       <button class="btn btn-dark btn-xs open-bill" data-id="${b.id}" type="button">View</button>
@@ -3541,7 +3488,7 @@
         }
 
         const b = document.createElement("div");
-        b.style.cssText = "background:var(--bg-soft);border-left:3px solid var(--cyan-top);padding:9px 12px;border-radius:10px;font-size:12.5px;";
+        b.style.cssText = "background:var(--bg-soft);border-left:3px solid var(--cyan-accent);padding:9px 12px;border-radius:10px;font-size:12.5px;";
         b.textContent = ans;
         feed.appendChild(b);
         feed.scrollTop = feed.scrollHeight;
@@ -3557,7 +3504,7 @@
         if (e.key === "Enter") document.getElementById("btnAskAi").click();
       });
       document.getElementById("btnClearAi").addEventListener("click", () => {
-        document.getElementById("aiFeed").innerHTML = `<div style="background:var(--bg-soft);border-left:3px solid var(--cyan-top);padding:10px 12px;border-radius:10px;font-size:12.5px;">Chat cleared. Ask about today's sales, profit, low stock, or pending udhaar.</div>`;
+        document.getElementById("aiFeed").innerHTML = `<div style="background:var(--bg-soft);border-left:3px solid var(--cyan-accent);padding:10px 12px;border-radius:10px;font-size:12.5px;">Chat cleared. Ask about today's sales, profit, low stock, or pending udhaar.</div>`;
       });
       document.querySelectorAll(".ai-chip").forEach((c) => c.addEventListener("click", () => askAi(c.getAttribute("data-q"))));
 
