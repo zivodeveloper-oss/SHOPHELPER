@@ -53,12 +53,140 @@
       display: none !important;
     }
 
+    /* Strictly Isolated Stage Visibility (Terms -> Login -> App Never Merged) */
+    body.stage-terms #authGateOverlay,
+    body.stage-terms #appShell {
+      display: none !important;
+    }
+    body.stage-terms #termsGateOverlay {
+      display: flex !important;
+    }
+
+    body.stage-auth #termsGateOverlay,
+    body.stage-auth #appShell {
+      display: none !important;
+    }
+    body.stage-auth #authGateOverlay {
+      display: flex !important;
+    }
+
+    body.stage-app #termsGateOverlay,
+    body.stage-app #authGateOverlay {
+      display: none !important;
+    }
+    body.stage-app #appShell {
+      display: block !important;
+    }
+
+    /* Android vs Windows Distinct UI Modes */
+    body.platform-android {
+      --bg-page: #0f172a;
+      --bg-card: #162033;
+      --bg-card-hover: #1d2942;
+      --bg-soft: #1e2d47;
+      --border-color: #293b5c;
+      padding-bottom: 78px;
+    }
+
+    body.platform-android.light-mode {
+      --bg-page: #e7eef8;
+      --bg-card: #f8fafc;
+      --bg-card-hover: #ffffff;
+      --bg-soft: #dbe6f5;
+      --border-color: #b8c9e0;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+    }
+
+    body.platform-android .top-navbar {
+      background: linear-gradient(90deg, #0f766e 0%, #134e4a 100%);
+      border-bottom: none;
+      padding: 12px 16px;
+      border-bottom-left-radius: 18px;
+      border-bottom-right-radius: 18px;
+    }
+
+    body.platform-android .top-navbar .brand-name-label,
+    body.platform-android .top-navbar .brand-sub-label {
+      color: #ffffff;
+    }
+
+    body.platform-android .top-navbar .brand-sub-label {
+      opacity: 0.88;
+    }
+
+    body.platform-android .workspace {
+      padding: 14px 14px 32px;
+    }
+
+    body.platform-android .floating-card {
+      border-top: none;
+      border-left: 4px solid #34d399;
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    body.platform-android .btn {
+      border-radius: 12px;
+      min-height: 38px;
+    }
+
+    .android-bottom-nav {
+      display: none;
+    }
+
+    body.platform-android .android-bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 800;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-color);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 6px 8px;
+      gap: 4px;
+      box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .android-nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      border-radius: 12px;
+      padding: 6px 4px;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+    }
+
+    .android-nav-btn.active {
+      background: rgba(13, 148, 136, 0.18);
+      color: #2dd4bf;
+    }
+
+    /* Windows / Desktop Distinct UI Polish */
+    body.platform-windows .top-navbar {
+      border-bottom: 2px solid var(--teal-header);
+    }
+
+    body.platform-windows .panel-box,
+    body.platform-windows .floating-card,
+    body.platform-windows .cmd-metric-pill {
+      border-radius: 8px;
+    }
+
     /* Fullscreen Gate Overlays */
     .gate-overlay {
       position: fixed;
       inset: 0;
       z-index: 10000;
-      background: rgba(15, 18, 23, 0.96);
+      background: rgba(15, 18, 23, 0.97);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -793,6 +921,13 @@
       pointer-events: none;
     }
 
+    body.platform-android .toast {
+      bottom: 78px;
+      right: 14px;
+      left: 14px;
+      text-align: center;
+    }
+
     .toast.show {
       opacity: 1;
       transform: translateY(0);
@@ -840,8 +975,8 @@
     }
   </style>
 </head>
-<body>
-  <!-- STEP 1: TERMS & CONDITIONS GATE (18+ ONLY) -->
+<body class="stage-terms platform-windows">
+  <!-- STAGE 1: TERMS & CONDITIONS GATE (18+ ONLY) -->
   <div id="termsGateOverlay" class="gate-overlay">
     <div class="gate-panel">
       <div class="gate-header">
@@ -849,7 +984,7 @@
           <img src="favicon.png" alt="Zivo Logo" class="zivo-logo-img favicon-img" />
           <div>
             <h1 style="font-size:20px;font-weight:900;">Zivo ShopHelper — Terms & Conditions</h1>
-            <p style="font-size:12px;color:var(--text-muted);">Free retail utility for local shops • Please read and accept to continue.</p>
+            <p style="font-size:12px;color:var(--text-muted);">Step 1 of 3 • Accept terms first before login or shop app</p>
           </div>
         </div>
         <span class="free-pill-badge">100% FREE UTILITY • 18+</span>
@@ -879,20 +1014,20 @@
       </div>
 
       <div class="btn-row">
-        <button id="btnAcceptTerms" class="btn btn-teal" type="button" disabled>Accept & Continue</button>
+        <button id="btnAcceptTerms" class="btn btn-teal" type="button" disabled>Accept & Go to Login</button>
         <a class="btn btn-dark" href="mailto:zivo.developer@gmail.com">✉️ Email Support</a>
       </div>
     </div>
   </div>
 
-  <!-- STEP 2: ACCOUNT CREATION & LOGIN GATE (18+ ENFORCED) -->
-  <div id="authGateOverlay" class="gate-overlay hidden">
+  <!-- STAGE 2: ACCOUNT CREATION & LOGIN GATE (18+ ENFORCED) -->
+  <div id="authGateOverlay" class="gate-overlay">
     <div class="auth-panel">
       <div class="gate-brand" style="margin-bottom:14px;">
         <img src="favicon.png" alt="Zivo Logo" class="zivo-logo-img favicon-img" />
         <div>
-          <h2 style="font-size:18px;font-weight:900;">Zivo ShopHelper</h2>
-          <p style="font-size:11.5px;color:var(--text-muted);">Create your free shop profile or sign in (18+ only)</p>
+          <h2 style="font-size:18px;font-weight:900;">Zivo ShopHelper — Login</h2>
+          <p style="font-size:11.5px;color:var(--text-muted);">Step 2 of 3 • Sign in or create profile (18+ only)</p>
         </div>
       </div>
 
@@ -941,422 +1076,313 @@
         </div>
         <button id="btnLoginAccount" class="btn btn-teal btn-full" type="button">Unlock Shop Dashboard</button>
       </div>
+
+      <div style="margin-top:12px;text-align:center;">
+        <button id="btnBackToTerms" class="btn btn-dark btn-xs" type="button">◀ Back to Terms & Conditions</button>
+      </div>
     </div>
   </div>
 
-  <!-- TOP HEADER BAR -->
-  <header class="top-navbar">
-    <div class="top-navbar-inner">
-      <div id="headerBrandHome" class="nav-left" title="Main Dashboard">
-        <img src="favicon.png" alt="Zivo Logo" class="zivo-logo-img favicon-img" />
-        <div class="brand-title-wrap">
-          <span class="brand-name-label">Zivo ShopHelper</span>
-          <span id="headerContextLabel" class="brand-sub-label">Main Dashboard • Free Shop Utility</span>
+  <!-- STAGE 3: MAIN SHOP APP SHELL -->
+  <div id="appShell">
+    <!-- TOP HEADER BAR -->
+    <header class="top-navbar">
+      <div class="top-navbar-inner">
+        <div id="headerBrandHome" class="nav-left" title="Main Dashboard">
+          <img src="favicon.png" alt="Zivo Logo" class="zivo-logo-img favicon-img" />
+          <div class="brand-title-wrap">
+            <span class="brand-name-label">Zivo ShopHelper</span>
+            <span id="headerContextLabel" class="brand-sub-label">Main Dashboard • Free Shop Utility</span>
+          </div>
+        </div>
+
+        <div class="nav-right">
+          <button id="btnHeaderHome" class="btn-header-sub" type="button">🏠 Home</button>
+          <button id="btnHeaderBack" class="btn-header-sub" type="button">◀ Back</button>
+          <button id="btnHeaderUiMode" class="btn-header-sub" type="button">📱 Android UI</button>
+          <button id="btnHeaderTheme" class="btn-header-sub" type="button">☀️ Light</button>
+          <button id="btnOpenAboutDev" class="btn-about-dev" type="button">👤 About Developer</button>
+          <button id="btnLogout" class="btn-logout" type="button">🚪 Logout</button>
         </div>
       </div>
+    </header>
 
-      <div class="nav-right">
-        <button id="btnHeaderHome" class="btn-header-sub" type="button">🏠 Home</button>
-        <button id="btnHeaderBack" class="btn-header-sub" type="button">◀ Back</button>
-        <button id="btnHeaderTheme" class="btn-header-sub" type="button">☀️ Light</button>
-        <button id="btnOpenAboutDev" class="btn-about-dev" type="button">👤 About Developer</button>
-        <button id="btnLogout" class="btn-logout" type="button">🚪 Logout</button>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN WORKSPACE -->
-  <main class="workspace">
-    <!-- Fixed Search Strip (Items, Customers, Bills, Catalog & Modules) -->
-    <div class="search-strip-box">
-      <span id="cloudStatusBadge" class="free-pill-badge">Local Mode</span>
-      <input id="moduleSearchInput" type="search" placeholder="Search items, customers, bills, catalog, or modules..." autocomplete="off" />
-      <button id="btnClearSearch" class="btn btn-dark btn-sm" type="button">Clear</button>
-      <div id="moduleSearchDropdown" class="dropdown-list hidden"></div>
-    </div>
-
-    <!-- MAIN DASHBOARD VIEW -->
-    <section id="view-home" class="app-view">
-      <!-- Wide Bar (Like Top Bar) for Live Shop Command + Shop Name + Sales + Actions -->
-      <div class="live-command-bar">
-        <div class="command-left">
-          <div class="command-left-kicker">LIVE SHOP COMMAND</div>
-          <h1 id="welcomeShopHeading">Zivo Shop Helper</h1>
-          <p id="welcomeBreakdown">Today's Sales: ₹0.00 • Cash: ₹0.00 • UPI: ₹0.00 • Udhaar: ₹0.00</p>
-          <div class="command-actions">
-            <button id="btnQuickNewBill" class="btn btn-green btn-sm" type="button">+ New Bill</button>
-            <button id="btnQuickAddItem" class="btn btn-amber btn-sm" type="button">+ Add Item</button>
-            <button id="btnQuickCatalog" class="btn btn-dark btn-sm" type="button">📚 Catalog</button>
-          </div>
-        </div>
-
-        <div class="command-metrics">
-          <div class="cmd-metric-pill">
-            <div class="cmd-metric-label">TODAY'S SALES</div>
-            <div id="dashTodaySales" class="cmd-metric-val" style="color:#4ade80;">₹0.00</div>
-          </div>
-          <div class="cmd-metric-pill">
-            <div class="cmd-metric-label">TODAY'S PROFIT</div>
-            <div id="dashTodayProfit" class="cmd-metric-val" style="color:#22d3ee;">₹0.00</div>
-          </div>
-          <div class="cmd-metric-pill">
-            <div class="cmd-metric-label">PENDING UDHAAR</div>
-            <div id="dashPendingUdhaar" class="cmd-metric-val" style="color:#fbbf24;">₹0.00</div>
-          </div>
-          <div class="cmd-metric-pill">
-            <div class="cmd-metric-label">LOW STOCK ITEMS</div>
-            <div id="dashLowStockCount" class="cmd-metric-val" style="color:#f8fafc;">0</div>
-          </div>
-        </div>
+    <!-- MAIN WORKSPACE -->
+    <main class="workspace">
+      <!-- Fixed Search Strip (Items, Customers, Bills, Catalog & Modules) -->
+      <div class="search-strip-box">
+        <span id="cloudStatusBadge" class="free-pill-badge">Local Mode</span>
+        <input id="moduleSearchInput" type="search" placeholder="Search items, customers, bills, catalog, or modules..." autocomplete="off" />
+        <button id="btnClearSearch" class="btn btn-dark btn-sm" type="button">Clear</button>
+        <div id="moduleSearchDropdown" class="dropdown-list hidden"></div>
       </div>
 
-      <div id="lowStockBanner" class="alert-banner hidden">
-        <span id="lowStockBannerText">Low stock alert on items.</span>
-        <button id="btnBannerRestock" class="btn btn-amber btn-sm" type="button">View Stock</button>
-      </div>
-
-      <!-- SECTION 1: CORE OPERATIONS -->
-      <h2 class="section-group-title">Core Operations</h2>
-
-      <div class="three-col-grid">
-        <div class="floating-card" data-view="billing">
-          <div class="floating-card-icon">🧾</div>
-          <div>
-            <div class="floating-card-title">POS Billing</div>
-            <div class="floating-card-sub">Create bills, GST & print receipts</div>
-          </div>
-        </div>
-        <div class="floating-card" data-view="inventory">
-          <div class="floating-card-icon">📦</div>
-          <div>
-            <div class="floating-card-title">Stock Inventory</div>
-            <div id="subInvCount" class="floating-card-sub">0 items in stock</div>
-          </div>
-        </div>
-        <div class="floating-card" data-view="customers">
-          <div class="floating-card-icon">💰</div>
-          <div>
-            <div class="floating-card-title">Customer Khata</div>
-            <div id="subKhataCount" class="floating-card-sub">0 credit accounts</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="three-col-grid">
-        <div class="floating-card" data-view="services">
-          <div class="floating-card-icon">🛠️</div>
-          <div>
-            <div class="floating-card-title">Services Manager</div>
-            <div id="subSrvCount" class="floating-card-sub">0 shop services</div>
-          </div>
-        </div>
-        <div class="floating-card" data-view="returns">
-          <div class="floating-card-icon">🔄</div>
-          <div>
-            <div class="floating-card-title">Customer Returns</div>
-            <div id="subRetCount" class="floating-card-sub">0 returns recorded</div>
-          </div>
-        </div>
-        <div class="floating-card" data-view="history">
-          <div class="floating-card-icon">📜</div>
-          <div>
-            <div class="floating-card-title">Sales History & Bills</div>
-            <div id="subBillsCount" class="floating-card-sub">0 saved bills</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SECTION 2: GROWTH & TOOLS -->
-      <h2 class="section-group-title">Growth & Tools</h2>
-
-      <div class="three-col-grid">
-        <div class="floating-card" data-view="catalog">
-          <div class="floating-card-icon">📚</div>
-          <div>
-            <div class="floating-card-title">Product Catalog</div>
-            <div class="floating-card-sub">Browse, filter & quick-bill items</div>
-          </div>
-        </div>
-        <div class="floating-card" data-view="suppliers">
-          <div class="floating-card-icon">🚚</div>
-          <div>
-            <div class="floating-card-title">Suppliers & Orders</div>
-            <div id="subSupCount" class="floating-card-sub">0 purchase orders</div>
-          </div>
-        </div>
-        <div class="floating-card" data-view="ai">
-          <div class="floating-card-icon">🤖</div>
-          <div>
-            <div class="floating-card-title">AI Business Assistant</div>
-            <div class="floating-card-sub">Sales, low stock & udhaar helper</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="three-col-grid">
-        <div class="floating-card" data-view="studio">
-          <div class="floating-card-icon">📱</div>
-          <div>
-            <div class="floating-card-title">Status Creator</div>
-            <div class="floating-card-sub">WhatsApp shop updates & offers</div>
-          </div>
-        </div>
-        <div class="floating-card" data-view="labels">
-          <div class="floating-card-icon">🏷️</div>
-          <div>
-            <div class="floating-card-title">Price Tags & Offers</div>
-            <div class="floating-card-sub">Shelf price labels</div>
-          </div>
-        </div>
-        <div class="floating-card" data-view="firebase">
-          <div class="floating-card-icon">🔥</div>
-          <div>
-            <div class="floating-card-title">Firebase Cloud Sync</div>
-            <div class="floating-card-sub">Sync data to Cloud Firestore</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="three-col-grid">
-        <div class="floating-card" data-view="billing">
-          <div class="floating-card-icon">🧮</div>
-          <div>
-            <div class="floating-card-title">Billing Counter</div>
-            <div class="floating-card-sub">Quick counter invoice screen</div>
-          </div>
-        </div>
-        <div class="floating-card" data-modal="calcModal">
-          <div class="floating-card-icon">🔢</div>
-          <div>
-            <div class="floating-card-title">Calculator</div>
-            <div class="floating-card-sub">Fast math pad</div>
-          </div>
-        </div>
-        <div class="floating-card" data-modal="eodModal">
-          <div class="floating-card-icon">💵</div>
-          <div>
-            <div class="floating-card-title">EOD Report</div>
-            <div class="floating-card-sub">End-of-day cash & sales summary</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="three-col-grid">
-        <div class="floating-card" data-view="settings">
-          <div class="floating-card-icon">🖥️</div>
-          <div>
-            <div class="floating-card-title">Desktop & Shop Setup</div>
-            <div class="floating-card-sub">Shop details, UPI & JSON backup</div>
-          </div>
-        </div>
-        <div class="floating-card" data-view="quicksettings">
-          <div class="floating-card-icon">⚙️</div>
-          <div>
-            <div class="floating-card-title">Settings & Preferences</div>
-            <div class="floating-card-sub">Theme, terms & reset options</div>
-          </div>
-        </div>
-        <div class="floating-card" data-modal="aboutDevModal">
-          <div class="floating-card-icon">👨‍💻</div>
-          <div>
-            <div class="floating-card-title">About Developer</div>
-            <div class="floating-card-sub">11-yr solo AI app builder</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRODUCT CATALOG VIEW -->
-    <section id="view-catalog" class="app-view hidden">
-      <div class="view-head">
-        <h2>📚 Product & Service Catalog</h2>
-        <div class="btn-row">
-          <input id="catalogFilterInput" type="search" placeholder="Filter catalog items..." style="width:220px;" />
-          <button id="btnGoInvFromCatalog" class="btn btn-teal btn-sm" type="button">+ Add Product</button>
-        </div>
-      </div>
-      <div class="panel-box">
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type / SKU</th>
-                <th>Rate</th>
-                <th>Stock / Info</th>
-                <th>GST</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="catalogTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- STOCK INVENTORY VIEW -->
-    <section id="view-inventory" class="app-view hidden">
-      <div class="view-head">
-        <h2>📦 Stock Inventory</h2>
-        <div class="btn-row">
-          <select id="invFilterSelect" style="width:auto;">
-            <option value="ALL">All Stock</option>
-            <option value="LOW">Low Stock Only</option>
-            <option value="OK">Healthy Stock</option>
-          </select>
-          <span id="invCountBadge" class="free-pill-badge">0 Products</span>
-        </div>
-      </div>
-      <div class="panel-box">
-        <h3 id="invFormTitle">Add / Edit Product</h3>
-        <input id="invEditId" type="hidden" />
-        <div class="grid-3">
-          <div class="field">
-            <label for="invName">Product Name</label>
-            <input id="invName" type="text" placeholder="e.g. Basmati Rice 1kg" />
-          </div>
-          <div class="field">
-            <label for="invSku">Barcode / SKU</label>
-            <input id="invSku" type="text" placeholder="Optional SKU" />
-          </div>
-          <div class="field">
-            <label for="invCost">Cost Price (₹)</label>
-            <input id="invCost" type="number" min="0" step="0.01" placeholder="0.00" />
-          </div>
-        </div>
-        <div class="grid-3">
-          <div class="field">
-            <label for="invPrice">Selling Price (₹)</label>
-            <input id="invPrice" type="number" min="0" step="0.01" placeholder="0.00" />
-          </div>
-          <div class="field">
-            <label for="invStock">Stock Quantity</label>
-            <input id="invStock" type="number" min="0" step="any" placeholder="0" />
-          </div>
-          <div class="grid-2" style="margin-bottom:0;">
-            <div class="field">
-              <label for="invLow">Low Alert</label>
-              <input id="invLow" type="number" min="0" value="5" />
+      <!-- MAIN DASHBOARD VIEW -->
+      <section id="view-home" class="app-view">
+        <!-- Wide Bar (Like Top Bar) for Live Shop Command + Shop Name + Sales + Actions -->
+        <div class="live-command-bar">
+          <div class="command-left">
+            <div id="uiModeKicker" class="command-left-kicker">LIVE SHOP COMMAND • WINDOWS UI</div>
+            <h1 id="welcomeShopHeading">Zivo Shop Helper</h1>
+            <p id="welcomeBreakdown">Today's Sales: ₹0.00 • Cash: ₹0.00 • UPI: ₹0.00 • Udhaar: ₹0.00</p>
+            <div class="command-actions">
+              <button id="btnQuickNewBill" class="btn btn-green btn-sm" type="button">+ New Bill</button>
+              <button id="btnQuickAddItem" class="btn btn-amber btn-sm" type="button">+ Add Item</button>
+              <button id="btnQuickCatalog" class="btn btn-dark btn-sm" type="button">📚 Catalog</button>
             </div>
-            <div class="field">
-              <label for="invGst">GST %</label>
-              <select id="invGst">
-                <option value="0">0%</option>
-                <option value="5">5%</option>
-                <option value="12">12%</option>
-                <option value="18">18%</option>
-                <option value="28">28%</option>
-              </select>
+          </div>
+
+          <div class="command-metrics">
+            <div class="cmd-metric-pill">
+              <div class="cmd-metric-label">TODAY'S SALES</div>
+              <div id="dashTodaySales" class="cmd-metric-val" style="color:#4ade80;">₹0.00</div>
+            </div>
+            <div class="cmd-metric-pill">
+              <div class="cmd-metric-label">TODAY'S PROFIT</div>
+              <div id="dashTodayProfit" class="cmd-metric-val" style="color:#22d3ee;">₹0.00</div>
+            </div>
+            <div class="cmd-metric-pill">
+              <div class="cmd-metric-label">PENDING UDHAAR</div>
+              <div id="dashPendingUdhaar" class="cmd-metric-val" style="color:#fbbf24;">₹0.00</div>
+            </div>
+            <div class="cmd-metric-pill">
+              <div class="cmd-metric-label">LOW STOCK ITEMS</div>
+              <div id="dashLowStockCount" class="cmd-metric-val" style="color:#f8fafc;">0</div>
             </div>
           </div>
         </div>
-        <div class="btn-row">
-          <button id="btnSaveInv" class="btn btn-teal" type="button">Save Product</button>
-          <button id="btnCancelInvEdit" class="btn btn-dark hidden" type="button">Cancel Edit</button>
-        </div>
-      </div>
 
-      <div class="panel-box">
-        <h3>Inventory List</h3>
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>SKU</th>
-                <th>Cost</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>GST</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="invTableBody"></tbody>
-          </table>
+        <div id="lowStockBanner" class="alert-banner hidden">
+          <span id="lowStockBannerText">Low stock alert on items.</span>
+          <button id="btnBannerRestock" class="btn btn-amber btn-sm" type="button">View Stock</button>
         </div>
-      </div>
-    </section>
 
-    <!-- SERVICES MANAGER VIEW -->
-    <section id="view-services" class="app-view hidden">
-      <div class="view-head">
-        <h2>🛠️ Services Manager</h2>
-      </div>
-      <div class="panel-box">
-        <h3>Add Shop Service</h3>
-        <div class="grid-3">
-          <div class="field">
-            <label for="srvName">Service Name</label>
-            <input id="srvName" type="text" placeholder="e.g. Home Delivery / Repair Fee" />
+        <!-- SECTION 1: CORE OPERATIONS -->
+        <h2 class="section-group-title">Core Operations</h2>
+
+        <div class="three-col-grid">
+          <div class="floating-card" data-view="billing">
+            <div class="floating-card-icon">🧾</div>
+            <div>
+              <div class="floating-card-title">POS Billing</div>
+              <div class="floating-card-sub">Create bills, GST & print receipts</div>
+            </div>
           </div>
-          <div class="field">
-            <label for="srvFee">Fee (₹)</label>
-            <input id="srvFee" type="number" min="0" step="0.01" placeholder="50" />
+          <div class="floating-card" data-view="inventory">
+            <div class="floating-card-icon">📦</div>
+            <div>
+              <div class="floating-card-title">Stock Inventory</div>
+              <div id="subInvCount" class="floating-card-sub">0 items in stock</div>
+            </div>
           </div>
-          <div class="field">
-            <label for="srvGst">GST (%)</label>
-            <select id="srvGst">
-              <option value="0">0%</option>
-              <option value="5">5%</option>
-              <option value="12">12%</option>
-              <option value="18">18%</option>
+          <div class="floating-card" data-view="customers">
+            <div class="floating-card-icon">💰</div>
+            <div>
+              <div class="floating-card-title">Customer Khata</div>
+              <div id="subKhataCount" class="floating-card-sub">0 credit accounts</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="three-col-grid">
+          <div class="floating-card" data-view="services">
+            <div class="floating-card-icon">🛠️</div>
+            <div>
+              <div class="floating-card-title">Services Manager</div>
+              <div id="subSrvCount" class="floating-card-sub">0 shop services</div>
+            </div>
+          </div>
+          <div class="floating-card" data-view="returns">
+            <div class="floating-card-icon">🔄</div>
+            <div>
+              <div class="floating-card-title">Customer Returns</div>
+              <div id="subRetCount" class="floating-card-sub">0 returns recorded</div>
+            </div>
+          </div>
+          <div class="floating-card" data-view="history">
+            <div class="floating-card-icon">📜</div>
+            <div>
+              <div class="floating-card-title">Sales History & Bills</div>
+              <div id="subBillsCount" class="floating-card-sub">0 saved bills</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: GROWTH & TOOLS -->
+        <h2 class="section-group-title">Growth & Tools</h2>
+
+        <div class="three-col-grid">
+          <div class="floating-card" data-view="catalog">
+            <div class="floating-card-icon">📚</div>
+            <div>
+              <div class="floating-card-title">Product Catalog</div>
+              <div class="floating-card-sub">Browse, filter & quick-bill items</div>
+            </div>
+          </div>
+          <div class="floating-card" data-view="suppliers">
+            <div class="floating-card-icon">🚚</div>
+            <div>
+              <div class="floating-card-title">Suppliers & Orders</div>
+              <div id="subSupCount" class="floating-card-sub">0 purchase orders</div>
+            </div>
+          </div>
+          <div class="floating-card" data-view="ai">
+            <div class="floating-card-icon">🤖</div>
+            <div>
+              <div class="floating-card-title">AI Business Assistant</div>
+              <div class="floating-card-sub">Sales, low stock & udhaar helper</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="three-col-grid">
+          <div class="floating-card" data-view="studio">
+            <div class="floating-card-icon">📱</div>
+            <div>
+              <div class="floating-card-title">Status Creator</div>
+              <div class="floating-card-sub">WhatsApp shop updates & offers</div>
+            </div>
+          </div>
+          <div class="floating-card" data-view="labels">
+            <div class="floating-card-icon">🏷️</div>
+            <div>
+              <div class="floating-card-title">Price Tags & Offers</div>
+              <div class="floating-card-sub">Shelf price labels</div>
+            </div>
+          </div>
+          <div class="floating-card" data-view="firebase">
+            <div class="floating-card-icon">🔥</div>
+            <div>
+              <div class="floating-card-title">Firebase Cloud Sync</div>
+              <div class="floating-card-sub">Sync data to Cloud Firestore</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="three-col-grid">
+          <div class="floating-card" data-view="billing">
+            <div class="floating-card-icon">🧮</div>
+            <div>
+              <div class="floating-card-title">Billing Counter</div>
+              <div class="floating-card-sub">Quick counter invoice screen</div>
+            </div>
+          </div>
+          <div class="floating-card" data-modal="calcModal">
+            <div class="floating-card-icon">🔢</div>
+            <div>
+              <div class="floating-card-title">Calculator</div>
+              <div class="floating-card-sub">Fast math pad</div>
+            </div>
+          </div>
+          <div class="floating-card" data-modal="eodModal">
+            <div class="floating-card-icon">💵</div>
+            <div>
+              <div class="floating-card-title">EOD Report</div>
+              <div class="floating-card-sub">End-of-day cash & sales summary</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="three-col-grid">
+          <div class="floating-card" data-view="settings">
+            <div class="floating-card-icon">🖥️</div>
+            <div>
+              <div class="floating-card-title">Desktop & Shop Setup</div>
+              <div class="floating-card-sub">Shop details, UPI & JSON backup</div>
+            </div>
+          </div>
+          <div class="floating-card" data-view="quicksettings">
+            <div class="floating-card-icon">⚙️</div>
+            <div>
+              <div class="floating-card-title">Settings & Preferences</div>
+              <div class="floating-card-sub">Android/Windows UI, theme & reset</div>
+            </div>
+          </div>
+          <div class="floating-card" data-modal="aboutDevModal">
+            <div class="floating-card-icon">👨‍💻</div>
+            <div>
+              <div class="floating-card-title">About Developer</div>
+              <div class="floating-card-sub">11-yr solo AI app builder</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRODUCT CATALOG VIEW -->
+      <section id="view-catalog" class="app-view hidden">
+        <div class="view-head">
+          <h2>📚 Product & Service Catalog</h2>
+          <div class="btn-row">
+            <input id="catalogFilterInput" type="search" placeholder="Filter catalog items..." style="width:220px;" />
+            <button id="btnGoInvFromCatalog" class="btn btn-teal btn-sm" type="button">+ Add Product</button>
+          </div>
+        </div>
+        <div class="panel-box">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Type / SKU</th>
+                  <th>Rate</th>
+                  <th>Stock / Info</th>
+                  <th>GST</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="catalogTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- STOCK INVENTORY VIEW -->
+      <section id="view-inventory" class="app-view hidden">
+        <div class="view-head">
+          <h2>📦 Stock Inventory</h2>
+          <div class="btn-row">
+            <select id="invFilterSelect" style="width:auto;">
+              <option value="ALL">All Stock</option>
+              <option value="LOW">Low Stock Only</option>
+              <option value="OK">Healthy Stock</option>
             </select>
+            <span id="invCountBadge" class="free-pill-badge">0 Products</span>
           </div>
         </div>
-        <button id="btnAddService" class="btn btn-teal" type="button">+ Save Service</button>
-      </div>
-
-      <div class="panel-box">
-        <h3>Saved Services</h3>
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Service</th>
-                <th>Charge</th>
-                <th>GST</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="srvTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- BILL CREATOR VIEW -->
-    <section id="view-billing" class="app-view hidden">
-      <div class="view-head">
-        <h2>🧾 POS Billing</h2>
-        <div class="btn-row">
-          <button id="btnUndoCart" class="btn btn-dark btn-sm" type="button">↩ Undo</button>
-          <button id="btnClearCart" class="btn btn-red btn-sm" type="button">Clear Bill</button>
-        </div>
-      </div>
-      <div class="split-grid">
-        <div>
-          <div class="panel-box">
-            <h3>Add Item to Bill</h3>
-            <div class="grid-3">
-              <div class="field">
-                <label for="billItemName">Item Name</label>
-                <input id="billItemName" type="text" placeholder="Type product or service..." autocomplete="off" />
-                <div id="billItemDropdown" class="dropdown-list hidden"></div>
-              </div>
-              <div class="field">
-                <label for="billItemQty">Qty</label>
-                <input id="billItemQty" type="number" min="0.01" step="any" value="1" />
-              </div>
-              <div class="field">
-                <label for="billItemPrice">Rate (₹)</label>
-                <input id="billItemPrice" type="number" min="0" step="0.01" value="0" />
-              </div>
+        <div class="panel-box">
+          <h3 id="invFormTitle">Add / Edit Product</h3>
+          <input id="invEditId" type="hidden" />
+          <div class="grid-3">
+            <div class="field">
+              <label for="invName">Product Name</label>
+              <input id="invName" type="text" placeholder="e.g. Basmati Rice 1kg" />
             </div>
-            <div class="grid-2">
+            <div class="field">
+              <label for="invSku">Barcode / SKU</label>
+              <input id="invSku" type="text" placeholder="Optional SKU" />
+            </div>
+            <div class="field">
+              <label for="invCost">Cost Price (₹)</label>
+              <input id="invCost" type="number" min="0" step="0.01" placeholder="0.00" />
+            </div>
+          </div>
+          <div class="grid-3">
+            <div class="field">
+              <label for="invPrice">Selling Price (₹)</label>
+              <input id="invPrice" type="number" min="0" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="field">
+              <label for="invStock">Stock Quantity</label>
+              <input id="invStock" type="number" min="0" step="any" placeholder="0" />
+            </div>
+            <div class="grid-2" style="margin-bottom:0;">
               <div class="field">
-                <label for="billItemGst">GST (%)</label>
-                <select id="billItemGst">
+                <label for="invLow">Low Alert</label>
+                <input id="invLow" type="number" min="0" value="5" />
+              </div>
+              <div class="field">
+                <label for="invGst">GST %</label>
+                <select id="invGst">
                   <option value="0">0%</option>
                   <option value="5">5%</option>
                   <option value="12">12%</option>
@@ -1364,496 +1390,622 @@
                   <option value="28">28%</option>
                 </select>
               </div>
-              <div class="field">
-                <label for="billDiscount">Discount (₹)</label>
-                <input id="billDiscount" type="number" min="0" step="0.01" value="0" />
-              </div>
-            </div>
-            <button id="btnAddToCart" class="btn btn-teal btn-full" type="button">+ Add to Bill (Enter)</button>
-          </div>
-
-          <div class="panel-box">
-            <h3>Current Bill Items</h3>
-            <div class="table-scroll">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Qty</th>
-                    <th>Rate</th>
-                    <th>GST</th>
-                    <th>Total</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody id="cartTableBody"></tbody>
-              </table>
             </div>
           </div>
-
-          <div class="panel-box">
-            <h3>Customer & Checkout</h3>
-            <div class="grid-2">
-              <div class="field">
-                <label for="billCustName">Customer Name</label>
-                <input id="billCustName" type="text" placeholder="Walk-in Customer" autocomplete="off" />
-                <div id="billCustDropdown" class="dropdown-list hidden"></div>
-              </div>
-              <div class="field">
-                <label for="billCustPhone">WhatsApp Phone</label>
-                <input id="billCustPhone" type="tel" placeholder="98XXXXXXXX" />
-              </div>
-            </div>
-            <div class="grid-2">
-              <div class="field">
-                <label for="billPayMode">Payment Mode</label>
-                <select id="billPayMode">
-                  <option value="Cash">Cash</option>
-                  <option value="UPI">UPI</option>
-                  <option value="Udhaar">Udhaar (Credit)</option>
-                  <option value="Card">Card</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="billPaperSize">Receipt Size</label>
-                <select id="billPaperSize">
-                  <option value="thermal-80">Thermal 80mm</option>
-                  <option value="thermal-58">Thermal 58mm</option>
-                  <option value="a4">A4 Invoice</option>
-                </select>
-              </div>
-            </div>
-            <div class="grid-2">
-              <div class="field">
-                <label for="billCashReceived">Cash Received (₹) — Optional</label>
-                <input id="billCashReceived" type="number" min="0" step="0.01" placeholder="0.00" />
-              </div>
-              <div class="field">
-                <label for="billNote">Bill Note (Optional)</label>
-                <input id="billNote" type="text" placeholder="e.g. Parcel / Delivery" />
-              </div>
-            </div>
-            <label class="checkbox-row">
-              <input id="chkDeductStock" type="checkbox" checked />
-              Deduct sold quantities from Stock Inventory automatically
-            </label>
-            <div class="btn-row" style="margin-top:14px;">
-              <button id="btnFinalizeBill" class="btn btn-green" type="button">💾 Save & Generate Bill</button>
-              <button id="btnPrintBill" class="btn btn-dark" type="button">🖨️ Print Receipt</button>
-              <button id="btnCopyBillText" class="btn btn-dark" type="button">📋 Copy Bill</button>
-              <button id="btnWhatsAppBill" class="btn btn-teal" type="button">📲 WhatsApp Bill</button>
-            </div>
+          <div class="btn-row">
+            <button id="btnSaveInv" class="btn btn-teal" type="button">Save Product</button>
+            <button id="btnCancelInvEdit" class="btn btn-dark hidden" type="button">Cancel Edit</button>
           </div>
         </div>
 
         <div class="panel-box">
-          <h3>Live Receipt Preview</h3>
-          <div id="printableReceiptArea" class="receipt-sheet paper-thermal-80">
-            <div style="text-align:center;border-bottom:1px dashed #9ca3af;padding-bottom:8px;margin-bottom:8px;">
-              <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:4px;">
-                <img src="favicon.png" alt="Zivo Logo" class="zivo-logo-img" style="width:24px;height:24px;border-radius:5px;object-fit:cover;" />
-                <span style="font-weight:900;font-size:15px;" id="rcptShopTitle">Zivo Retail Store</span>
-              </div>
-              <div style="font-size:11px;color:#4b5563;" id="rcptShopSub">Patna, Bihar</div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">
-              <span id="rcptNo">Bill #INV-001</span>
-              <span id="rcptDate"></span>
-            </div>
-            <div style="font-size:11px;margin-bottom:8px;" id="rcptCust">Customer: Walk-in Customer</div>
-            <table style="color:#111827;font-size:11px;">
+          <h3>Inventory List</h3>
+          <div class="table-scroll">
+            <table>
               <thead>
                 <tr>
-                  <th style="color:#374151;padding:4px;">Item</th>
-                  <th style="color:#374151;padding:4px;">Qty</th>
-                  <th style="color:#374151;padding:4px;text-align:right;">Amt</th>
+                  <th>Item</th>
+                  <th>SKU</th>
+                  <th>Cost</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>GST</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
-              <tbody id="rcptItemsBody"></tbody>
+              <tbody id="invTableBody"></tbody>
             </table>
-            <div style="border-top:1px dashed #9ca3af;margin-top:8px;padding-top:8px;font-size:11px;">
-              <div style="display:flex;justify-content:space-between;"><span>Subtotal:</span><span id="rcptSub">₹0.00</span></div>
-              <div style="display:flex;justify-content:space-between;"><span>GST:</span><span id="rcptGst">₹0.00</span></div>
-              <div style="display:flex;justify-content:space-between;"><span>Discount:</span><span id="rcptDisc">₹0.00</span></div>
-              <div style="display:flex;justify-content:space-between;font-weight:900;font-size:13.5px;margin-top:4px;">
-                <span>Grand Total:</span><span id="rcptTotal">₹0.00</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;margin-top:4px;">
-                <span>Mode:</span><span id="rcptMode">Cash</span>
-              </div>
-              <div id="rcptChangeRow" class="hidden" style="display:flex;justify-content:space-between;margin-top:2px;font-weight:700;">
-                <span>Balance Change:</span><span id="rcptChange">₹0.00</span>
-              </div>
-              <div id="rcptNoteLine" class="hidden" style="margin-top:4px;color:#374151;font-style:italic;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SERVICES MANAGER VIEW -->
+      <section id="view-services" class="app-view hidden">
+        <div class="view-head">
+          <h2>🛠️ Services Manager</h2>
+        </div>
+        <div class="panel-box">
+          <h3>Add Shop Service</h3>
+          <div class="grid-3">
+            <div class="field">
+              <label for="srvName">Service Name</label>
+              <input id="srvName" type="text" placeholder="e.g. Home Delivery / Repair Fee" />
             </div>
-            <div style="margin-top:8px;padding-top:6px;border-top:1px dashed #9ca3af;text-align:center;font-size:10px;color:#374151;" id="rcptFooterNote">
-              Thank you for shopping with us!
+            <div class="field">
+              <label for="srvFee">Fee (₹)</label>
+              <input id="srvFee" type="number" min="0" step="0.01" placeholder="50" />
+            </div>
+            <div class="field">
+              <label for="srvGst">GST (%)</label>
+              <select id="srvGst">
+                <option value="0">0%</option>
+                <option value="5">5%</option>
+                <option value="12">12%</option>
+                <option value="18">18%</option>
+              </select>
+            </div>
+          </div>
+          <button id="btnAddService" class="btn btn-teal" type="button">+ Save Service</button>
+        </div>
+
+        <div class="panel-box">
+          <h3>Saved Services</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Charge</th>
+                  <th>GST</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="srvTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- BILL CREATOR VIEW -->
+      <section id="view-billing" class="app-view hidden">
+        <div class="view-head">
+          <h2>🧾 POS Billing</h2>
+          <div class="btn-row">
+            <button id="btnUndoCart" class="btn btn-dark btn-sm" type="button">↩ Undo</button>
+            <button id="btnClearCart" class="btn btn-red btn-sm" type="button">Clear Bill</button>
+          </div>
+        </div>
+        <div class="split-grid">
+          <div>
+            <div class="panel-box">
+              <h3>Add Item to Bill</h3>
+              <div class="grid-3">
+                <div class="field">
+                  <label for="billItemName">Item Name</label>
+                  <input id="billItemName" type="text" placeholder="Type product or service..." autocomplete="off" />
+                  <div id="billItemDropdown" class="dropdown-list hidden"></div>
+                </div>
+                <div class="field">
+                  <label for="billItemQty">Qty</label>
+                  <input id="billItemQty" type="number" min="0.01" step="any" value="1" />
+                </div>
+                <div class="field">
+                  <label for="billItemPrice">Rate (₹)</label>
+                  <input id="billItemPrice" type="number" min="0" step="0.01" value="0" />
+                </div>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="billItemGst">GST (%)</label>
+                  <select id="billItemGst">
+                    <option value="0">0%</option>
+                    <option value="5">5%</option>
+                    <option value="12">12%</option>
+                    <option value="18">18%</option>
+                    <option value="28">28%</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="billDiscount">Discount (₹)</label>
+                  <input id="billDiscount" type="number" min="0" step="0.01" value="0" />
+                </div>
+              </div>
+              <button id="btnAddToCart" class="btn btn-teal btn-full" type="button">+ Add to Bill (Enter)</button>
+            </div>
+
+            <div class="panel-box">
+              <h3>Current Bill Items</h3>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Qty</th>
+                      <th>Rate</th>
+                      <th>GST</th>
+                      <th>Total</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="cartTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel-box">
+              <h3>Customer & Checkout</h3>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="billCustName">Customer Name</label>
+                  <input id="billCustName" type="text" placeholder="Walk-in Customer" autocomplete="off" />
+                  <div id="billCustDropdown" class="dropdown-list hidden"></div>
+                </div>
+                <div class="field">
+                  <label for="billCustPhone">WhatsApp Phone</label>
+                  <input id="billCustPhone" type="tel" placeholder="98XXXXXXXX" />
+                </div>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="billPayMode">Payment Mode</label>
+                  <select id="billPayMode">
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Udhaar">Udhaar (Credit)</option>
+                    <option value="Card">Card</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="billPaperSize">Receipt Size</label>
+                  <select id="billPaperSize">
+                    <option value="thermal-80">Thermal 80mm</option>
+                    <option value="thermal-58">Thermal 58mm</option>
+                    <option value="a4">A4 Invoice</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="billCashReceived">Cash Received (₹) — Optional</label>
+                  <input id="billCashReceived" type="number" min="0" step="0.01" placeholder="0.00" />
+                </div>
+                <div class="field">
+                  <label for="billNote">Bill Note (Optional)</label>
+                  <input id="billNote" type="text" placeholder="e.g. Parcel / Delivery" />
+                </div>
+              </div>
+              <label class="checkbox-row">
+                <input id="chkDeductStock" type="checkbox" checked />
+                Deduct sold quantities from Stock Inventory automatically
+              </label>
+              <div class="btn-row" style="margin-top:14px;">
+                <button id="btnFinalizeBill" class="btn btn-green" type="button">💾 Save & Generate Bill</button>
+                <button id="btnPrintBill" class="btn btn-dark" type="button">🖨️ Print Receipt</button>
+                <button id="btnCopyBillText" class="btn btn-dark" type="button">📋 Copy Bill</button>
+                <button id="btnWhatsAppBill" class="btn btn-teal" type="button">📲 WhatsApp Bill</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-box">
+            <h3>Live Receipt Preview</h3>
+            <div id="printableReceiptArea" class="receipt-sheet paper-thermal-80">
+              <div style="text-align:center;border-bottom:1px dashed #9ca3af;padding-bottom:8px;margin-bottom:8px;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:4px;">
+                  <img src="favicon.png" alt="Zivo Logo" class="zivo-logo-img" style="width:24px;height:24px;border-radius:5px;object-fit:cover;" />
+                  <span style="font-weight:900;font-size:15px;" id="rcptShopTitle">Zivo Retail Store</span>
+                </div>
+                <div style="font-size:11px;color:#4b5563;" id="rcptShopSub">Patna, Bihar</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">
+                <span id="rcptNo">Bill #INV-001</span>
+                <span id="rcptDate"></span>
+              </div>
+              <div style="font-size:11px;margin-bottom:8px;" id="rcptCust">Customer: Walk-in Customer</div>
+              <table style="color:#111827;font-size:11px;">
+                <thead>
+                  <tr>
+                    <th style="color:#374151;padding:4px;">Item</th>
+                    <th style="color:#374151;padding:4px;">Qty</th>
+                    <th style="color:#374151;padding:4px;text-align:right;">Amt</th>
+                  </tr>
+                </thead>
+                <tbody id="rcptItemsBody"></tbody>
+              </table>
+              <div style="border-top:1px dashed #9ca3af;margin-top:8px;padding-top:8px;font-size:11px;">
+                <div style="display:flex;justify-content:space-between;"><span>Subtotal:</span><span id="rcptSub">₹0.00</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>GST:</span><span id="rcptGst">₹0.00</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>Discount:</span><span id="rcptDisc">₹0.00</span></div>
+                <div style="display:flex;justify-content:space-between;font-weight:900;font-size:13.5px;margin-top:4px;">
+                  <span>Grand Total:</span><span id="rcptTotal">₹0.00</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:4px;">
+                  <span>Mode:</span><span id="rcptMode">Cash</span>
+                </div>
+                <div id="rcptChangeRow" class="hidden" style="display:flex;justify-content:space-between;margin-top:2px;font-weight:700;">
+                  <span>Balance Change:</span><span id="rcptChange">₹0.00</span>
+                </div>
+                <div id="rcptNoteLine" class="hidden" style="margin-top:4px;color:#374151;font-style:italic;"></div>
+              </div>
+              <div style="margin-top:8px;padding-top:6px;border-top:1px dashed #9ca3af;text-align:center;font-size:10px;color:#374151;" id="rcptFooterNote">
+                Thank you for shopping with us!
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- CUSTOMER RETURNS VIEW -->
-    <section id="view-returns" class="app-view hidden">
-      <div class="view-head">
-        <h2>🔄 Customer Returns</h2>
-      </div>
-      <div class="panel-box">
-        <h3>Record Customer Return</h3>
-        <div class="grid-3">
-          <div class="field">
-            <label for="retItem">Returned Item</label>
-            <input id="retItem" type="text" placeholder="Product name" />
-          </div>
-          <div class="field">
-            <label for="retQty">Quantity</label>
-            <input id="retQty" type="number" min="1" step="any" value="1" />
-          </div>
-          <div class="field">
-            <label for="retRefund">Refund Amount (₹)</label>
-            <input id="retRefund" type="number" min="0" step="0.01" placeholder="0.00" />
-          </div>
+      <!-- CUSTOMER RETURNS VIEW -->
+      <section id="view-returns" class="app-view hidden">
+        <div class="view-head">
+          <h2>🔄 Customer Returns</h2>
         </div>
-        <label class="checkbox-row">
-          <input id="chkRestockReturn" type="checkbox" checked />
-          Add returned quantity back to Stock Inventory
-        </label>
-        <button id="btnRecordReturn" class="btn btn-amber" style="margin-top:10px;" type="button">Record Return</button>
-      </div>
-      <div class="panel-box">
-        <h3>Return History</h3>
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Item</th>
-                <th>Qty</th>
-                <th>Refund</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="retTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- AI BUSINESS ASSISTANT VIEW -->
-    <section id="view-ai" class="app-view hidden">
-      <div class="view-head">
-        <h2>🤖 AI Business Assistant</h2>
-        <div class="btn-row">
-          <button class="btn btn-dark btn-sm ai-chip" data-q="Summarize today's sales and profit" type="button">Today's Sales & Profit</button>
-          <button class="btn btn-dark btn-sm ai-chip" data-q="Which items are low on stock?" type="button">Low Stock Check</button>
-          <button class="btn btn-dark btn-sm ai-chip" data-q="Show pending customer udhaar" type="button">Pending Udhaar</button>
-          <button class="btn btn-dark btn-sm ai-chip" data-q="Give me a full shop health summary" type="button">Shop Summary</button>
-        </div>
-      </div>
-      <div class="panel-box">
-        <div id="aiFeed" style="min-height:200px;max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
-          <div style="background:var(--bg-soft);border-left:3px solid var(--cyan-top);padding:10px 12px;border-radius:10px;font-size:12.5px;">
-            Hello! Ask me about today's sales, net profit, low stock items, pending customer credit, or overall shop status.
+        <div class="panel-box">
+          <h3>Record Customer Return</h3>
+          <div class="grid-3">
+            <div class="field">
+              <label for="retItem">Returned Item</label>
+              <input id="retItem" type="text" placeholder="Product name" />
+            </div>
+            <div class="field">
+              <label for="retQty">Quantity</label>
+              <input id="retQty" type="number" min="1" step="any" value="1" />
+            </div>
+            <div class="field">
+              <label for="retRefund">Refund Amount (₹)</label>
+              <input id="retRefund" type="number" min="0" step="0.01" placeholder="0.00" />
+            </div>
           </div>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <input id="aiPromptInput" type="text" placeholder="Ask Zivo AI Assistant..." />
-          <button id="btnAskAi" class="btn btn-teal" type="button">Ask</button>
-          <button id="btnClearAi" class="btn btn-dark" type="button">Clear</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- CREDIT MANAGER VIEW -->
-    <section id="view-customers" class="app-view hidden">
-      <div class="view-head">
-        <h2>💰 Customer Khata</h2>
-        <span id="khataTotalBadge" class="free-pill-badge">Total Udhaar: ₹0.00</span>
-      </div>
-      <div class="panel-box">
-        <h3>Add Customer Account</h3>
-        <div class="grid-3">
-          <div class="field">
-            <label for="khataName">Customer Name</label>
-            <input id="khataName" type="text" placeholder="Customer name" />
-          </div>
-          <div class="field">
-            <label for="khataPhone">Phone Number</label>
-            <input id="khataPhone" type="tel" placeholder="98XXXXXXXX" />
-          </div>
-          <div class="field">
-            <label for="khataDue">Opening Udhaar (₹)</label>
-            <input id="khataDue" type="number" min="0" step="0.01" value="0" />
-          </div>
-        </div>
-        <button id="btnAddKhata" class="btn btn-teal" type="button">Save Customer</button>
-      </div>
-      <div class="panel-box">
-        <h3>Customer Ledger</h3>
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Customer</th>
-                <th>Phone</th>
-                <th>Due Balance</th>
-                <th>Custom Amount (₹)</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="khataTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- SALES HISTORY VIEW -->
-    <section id="view-history" class="app-view hidden">
-      <div class="view-head">
-        <h2>📜 Sales History & Bills</h2>
-        <div class="btn-row">
-          <input id="historySearchInput" type="search" placeholder="Filter bill # or customer..." style="width:200px;" />
-          <select id="historyModeFilter" style="width:auto;">
-            <option value="ALL">All Modes</option>
-            <option value="Cash">Cash</option>
-            <option value="UPI">UPI</option>
-            <option value="Udhaar">Udhaar</option>
-            <option value="Card">Card</option>
-          </select>
-          <button id="btnExportCsv" class="btn btn-dark btn-sm" type="button">⬇️ Export CSV</button>
-        </div>
-      </div>
-      <div class="panel-box">
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Invoice</th>
-                <th>Date</th>
-                <th>Customer</th>
-                <th>Mode</th>
-                <th>Total</th>
-                <th>Profit</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="historyTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- SUPPLIERS VIEW -->
-    <section id="view-suppliers" class="app-view hidden">
-      <div class="view-head">
-        <h2>🚚 Suppliers & Orders</h2>
-      </div>
-      <div class="panel-box">
-        <h3>New Purchase Order</h3>
-        <div class="grid-3">
-          <div class="field">
-            <label for="supName">Supplier Name</label>
-            <input id="supName" type="text" placeholder="Distributor name" />
-          </div>
-          <div class="field">
-            <label for="supItems">Ordered Items</label>
-            <input id="supItems" type="text" placeholder="e.g. 20x Cooking Oil" />
-          </div>
-          <div class="field">
-            <label for="supCost">Order Total (₹)</label>
-            <input id="supCost" type="number" min="0" step="0.01" placeholder="0.00" />
-          </div>
-        </div>
-        <button id="btnAddSupplier" class="btn btn-teal" type="button">+ Record Order</button>
-      </div>
-      <div class="panel-box">
-        <h3>Purchase Orders</h3>
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Supplier</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="supTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- STATUS CREATOR VIEW -->
-    <section id="view-studio" class="app-view hidden">
-      <div class="view-head">
-        <h2>📱 Status Creator</h2>
-      </div>
-      <div class="panel-box">
-        <h3>WhatsApp Offer Status Designer</h3>
-        <div class="grid-2">
-          <div class="field">
-            <label for="promoHeading">Offer Headline</label>
-            <input id="promoHeading" type="text" value="Fresh Daily Essentials Available!" />
-          </div>
-          <div class="field">
-            <label for="promoSub">Offer Details</label>
-            <input id="promoSub" type="text" value="Fast counter service, Cash & UPI accepted, regular khata support." />
-          </div>
-        </div>
-        <div style="background:linear-gradient(135deg,#0d9488,#0284c7);color:#fff;padding:22px;border-radius:14px;text-align:center;margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:800;letter-spacing:1px;opacity:0.9;">SHOP UPDATE</div>
-          <div id="promoPreviewTitle" style="font-size:20px;font-weight:900;margin:6px 0;">Fresh Daily Essentials Available!</div>
-          <div id="promoPreviewBody" style="font-size:13px;opacity:0.95;">Fast counter service, Cash & UPI accepted, regular khata support.</div>
-        </div>
-        <div class="btn-row">
-          <button id="btnCopyStatus" class="btn btn-teal" type="button">📋 Copy Status Text</button>
-          <button id="btnShareStatusWa" class="btn btn-green" type="button">📲 Share on WhatsApp</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRICE TAGS VIEW -->
-    <section id="view-labels" class="app-view hidden">
-      <div class="view-head">
-        <h2>🏷️ Price Tags & Offers</h2>
-      </div>
-      <div class="panel-box">
-        <h3>Printable Shelf Price Tag</h3>
-        <div class="grid-3">
-          <div class="field">
-            <label for="tagProductName">Product Name</label>
-            <input id="tagProductName" type="text" value="Premium Basmati Rice 1kg" />
-          </div>
-          <div class="field">
-            <label for="tagProductPrice">Tag Price (₹)</label>
-            <input id="tagProductPrice" type="number" step="0.01" value="120" />
-          </div>
-          <div class="field">
-            <label for="tagOfferBadge">Offer / Unit Note</label>
-            <input id="tagOfferBadge" type="text" value="Incl. Taxes • Fresh Stock" />
-          </div>
-        </div>
-        <div style="background:#ffffff;color:#0f172a;border-radius:12px;padding:16px;max-width:280px;margin:10px auto;text-align:center;border:1px solid #cbd5e1;">
-          <div id="tagOutShop" style="font-size:10px;font-weight:800;color:#475569;">ZIVO RETAIL STORE</div>
-          <div id="tagOutName" style="font-size:15px;font-weight:900;margin:4px 0;">Premium Basmati Rice 1kg</div>
-          <div id="tagOutPrice" style="font-size:22px;font-weight:900;color:#0d9488;">₹120.00</div>
-          <div id="tagOutOffer" style="font-size:10.5px;font-weight:700;color:#334155;margin-top:4px;">Incl. Taxes • Fresh Stock</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- BUSINESS SETUP VIEW -->
-    <section id="view-settings" class="app-view hidden">
-      <div class="view-head">
-        <h2>🖥️ Desktop & Shop Setup</h2>
-      </div>
-      <div class="panel-box">
-        <h3>Store Profile & Account Details</h3>
-        <div class="grid-2">
-          <div class="field">
-            <label for="setShopName">Shop Name</label>
-            <input id="setShopName" type="text" />
-          </div>
-          <div class="field">
-            <label for="setUserName">Owner / Username</label>
-            <input id="setUserName" type="text" />
-          </div>
-        </div>
-        <div class="grid-2">
-          <div class="field">
-            <label for="setEmail">Registered Email</label>
-            <input id="setEmail" type="email" />
-          </div>
-          <div class="field">
-            <label for="setUpi">Shop UPI ID</label>
-            <input id="setUpi" type="text" placeholder="yourshop@upi" />
-          </div>
-        </div>
-        <div class="grid-2">
-          <div class="field">
-            <label for="setCity">City / Address</label>
-            <input id="setCity" type="text" placeholder="Patna, Bihar" />
-          </div>
-          <div class="field">
-            <label for="setGstin">GSTIN (Optional)</label>
-            <input id="setGstin" type="text" placeholder="Optional" />
-          </div>
-        </div>
-        <div class="btn-row">
-          <button id="btnSaveSetup" class="btn btn-teal" type="button">Save Business Setup</button>
-          <button id="btnDownloadBackup" class="btn btn-dark" type="button">⬇️ Download Backup JSON</button>
-          <label class="btn btn-dark" style="cursor:pointer;">
-            ⬆️ Import Backup JSON
-            <input id="importBackupFile" type="file" accept="application/json" class="hidden" />
+          <label class="checkbox-row">
+            <input id="chkRestockReturn" type="checkbox" checked />
+            Add returned quantity back to Stock Inventory
           </label>
+          <button id="btnRecordReturn" class="btn btn-amber" style="margin-top:10px;" type="button">Record Return</button>
         </div>
-      </div>
-    </section>
+        <div class="panel-box">
+          <h3>Return History</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th>Refund</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="retTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-    <!-- QUICK PREFERENCES VIEW -->
-    <section id="view-quicksettings" class="app-view hidden">
-      <div class="view-head">
-        <h2>⚙️ Settings & Preferences</h2>
-      </div>
-      <div class="panel-box">
-        <h3>Account & Storage Summary</h3>
-        <p id="prefAccountSummary" style="font-size:13px;color:var(--text-muted);margin-bottom:12px;"></p>
-        <div class="btn-row">
-          <button id="btnToggleThemePref" class="btn btn-dark" type="button">🌓 Toggle Light / Dark Theme</button>
-          <button id="btnViewTermsAgain" class="btn btn-dark" type="button">📄 Review Terms & Conditions</button>
-          <button id="btnResetDemoData" class="btn btn-red" type="button">🗑️ Reset Shop Data</button>
+      <!-- AI BUSINESS ASSISTANT VIEW -->
+      <section id="view-ai" class="app-view hidden">
+        <div class="view-head">
+          <h2>🤖 AI Business Assistant</h2>
+          <div class="btn-row">
+            <button class="btn btn-dark btn-sm ai-chip" data-q="Summarize today's sales and profit" type="button">Today's Sales & Profit</button>
+            <button class="btn btn-dark btn-sm ai-chip" data-q="Which items are low on stock?" type="button">Low Stock Check</button>
+            <button class="btn btn-dark btn-sm ai-chip" data-q="Show pending customer udhaar" type="button">Pending Udhaar</button>
+            <button class="btn btn-dark btn-sm ai-chip" data-q="Give me a full shop health summary" type="button">Shop Summary</button>
+          </div>
         </div>
-      </div>
-    </section>
+        <div class="panel-box">
+          <div id="aiFeed" style="min-height:200px;max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+            <div style="background:var(--bg-soft);border-left:3px solid var(--cyan-top);padding:10px 12px;border-radius:10px;font-size:12.5px;">
+              Hello! Ask me about today's sales, net profit, low stock items, pending customer credit, or overall shop status.
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <input id="aiPromptInput" type="text" placeholder="Ask Zivo AI Assistant..." />
+            <button id="btnAskAi" class="btn btn-teal" type="button">Ask</button>
+            <button id="btnClearAi" class="btn btn-dark" type="button">Clear</button>
+          </div>
+        </div>
+      </section>
 
-    <!-- FIREBASE CLOUD SYNC VIEW -->
-    <section id="view-firebase" class="app-view hidden">
-      <div class="view-head">
-        <h2>🔥 Firebase Cloud Sync</h2>
-        <span id="fbStatePill" class="free-pill-badge">Not Connected</span>
-      </div>
-      <div class="panel-box">
-        <h3>Connect Your Firebase Firestore Config</h3>
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
-          Paste your Firebase project JSON config (or fill the fields below) to sync your shop records to Cloud Firestore under a document key. Local storage continues working offline even without Firebase.
-        </p>
-        <div class="field">
-          <label for="fbJsonInput">Paste Firebase Config JSON (Optional Auto-Fill)</label>
-          <textarea id="fbJsonInput" rows="3" placeholder='{"apiKey":"...","authDomain":"...","projectId":"...","appId":"..."}'></textarea>
+      <!-- CREDIT MANAGER VIEW -->
+      <section id="view-customers" class="app-view hidden">
+        <div class="view-head">
+          <h2>💰 Customer Khata</h2>
+          <span id="khataTotalBadge" class="free-pill-badge">Total Udhaar: ₹0.00</span>
         </div>
-        <div class="grid-2">
-          <div class="field">
-            <label for="fbApiKey">API Key</label>
-            <input id="fbApiKey" type="text" placeholder="AIza..." />
+        <div class="panel-box">
+          <h3>Add Customer Account</h3>
+          <div class="grid-3">
+            <div class="field">
+              <label for="khataName">Customer Name</label>
+              <input id="khataName" type="text" placeholder="Customer name" />
+            </div>
+            <div class="field">
+              <label for="khataPhone">Phone Number</label>
+              <input id="khataPhone" type="tel" placeholder="98XXXXXXXX" />
+            </div>
+            <div class="field">
+              <label for="khataDue">Opening Udhaar (₹)</label>
+              <input id="khataDue" type="number" min="0" step="0.01" value="0" />
+            </div>
           </div>
-          <div class="field">
-            <label for="fbProjectId">Project ID</label>
-            <input id="fbProjectId" type="text" placeholder="your-project-id" />
+          <button id="btnAddKhata" class="btn btn-teal" type="button">Save Customer</button>
+        </div>
+        <div class="panel-box">
+          <h3>Customer Ledger</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Phone</th>
+                  <th>Due Balance</th>
+                  <th>Custom Amount (₹)</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="khataTableBody"></tbody>
+            </table>
           </div>
         </div>
-        <div class="grid-2">
-          <div class="field">
-            <label for="fbAppId">App ID</label>
-            <input id="fbAppId" type="text" placeholder="1:123456:web:abcdef" />
-          </div>
-          <div class="field">
-            <label for="fbDocKey">Shop Cloud Sync Key / ID</label>
-            <input id="fbDocKey" type="text" placeholder="e.g. zivo_shop_patna_01" />
+      </section>
+
+      <!-- SALES HISTORY VIEW -->
+      <section id="view-history" class="app-view hidden">
+        <div class="view-head">
+          <h2>📜 Sales History & Bills</h2>
+          <div class="btn-row">
+            <input id="historySearchInput" type="search" placeholder="Filter bill # or customer..." style="width:200px;" />
+            <select id="historyModeFilter" style="width:auto;">
+              <option value="ALL">All Modes</option>
+              <option value="Cash">Cash</option>
+              <option value="UPI">UPI</option>
+              <option value="Udhaar">Udhaar</option>
+              <option value="Card">Card</option>
+            </select>
+            <button id="btnExportCsv" class="btn btn-dark btn-sm" type="button">⬇️ Export CSV</button>
           </div>
         </div>
-        <div class="btn-row">
-          <button id="btnSaveFirebaseCfg" class="btn btn-teal" type="button">💾 Save Firebase Config</button>
-          <button id="btnPushFirebase" class="btn btn-green" type="button">☁️ Push Data to Cloud</button>
-          <button id="btnPullFirebase" class="btn btn-dark" type="button">⬇️ Pull Data from Cloud</button>
+        <div class="panel-box">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Invoice</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Mode</th>
+                  <th>Total</th>
+                  <th>Profit</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody"></tbody>
+            </table>
+          </div>
         </div>
-        <p id="fbLastSyncText" style="font-size:11.5px;color:var(--text-muted);margin-top:10px;"></p>
-      </div>
-    </section>
-  </main>
+      </section>
+
+      <!-- SUPPLIERS VIEW -->
+      <section id="view-suppliers" class="app-view hidden">
+        <div class="view-head">
+          <h2>🚚 Suppliers & Orders</h2>
+        </div>
+        <div class="panel-box">
+          <h3>New Purchase Order</h3>
+          <div class="grid-3">
+            <div class="field">
+              <label for="supName">Supplier Name</label>
+              <input id="supName" type="text" placeholder="Distributor name" />
+            </div>
+            <div class="field">
+              <label for="supItems">Ordered Items</label>
+              <input id="supItems" type="text" placeholder="e.g. 20x Cooking Oil" />
+            </div>
+            <div class="field">
+              <label for="supCost">Order Total (₹)</label>
+              <input id="supCost" type="number" min="0" step="0.01" placeholder="0.00" />
+            </div>
+          </div>
+          <button id="btnAddSupplier" class="btn btn-teal" type="button">+ Record Order</button>
+        </div>
+        <div class="panel-box">
+          <h3>Purchase Orders</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Supplier</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="supTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- STATUS CREATOR VIEW -->
+      <section id="view-studio" class="app-view hidden">
+        <div class="view-head">
+          <h2>📱 Status Creator</h2>
+        </div>
+        <div class="panel-box">
+          <h3>WhatsApp Offer Status Designer</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label for="promoHeading">Offer Headline</label>
+              <input id="promoHeading" type="text" value="Fresh Daily Essentials Available!" />
+            </div>
+            <div class="field">
+              <label for="promoSub">Offer Details</label>
+              <input id="promoSub" type="text" value="Fast counter service, Cash & UPI accepted, regular khata support." />
+            </div>
+          </div>
+          <div style="background:linear-gradient(135deg,#0d9488,#0284c7);color:#fff;padding:22px;border-radius:14px;text-align:center;margin-bottom:12px;">
+            <div style="font-size:11px;font-weight:800;letter-spacing:1px;opacity:0.9;">SHOP UPDATE</div>
+            <div id="promoPreviewTitle" style="font-size:20px;font-weight:900;margin:6px 0;">Fresh Daily Essentials Available!</div>
+            <div id="promoPreviewBody" style="font-size:13px;opacity:0.95;">Fast counter service, Cash & UPI accepted, regular khata support.</div>
+          </div>
+          <div class="btn-row">
+            <button id="btnCopyStatus" class="btn btn-teal" type="button">📋 Copy Status Text</button>
+            <button id="btnShareStatusWa" class="btn btn-green" type="button">📲 Share on WhatsApp</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRICE TAGS VIEW -->
+      <section id="view-labels" class="app-view hidden">
+        <div class="view-head">
+          <h2>🏷️ Price Tags & Offers</h2>
+        </div>
+        <div class="panel-box">
+          <h3>Printable Shelf Price Tag</h3>
+          <div class="grid-3">
+            <div class="field">
+              <label for="tagProductName">Product Name</label>
+              <input id="tagProductName" type="text" value="Premium Basmati Rice 1kg" />
+            </div>
+            <div class="field">
+              <label for="tagProductPrice">Tag Price (₹)</label>
+              <input id="tagProductPrice" type="number" step="0.01" value="120" />
+            </div>
+            <div class="field">
+              <label for="tagOfferBadge">Offer / Unit Note</label>
+              <input id="tagOfferBadge" type="text" value="Incl. Taxes • Fresh Stock" />
+            </div>
+          </div>
+          <div style="background:#ffffff;color:#0f172a;border-radius:12px;padding:16px;max-width:280px;margin:10px auto;text-align:center;border:1px solid #cbd5e1;">
+            <div id="tagOutShop" style="font-size:10px;font-weight:800;color:#475569;">ZIVO RETAIL STORE</div>
+            <div id="tagOutName" style="font-size:15px;font-weight:900;margin:4px 0;">Premium Basmati Rice 1kg</div>
+            <div id="tagOutPrice" style="font-size:22px;font-weight:900;color:#0d9488;">₹120.00</div>
+            <div id="tagOutOffer" style="font-size:10.5px;font-weight:700;color:#334155;margin-top:4px;">Incl. Taxes • Fresh Stock</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BUSINESS SETUP VIEW -->
+      <section id="view-settings" class="app-view hidden">
+        <div class="view-head">
+          <h2>🖥️ Desktop & Shop Setup</h2>
+        </div>
+        <div class="panel-box">
+          <h3>Store Profile & Account Details</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label for="setShopName">Shop Name</label>
+              <input id="setShopName" type="text" />
+            </div>
+            <div class="field">
+              <label for="setUserName">Owner / Username</label>
+              <input id="setUserName" type="text" />
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="setEmail">Registered Email</label>
+              <input id="setEmail" type="email" />
+            </div>
+            <div class="field">
+              <label for="setUpi">Shop UPI ID</label>
+              <input id="setUpi" type="text" placeholder="yourshop@upi" />
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="setCity">City / Address</label>
+              <input id="setCity" type="text" placeholder="Patna, Bihar" />
+            </div>
+            <div class="field">
+              <label for="setGstin">GSTIN (Optional)</label>
+              <input id="setGstin" type="text" placeholder="Optional" />
+            </div>
+          </div>
+          <div class="btn-row">
+            <button id="btnSaveSetup" class="btn btn-teal" type="button">Save Business Setup</button>
+            <button id="btnDownloadBackup" class="btn btn-dark" type="button">⬇️ Download Backup JSON</button>
+            <label class="btn btn-dark" style="cursor:pointer;">
+              ⬆️ Import Backup JSON
+              <input id="importBackupFile" type="file" accept="application/json" class="hidden" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUICK PREFERENCES VIEW -->
+      <section id="view-quicksettings" class="app-view hidden">
+        <div class="view-head">
+          <h2>⚙️ Settings & Preferences</h2>
+        </div>
+        <div class="panel-box">
+          <h3>Account, Platform UI & Storage Summary</h3>
+          <p id="prefAccountSummary" style="font-size:13px;color:var(--text-muted);margin-bottom:12px;"></p>
+          <div class="btn-row">
+            <button id="btnToggleUiModePref" class="btn btn-teal" type="button">📱/🖥️ Switch Android / Windows UI</button>
+            <button id="btnToggleThemePref" class="btn btn-dark" type="button">🌓 Toggle Light / Dark Theme</button>
+            <button id="btnViewTermsAgain" class="btn btn-dark" type="button">📄 Review Terms & Conditions</button>
+            <button id="btnResetDemoData" class="btn btn-red" type="button">🗑️ Reset Shop Data</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- FIREBASE CLOUD SYNC VIEW -->
+      <section id="view-firebase" class="app-view hidden">
+        <div class="view-head">
+          <h2>🔥 Firebase Cloud Sync</h2>
+          <span id="fbStatePill" class="free-pill-badge">Not Connected</span>
+        </div>
+        <div class="panel-box">
+          <h3>Connect Your Firebase Firestore Config</h3>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
+            Paste your Firebase project JSON config (or fill the fields below) to sync your shop records to Cloud Firestore under a document key. Local storage continues working offline even without Firebase.
+          </p>
+          <div class="field">
+            <label for="fbJsonInput">Paste Firebase Config JSON (Optional Auto-Fill)</label>
+            <textarea id="fbJsonInput" rows="3" placeholder='{"apiKey":"...","authDomain":"...","projectId":"...","appId":"..."}'></textarea>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="fbApiKey">API Key</label>
+              <input id="fbApiKey" type="text" placeholder="AIza..." />
+            </div>
+            <div class="field">
+              <label for="fbProjectId">Project ID</label>
+              <input id="fbProjectId" type="text" placeholder="your-project-id" />
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="fbAppId">App ID</label>
+              <input id="fbAppId" type="text" placeholder="1:123456:web:abcdef" />
+            </div>
+            <div class="field">
+              <label for="fbDocKey">Shop Cloud Sync Key / ID</label>
+              <input id="fbDocKey" type="text" placeholder="e.g. zivo_shop_patna_01" />
+            </div>
+          </div>
+          <div class="btn-row">
+            <button id="btnSaveFirebaseCfg" class="btn btn-teal" type="button">💾 Save Firebase Config</button>
+            <button id="btnPushFirebase" class="btn btn-green" type="button">☁️ Push Data to Cloud</button>
+            <button id="btnPullFirebase" class="btn btn-dark" type="button">⬇️ Pull Data from Cloud</button>
+          </div>
+          <p id="fbLastSyncText" style="font-size:11.5px;color:var(--text-muted);margin-top:10px;"></p>
+        </div>
+      </section>
+    </main>
+
+    <!-- ANDROID BOTTOM BAR (SHOWN ONLY WHEN ANDROID UI IS ACTIVE) -->
+    <nav class="android-bottom-nav" aria-label="Android Quick Navigation">
+      <button class="android-nav-btn active" data-bnav="home" type="button">🏠<span>Home</span></button>
+      <button class="android-nav-btn" data-bnav="billing" type="button">🧾<span>Bill</span></button>
+      <button class="android-nav-btn" data-bnav="inventory" type="button">📦<span>Stock</span></button>
+      <button class="android-nav-btn" data-bnav="customers" type="button">💰<span>Khata</span></button>
+    </nav>
+  </div>
 
   <!-- ABOUT DEVELOPER MODAL -->
   <div id="aboutDevModal" class="modal-overlay">
@@ -1980,13 +2132,20 @@
         firebase: "Firebase Cloud Sync"
       };
 
+      function detectDefaultUiMode() {
+        const ua = navigator.userAgent || "";
+        return /android/i.test(ua) ? "android" : "windows";
+      }
+
       const defaultState = {
         account: null,
+        sessionUnlocked: false,
         shop: {
           city: "Patna, Bihar",
           upiId: "",
           gstin: "",
-          theme: "dark"
+          theme: "dark",
+          uiMode: detectDefaultUiMode()
         },
         firebase: {
           apiKey: "",
@@ -2024,6 +2183,7 @@
           if (acc && "plan" in acc) delete acc.plan;
           return {
             account: acc,
+            sessionUnlocked: Boolean(p.sessionUnlocked && acc),
             shop: { ...defaultState.shop, ...(p.shop || {}) },
             firebase: { ...defaultState.firebase, ...(p.firebase || {}) },
             inventory: Array.isArray(p.inventory) ? p.inventory : [],
@@ -2068,15 +2228,46 @@
           .replace(/"/g, """);
       }
 
-      function applyTheme() {
-        const isLight = state.shop.theme === "light";
-        document.body.classList.toggle("light-mode", isLight);
-        document.getElementById("btnHeaderTheme").textContent = isLight ? "🌙 Dark" : "☀️ Light";
+      function hasAcceptedTerms() {
+        try {
+          return localStorage.getItem(TERMS_KEY) === "yes";
+        } catch {
+          return false;
+        }
       }
 
-      // Terms & Auth Gates
-      const termsOverlay = document.getElementById("termsGateOverlay");
-      const authOverlay = document.getElementById("authGateOverlay");
+      // Strictly enforce separate stages: Terms -> Login -> App (never merged)
+      function syncStage() {
+        document.body.classList.remove("stage-terms", "stage-auth", "stage-app");
+        if (!hasAcceptedTerms()) {
+          document.body.classList.add("stage-terms");
+        } else if (!state.account || !state.sessionUnlocked) {
+          document.body.classList.add("stage-auth");
+          if (state.account) {
+            document.getElementById("loginEmail").value = state.account.email || "";
+            tabLoginBtn.click();
+          }
+        } else {
+          document.body.classList.add("stage-app");
+        }
+      }
+
+      function applyThemeAndPlatform() {
+        const isLight = state.shop.theme === "light";
+        const isAndroid = state.shop.uiMode === "android";
+
+        document.body.classList.toggle("light-mode", isLight);
+        document.body.classList.toggle("platform-android", isAndroid);
+        document.body.classList.toggle("platform-windows", !isAndroid);
+
+        document.getElementById("btnHeaderTheme").textContent = isLight ? "🌙 Dark" : "☀️ Light";
+        document.getElementById("btnHeaderUiMode").textContent = isAndroid ? "🖥️ Windows UI" : "📱 Android UI";
+        document.getElementById("uiModeKicker").textContent = isAndroid
+          ? "LIVE SHOP COMMAND • ANDROID UI"
+          : "LIVE SHOP COMMAND • WINDOWS UI";
+      }
+
+      // Stage 1: Terms Gate
       const chkAgreeTerms = document.getElementById("chkAgreeTerms");
       const chkAgreeAge18 = document.getElementById("chkAgreeAge18");
       const btnAcceptTerms = document.getElementById("btnAcceptTerms");
@@ -2092,27 +2283,21 @@
         try {
           localStorage.setItem(TERMS_KEY, "yes");
         } catch {}
-        termsOverlay.classList.add("hidden");
-        if (!state.account) {
-          authOverlay.classList.remove("hidden");
-        }
+        syncStage();
+        toast("Terms accepted — please sign in");
       });
 
-      const hasAcceptedTerms = (() => {
+      document.getElementById("btnBackToTerms").addEventListener("click", () => {
         try {
-          return localStorage.getItem(TERMS_KEY) === "yes";
-        } catch {
-          return false;
-        }
-      })();
+          localStorage.removeItem(TERMS_KEY);
+        } catch {}
+        chkAgreeTerms.checked = false;
+        chkAgreeAge18.checked = false;
+        updateTermsButtonState();
+        syncStage();
+      });
 
-      if (hasAcceptedTerms) {
-        termsOverlay.classList.add("hidden");
-        if (!state.account) {
-          authOverlay.classList.remove("hidden");
-        }
-      }
-
+      // Stage 2: Login / Create Profile Gate
       const tabSignupBtn = document.getElementById("tabSignupBtn");
       const tabLoginBtn = document.getElementById("tabLoginBtn");
       const signupFields = document.getElementById("signupFields");
@@ -2149,11 +2334,12 @@
         }
 
         state.account = { userName, email, shopName, age, pin };
+        state.sessionUnlocked = true;
         if (!state.firebase.docKey) {
           state.firebase.docKey = shopName.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "zivo_shop";
         }
         saveState();
-        authOverlay.classList.add("hidden");
+        syncStage();
         renderAll();
         toast(`Welcome, ${userName}!`);
       });
@@ -2174,12 +2360,20 @@
           toast("Incorrect email/username or passcode");
           return;
         }
-        authOverlay.classList.add("hidden");
+        state.sessionUnlocked = true;
+        saveState();
+        syncStage();
         renderAll();
         toast(`Signed in to ${state.account.shopName}`);
       });
 
-      // Navigation
+      // Stage 3: Navigation
+      function syncBottomNav() {
+        document.querySelectorAll(".android-nav-btn").forEach((b) => {
+          b.classList.toggle("active", b.getAttribute("data-bnav") === activeView);
+        });
+      }
+
       function navigateTo(viewKey, record = true) {
         if (!VIEW_TITLES[viewKey]) viewKey = "home";
         if (record && activeView !== viewKey) {
@@ -2190,6 +2384,7 @@
         document.querySelectorAll(".app-view").forEach((v) => v.classList.add("hidden"));
         document.getElementById("view-" + viewKey)?.classList.remove("hidden");
         document.getElementById("headerContextLabel").textContent = VIEW_TITLES[viewKey];
+        syncBottomNav();
         renderAll();
       }
 
@@ -2199,6 +2394,12 @@
           const m = card.getAttribute("data-modal");
           if (v) navigateTo(v);
           else if (m) openModal(m);
+        });
+      });
+
+      document.querySelectorAll(".android-nav-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          navigateTo(btn.getAttribute("data-bnav") || "home");
         });
       });
 
@@ -2213,10 +2414,20 @@
         }
       });
 
+      function toggleUiMode() {
+        state.shop.uiMode = state.shop.uiMode === "android" ? "windows" : "android";
+        saveState();
+        applyThemeAndPlatform();
+        toast(state.shop.uiMode === "android" ? "Switched to Android UI" : "Switched to Windows UI");
+      }
+
+      document.getElementById("btnHeaderUiMode").addEventListener("click", toggleUiMode);
+      document.getElementById("btnToggleUiModePref").addEventListener("click", toggleUiMode);
+
       document.getElementById("btnHeaderTheme").addEventListener("click", () => {
         state.shop.theme = state.shop.theme === "light" ? "dark" : "light";
         saveState();
-        applyTheme();
+        applyThemeAndPlatform();
       });
 
       document.getElementById("btnQuickNewBill").addEventListener("click", () => navigateTo("billing"));
@@ -2227,11 +2438,9 @@
 
       document.getElementById("btnOpenAboutDev").addEventListener("click", () => openModal("aboutDevModal"));
       document.getElementById("btnLogout").addEventListener("click", () => {
-        if (state.account) {
-          document.getElementById("loginEmail").value = state.account.email;
-          tabLoginBtn.click();
-        }
-        authOverlay.classList.remove("hidden");
+        state.sessionUnlocked = false;
+        saveState();
+        syncStage();
         toast("Logged out");
       });
 
@@ -2246,7 +2455,6 @@
         });
       });
 
-      // Close modal or dropdowns cleanly with Escape or backdrop click
       document.querySelectorAll(".modal-overlay").forEach((overlay) => {
         overlay.addEventListener("click", (e) => {
           if (e.target === overlay) overlay.classList.remove("open");
@@ -3404,6 +3612,7 @@
             if (acc && "plan" in acc) delete acc.plan;
             state = {
               account: acc,
+              sessionUnlocked: Boolean(acc),
               shop: { ...defaultState.shop, ...(p.shop || {}) },
               firebase: { ...defaultState.firebase, ...(p.firebase || {}) },
               inventory: Array.isArray(p.inventory) ? p.inventory : [],
@@ -3416,6 +3625,7 @@
               billSeq: Math.max(1, Number(p.billSeq) || 1)
             };
             saveState();
+            syncStage();
             renderAll();
             toast("Backup imported");
           } catch {
@@ -3429,21 +3639,29 @@
       document.getElementById("btnToggleThemePref").addEventListener("click", () => {
         state.shop.theme = state.shop.theme === "light" ? "dark" : "light";
         saveState();
-        applyTheme();
+        applyThemeAndPlatform();
       });
 
       document.getElementById("btnViewTermsAgain").addEventListener("click", () => {
-        termsOverlay.classList.remove("hidden");
+        try {
+          localStorage.removeItem(TERMS_KEY);
+        } catch {}
+        chkAgreeTerms.checked = false;
+        chkAgreeAge18.checked = false;
+        updateTermsButtonState();
+        syncStage();
       });
 
       document.getElementById("btnResetDemoData").addEventListener("click", () => {
         const keepAcc = state.account;
         const keepFb = state.firebase;
         const keepShop = state.shop;
+        const keepUnlocked = state.sessionUnlocked;
         state = structuredClone(defaultState);
         state.account = keepAcc;
         state.firebase = keepFb;
         state.shop = keepShop;
+        state.sessionUnlocked = keepUnlocked;
         cartUndoStack = [];
         saveState();
         renderAll();
@@ -3614,6 +3832,7 @@
 
       function renderProfileFields() {
         const shopName = state.account?.shopName || "Zivo Retail Store";
+        const modeLabel = state.shop.uiMode === "android" ? "Android UI" : "Windows UI";
         document.getElementById("setShopName").value = shopName;
         document.getElementById("setUserName").value = state.account?.userName || "";
         document.getElementById("setEmail").value = state.account?.email || "";
@@ -3622,12 +3841,13 @@
         document.getElementById("setGstin").value = state.shop.gstin || "";
         document.getElementById("tagOutShop").textContent = shopName.toUpperCase();
         document.getElementById("prefAccountSummary").textContent = state.account
-          ? `Profile: ${state.account.userName} (${state.account.email}) • Shop: ${state.account.shopName} • Age: ${state.account.age}+ • 100% Free Utility`
-          : "No shop profile created yet • 100% Free Utility";
+          ? `Profile: ${state.account.userName} (${state.account.email}) • Shop: ${state.account.shopName} • Age: ${state.account.age}+ • Mode: ${modeLabel} • 100% Free Utility`
+          : `No shop profile created yet • Mode: ${modeLabel} • 100% Free Utility`;
       }
 
       function renderAll() {
-        applyTheme();
+        applyThemeAndPlatform();
+        syncBottomNav();
         renderHome();
         renderCatalog();
         renderInventory();
@@ -3641,6 +3861,7 @@
         renderProfileFields();
       }
 
+      syncStage();
       renderAll();
     })();
   </script>
