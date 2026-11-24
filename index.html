@@ -5,16 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0d9488" />
   <title>Zivo ShopHelper — Free Local Shop POS, Stock &amp; Khata</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%230d9488'/%3E%3Cstop offset='100%25' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='34' font-family='sans-serif' font-weight='900' fill='%23fff'%3EZ%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" type="image/png" href="FAVICON.png" />
+  <link rel="shortcut icon" type="image/png" href="FAVICON.png" />
   <style>
     :root {
-      --bg-page: #050a14;
-      --bg-card: #0c1424;
-      --bg-card-hover: #111d36;
-      --bg-soft: #131e33;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --border-color: #1b2840;
+      --bg-page: #181b20;
+      --bg-card: #22262e;
+      --bg-card-hover: #292e38;
+      --bg-soft: #2e333d;
+      --text-main: #f3f4f6;
+      --text-muted: #a1a8b5;
+      --border-color: #363c48;
       --teal-header: #0d9488;
       --cyan-top: #22d3ee;
       --green-sales: #22c55e;
@@ -25,13 +26,13 @@
     }
 
     body.light-mode {
-      --bg-page: #f1f5f9;
-      --bg-card: #ffffff;
-      --bg-card-hover: #f8fafc;
-      --bg-soft: #e2e8f0;
-      --text-main: #0f172a;
-      --text-muted: #475569;
-      --border-color: #cbd5e1;
+      --bg-page: #e2e6ec;
+      --bg-card: #eef1f5;
+      --bg-card-hover: #f7f9fb;
+      --bg-soft: #d5dbe3;
+      --text-main: #1e242d;
+      --text-muted: #525b68;
+      --border-color: #bcc4cf;
     }
 
     * {
@@ -57,7 +58,7 @@
       position: fixed;
       inset: 0;
       z-index: 10000;
-      background: radial-gradient(circle at 15% 0%, rgba(13, 148, 136, 0.24), transparent 45%), rgba(3, 7, 18, 0.98);
+      background: rgba(15, 18, 23, 0.96);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -71,9 +72,9 @@
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-top: 3px solid var(--cyan-top);
-      border-radius: 18px;
-      padding: clamp(18px, 3vw, 28px);
-      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.7);
+      border-radius: 16px;
+      padding: clamp(18px, 3vw, 26px);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
     }
 
     .gate-header {
@@ -91,16 +92,13 @@
       gap: 12px;
     }
 
-    .gate-logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #0d9488, #06b6d4);
-      color: #fff;
-      font-weight: 900;
-      font-size: 21px;
-      display: grid;
-      place-items: center;
+    .favicon-img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #ffffff;
+      padding: 2px;
       flex-shrink: 0;
     }
 
@@ -112,6 +110,12 @@
       border-radius: 999px;
       font-size: 11.5px;
       font-weight: 800;
+    }
+
+    body.light-mode .free-pill-badge {
+      color: #15803d;
+      background: rgba(21, 128, 61, 0.12);
+      border-color: rgba(21, 128, 61, 0.3);
     }
 
     .terms-box {
@@ -129,6 +133,10 @@
       color: var(--cyan-top);
       font-size: 13.5px;
       margin: 12px 0 4px;
+    }
+
+    body.light-mode .terms-box h3 {
+      color: #0f766e;
     }
 
     .terms-box h3:first-child {
@@ -168,9 +176,9 @@
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-top: 3px solid var(--cyan-top);
-      border-radius: 18px;
+      border-radius: 16px;
       padding: 24px;
-      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
     }
 
     .auth-tabs {
@@ -179,7 +187,7 @@
       gap: 8px;
       background: var(--bg-soft);
       padding: 5px;
-      border-radius: 11px;
+      border-radius: 10px;
       border: 1px solid var(--border-color);
       margin-bottom: 16px;
     }
@@ -200,63 +208,49 @@
       color: #ffffff;
     }
 
-    /* Top Teal Header Bar */
+    /* Top Header Bar */
     .top-navbar {
-      background: var(--teal-header);
-      color: #ffffff;
-      padding: 9px 22px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 22px;
       position: sticky;
       top: 0;
       z-index: 600;
-      box-shadow: 0 3px 16px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
     }
 
     .top-navbar-inner {
-      max-width: 1380px;
+      max-width: 1320px;
       margin: 0 auto;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
     }
 
     .nav-left {
       display: flex;
       align-items: center;
       gap: 12px;
+      cursor: pointer;
     }
 
-    .brand-icon-square {
-      width: 34px;
-      height: 34px;
-      border-radius: 9px;
-      background: #ffffff;
-      color: #0d9488;
-      font-weight: 900;
-      font-size: 18px;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
+    .brand-title-wrap {
+      display: flex;
+      flex-direction: column;
     }
 
     .brand-name-label {
-      font-size: 15.5px;
+      font-size: 16px;
       font-weight: 800;
-      cursor: pointer;
+      line-height: 1.2;
     }
 
-    .dashboard-pill {
-      background: rgba(6, 12, 24, 0.55);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      color: #f8fafc;
-      padding: 5px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .brand-sub-label {
+      font-size: 11px;
+      color: var(--text-muted);
     }
 
     .nav-right {
@@ -270,8 +264,8 @@
       background: var(--purple-dev);
       color: #ffffff;
       border: none;
-      border-radius: 999px;
-      padding: 6px 14px;
+      border-radius: 8px;
+      padding: 6px 13px;
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
@@ -285,7 +279,7 @@
       color: #ffffff;
       border: none;
       border-radius: 8px;
-      padding: 6px 14px;
+      padding: 6px 13px;
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
@@ -295,87 +289,37 @@
     }
 
     .btn-header-sub {
-      background: rgba(6, 12, 24, 0.35);
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: var(--bg-soft);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 6px 11px;
+      padding: 6px 12px;
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     /* Main Workspace */
     .workspace {
-      max-width: 1380px;
+      max-width: 1320px;
       margin: 0 auto;
       padding: 16px 22px 54px;
     }
 
-    .sub-bar {
+    /* Search & Quick Context Strip */
+    .search-strip-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 6px 12px;
+      margin-bottom: 16px;
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .sub-nav-btns {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .sq-icon-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 9px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      font-size: 14px;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      transition: border-color 0.15s ease;
-    }
-
-    .sq-icon-btn:hover {
-      border-color: var(--cyan-top);
-    }
-
-    .search-strip-box {
-      flex: 1;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 6px 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
       position: relative;
-    }
-
-    .active-users-pill {
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid rgba(34, 197, 94, 0.35);
-      color: #4ade80;
-      font-size: 11.5px;
-      font-weight: 700;
-      padding: 4px 11px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-
-    .active-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 8px #22c55e;
     }
 
     .search-strip-box input {
@@ -384,20 +328,20 @@
       color: var(--text-main);
       font-size: 13px;
       width: 100%;
-      padding: 6px 2px;
+      padding: 6px 4px;
     }
 
     .search-strip-box input:focus {
       outline: none;
     }
 
-    /* Welcome Hero Card */
-    .hero-welcome-card {
-      background: var(--bg-card);
+    /* Wide Live Shop Command Banner (Like Top Bar, Not Narrow Card) */
+    .live-command-bar {
+      background: linear-gradient(90deg, #0f766e 0%, #115e59 55%, var(--bg-card) 100%);
       border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 22px 26px;
-      margin-bottom: 16px;
+      border-radius: 12px;
+      padding: 16px 22px;
+      margin-bottom: 18px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -405,55 +349,74 @@
       gap: 16px;
     }
 
-    .hero-welcome-left h1 {
-      font-size: clamp(20px, 2.5vw, 25px);
+    body.light-mode .live-command-bar {
+      background: linear-gradient(90deg, #0d9488 0%, #0f766e 65%, #1e293b 100%);
+      color: #ffffff;
+    }
+
+    .command-left-kicker {
+      font-size: 10.5px;
       font-weight: 800;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: #99f6e4;
+      margin-bottom: 2px;
+    }
+
+    .command-left h1 {
+      font-size: 21px;
+      font-weight: 900;
+      color: #ffffff;
       margin-bottom: 4px;
     }
 
-    .hero-welcome-left p {
-      font-size: 12.5px;
-      color: var(--text-muted);
+    .command-left p {
+      font-size: 12px;
+      color: #e2e8f0;
     }
 
-    .hero-welcome-right {
+    .command-actions {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 24px;
+      gap: 8px;
+      margin-top: 10px;
     }
 
-    .hero-stat {
-      text-align: right;
+    .command-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
     }
 
-    .hero-stat-label {
+    .cmd-metric-pill {
+      background: rgba(15, 20, 28, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 10px 16px;
+      min-width: 145px;
+    }
+
+    .cmd-metric-label {
       font-size: 10px;
       font-weight: 800;
-      letter-spacing: 0.6px;
-      color: var(--text-muted);
+      letter-spacing: 0.5px;
       text-transform: uppercase;
+      color: #cbd5e1;
     }
 
-    .hero-stat-sales {
-      font-size: 24px;
+    .cmd-metric-val {
+      font-size: 19px;
       font-weight: 900;
-      color: var(--green-sales);
-      margin-top: 2px;
-    }
-
-    .hero-stat-profit {
-      font-size: 24px;
-      font-weight: 900;
-      color: var(--cyan-profit);
       margin-top: 2px;
     }
 
     .alert-banner {
       background: rgba(245, 158, 11, 0.14);
-      border: 1px solid rgba(245, 158, 11, 0.45);
-      color: #fbbf24;
-      border-radius: 12px;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--amber-warn);
+      border-radius: 10px;
       padding: 10px 14px;
       margin-bottom: 16px;
       display: flex;
@@ -465,63 +428,65 @@
       font-weight: 700;
     }
 
-    .modules-heading-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 14px;
+    /* Section Headings (Left-Aligned Under Bar) */
+    .section-group-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      color: var(--text-main);
+      margin: 18px 0 12px;
+      padding-left: 4px;
     }
 
-    .modules-heading {
-      font-size: 15.5px;
-      font-weight: 800;
+    .section-group-title:first-of-type {
+      margin-top: 4px;
     }
 
-    /* 5-Column Cyan-Topped Module Grid */
-    .modules-grid {
+    /* 3-Column Floating Cards Grid */
+    .three-col-grid {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
+      margin-bottom: 8px;
     }
 
-    .module-tile-card {
+    .floating-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-top: 3px solid var(--cyan-top);
-      border-radius: 13px;
-      padding: 22px 12px;
-      min-height: 126px;
+      border-radius: 12px;
+      padding: 18px 16px;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
-      text-align: center;
+      gap: 14px;
+      text-align: left;
       cursor: pointer;
       transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .module-tile-card:hover {
-      transform: translateY(-3px);
+    .floating-card:hover {
+      transform: translateY(-2px);
       background: var(--bg-card-hover);
-      box-shadow: 0 10px 26px rgba(34, 211, 238, 0.14);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
     }
 
-    .module-emoji {
-      font-size: 29px;
+    .floating-card-icon {
+      font-size: 26px;
       line-height: 1;
+      flex-shrink: 0;
     }
 
-    .module-label {
-      font-size: 13.5px;
+    .floating-card-title {
+      font-size: 14px;
       font-weight: 800;
+      color: var(--text-main);
     }
 
-    .module-sub {
-      font-size: 11px;
+    .floating-card-sub {
+      font-size: 11.5px;
       color: var(--text-muted);
+      margin-top: 2px;
     }
 
     /* Inner Module Views */
@@ -542,7 +507,7 @@
     .panel-box {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 14px;
+      border-radius: 12px;
       padding: 16px;
       margin-bottom: 14px;
       position: relative;
@@ -593,7 +558,7 @@
       background: var(--bg-soft);
       color: var(--text-main);
       border: 1px solid var(--border-color);
-      border-radius: 9px;
+      border-radius: 8px;
       padding: 9px 11px;
       font-size: 13px;
       outline: none;
@@ -627,12 +592,13 @@
       justify-content: center;
       gap: 6px;
       border: none;
-      border-radius: 9px;
-      padding: 9px 14px;
+      border-radius: 8px;
+      padding: 8px 13px;
       font-size: 12.5px;
       font-weight: 700;
       cursor: pointer;
       font-family: inherit;
+      text-decoration: none;
     }
 
     .btn:disabled {
@@ -666,7 +632,7 @@
 
     .btn-amber {
       background: var(--amber-warn);
-      color: #0f172a;
+      color: #111827;
     }
 
     .btn-red {
@@ -695,9 +661,9 @@
       border: 1px solid var(--cyan-top);
       border-radius: 10px;
       z-index: 500;
-      max-height: 220px;
+      max-height: 240px;
       overflow-y: auto;
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55);
     }
 
     .dropdown-item {
@@ -781,8 +747,8 @@
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(2, 6, 23, 0.84);
-      backdrop-filter: blur(5px);
+      background: rgba(15, 18, 23, 0.84);
+      backdrop-filter: blur(4px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -800,9 +766,9 @@
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-top: 3px solid var(--cyan-top);
-      border-radius: 16px;
+      border-radius: 14px;
       padding: 20px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
     }
 
     .modal-top {
@@ -835,9 +801,9 @@
       transform: translateY(0);
     }
 
-    @media (max-width: 1060px) {
-      .modules-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+    @media (max-width: 920px) {
+      .three-col-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -846,19 +812,14 @@
       .grid-3 {
         grid-template-columns: 1fr;
       }
-      .modules-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .hero-stat {
-        text-align: left;
-      }
     }
 
-    @media (max-width: 540px) {
+    @media (max-width: 560px) {
+      .three-col-grid,
       .grid-2 {
         grid-template-columns: 1fr;
       }
-      .sub-bar {
+      .search-strip-box {
         flex-direction: column;
         align-items: stretch;
       }
@@ -883,32 +844,32 @@
   </style>
 </head>
 <body>
-  <!-- STEP 1: CLEAR, SAFE TERMS & CONDITIONS GATE (18+ ONLY) -->
+  <!-- STEP 1: TERMS & CONDITIONS GATE (18+ ONLY) -->
   <div id="termsGateOverlay" class="gate-overlay">
     <div class="gate-panel">
       <div class="gate-header">
         <div class="gate-brand">
-          <div class="gate-logo">Z</div>
+          <img src="FAVICON.png" alt="Zivo Logo" class="favicon-img" />
           <div>
             <h1 style="font-size:20px;font-weight:900;">Zivo ShopHelper — Terms &amp; Conditions</h1>
-            <p style="font-size:12px;color:var(--text-muted);">Free retail utility for local shopkeepers • Please read and accept to continue.</p>
+            <p style="font-size:12px;color:var(--text-muted);">Free retail utility for local shops • Please read and accept to continue.</p>
           </div>
         </div>
-        <span class="free-pill-badge">100% FREE UTILITY • NO PAID PLANS</span>
+        <span class="free-pill-badge">100% FREE UTILITY</span>
       </div>
 
       <div class="terms-box" tabindex="0">
-        <h3>1. Free Tool &amp; Age Requirement (18+ Only)</h3>
-        <p>Zivo ShopHelper is a free retail helper for local shops to manage billing, stock, customer khata, returns, and supplier orders. You must be at least 18 years old to accept these terms and set up a shop profile.</p>
+        <h3>1. Free Utility &amp; Age Eligibility (18+ Only)</h3>
+        <p>Zivo ShopHelper is a free retail helper for local shops to manage POS billing, stock inventory, customer khata, returns, and supplier orders. You must be at least 18 years old to accept these terms and create or use a shop profile.</p>
 
-        <h3>2. Support Contact &amp; Help</h3>
-        <p>If you face any bug, problem, or question while using this app, please email us at <strong>zivo.developer@gmail.com</strong> so we can help fix it directly. Nothing in these terms stops anyone from exercising their lawful rights.</p>
+        <h3>2. Support Contact</h3>
+        <p>If you experience any bug, issue, or question while using this app, please email us at <strong>zivo.developer@gmail.com</strong> so we can help fix it directly. Nothing in these terms limits anyone's lawful rights.</p>
 
-        <h3>3. Third-Party Fraud &amp; Calculation Check</h3>
-        <p>We are not responsible for scams, phishing links, or fake payment requests from third parties. Please always double-check item prices, quantities, GST, discounts, and customer balances before finalizing any bill.</p>
+        <h3>3. Third-Party Fraud &amp; Manual Calculation Check</h3>
+        <p>We are not responsible for scams, phishing links, or fake payment requests from third parties. Please always verify item prices, quantities, GST, discounts, and customer credit balances before finalizing any bill.</p>
 
         <h3>4. Local Storage, Firebase Cloud Sync &amp; Profile Details</h3>
-        <p>By default, your shop records are stored locally in your browser on your device—please export a JSON backup regularly so you do not lose data if browser storage is cleared. If you choose to connect your own Firebase Cloud config in Cloud Sync, your records can sync to your Firebase project. For a helpful, personalized experience, we ask for your username, email, and shop name; please note that the creator of Zivo ShopHelper can view account/cloud details when cloud sync or account features are used.</p>
+        <p>By default, your shop data is saved locally in your browser on your device—please export a JSON backup regularly so your data is safe if browser storage is cleared. If you connect your own Firebase Cloud config in Firebase Sync, your shop records can sync to your Firebase Firestore project. For a personalized experience, we ask for your username, email, and shop name; note that the creator of Zivo ShopHelper can view account and cloud details when cloud sync or account features are used.</p>
       </div>
 
       <div class="consent-checks">
@@ -933,7 +894,7 @@
   <div id="authGateOverlay" class="gate-overlay hidden">
     <div class="auth-panel">
       <div class="gate-brand" style="margin-bottom:14px;">
-        <div class="gate-logo" style="width:40px;height:40px;font-size:19px;">Z</div>
+        <img src="FAVICON.png" alt="Zivo Logo" class="favicon-img" />
         <div>
           <h2 style="font-size:18px;font-weight:900;">Zivo ShopHelper</h2>
           <p style="font-size:11.5px;color:var(--text-muted);">Create your free shop profile or sign in (18+ only)</p>
@@ -988,16 +949,20 @@
     </div>
   </div>
 
-  <!-- TOP TEAL HEADER BAR -->
+  <!-- TOP HEADER BAR -->
   <header class="top-navbar">
     <div class="top-navbar-inner">
-      <div class="nav-left">
-        <div id="headerLogoBtn" class="brand-icon-square" title="Main Dashboard">Z</div>
-        <span id="headerBrandTitle" class="brand-name-label">Zivo ShopHelper</span>
-        <span id="headerContextPill" class="dashboard-pill">🏠 Main Dashboard</span>
+      <div id="headerBrandHome" class="nav-left" title="Main Dashboard">
+        <img src="FAVICON.png" alt="Zivo Logo" class="favicon-img" />
+        <div class="brand-title-wrap">
+          <span class="brand-name-label">Zivo ShopHelper</span>
+          <span id="headerContextLabel" class="brand-sub-label">Main Dashboard • Free Shop Utility</span>
+        </div>
       </div>
 
       <div class="nav-right">
+        <button id="btnHeaderHome" class="btn-header-sub" type="button">🏠 Home</button>
+        <button id="btnHeaderBack" class="btn-header-sub" type="button">◀ Back</button>
         <button id="btnHeaderTheme" class="btn-header-sub" type="button">☀️ Light</button>
         <button id="btnOpenAboutDev" class="btn-about-dev" type="button">👤 About Developer</button>
         <button id="btnLogout" class="btn-logout" type="button">🚪 Logout</button>
@@ -1007,37 +972,45 @@
 
   <!-- MAIN WORKSPACE -->
   <main class="workspace">
-    <!-- Sub-Navigation & Search Strip -->
-    <div class="sub-bar">
-      <div class="sub-nav-btns">
-        <button id="btnNavBack" class="sq-icon-btn" title="Back" type="button">◀</button>
-        <button id="btnNavHome" class="sq-icon-btn" title="Main Dashboard" type="button">🏠</button>
-        <button id="btnNavRefresh" class="sq-icon-btn" title="Refresh" type="button">🔄</button>
-      </div>
-
-      <div class="search-strip-box">
-        <span id="cloudStatusBadge" class="active-users-pill"><span class="active-dot"></span> Local Mode Ready</span>
-        <input id="moduleSearchInput" type="search" placeholder="Search Modules, Items, Customers, or Bills..." autocomplete="off" />
-        <div id="moduleSearchDropdown" class="dropdown-list hidden"></div>
-      </div>
+    <!-- Fixed Search Strip (Items, Customers, Bills, Catalog & Modules) -->
+    <div class="search-strip-box">
+      <span id="cloudStatusBadge" class="free-pill-badge">Local Mode</span>
+      <input id="moduleSearchInput" type="search" placeholder="Search items, customers, bills, catalog, or modules..." autocomplete="off" />
+      <button id="btnClearSearch" class="btn btn-dark btn-sm" type="button">Clear</button>
+      <div id="moduleSearchDropdown" class="dropdown-list hidden"></div>
     </div>
 
     <!-- MAIN DASHBOARD VIEW -->
     <section id="view-home" class="app-view">
-      <div class="hero-welcome-card">
-        <div class="hero-welcome-left">
-          <h1 id="welcomeShopHeading">Welcome Back, Zivo Retail Store 👋</h1>
-          <p id="welcomeBreakdown">Select a feature below to begin • Cash: ₹0.00 • UPI: ₹0.00 • Udhaar: ₹0.00</p>
+      <!-- Wide Bar (Like Top Bar) for Live Shop Command + Shop Name + Sales + Actions -->
+      <div class="live-command-bar">
+        <div class="command-left">
+          <div class="command-left-kicker">LIVE SHOP COMMAND</div>
+          <h1 id="welcomeShopHeading">Zivo Shop Helper</h1>
+          <p id="welcomeBreakdown">Today's Sales: ₹0.00 • Cash: ₹0.00 • UPI: ₹0.00 • Udhaar: ₹0.00</p>
+          <div class="command-actions">
+            <button id="btnQuickNewBill" class="btn btn-green btn-sm" type="button">+ New Bill</button>
+            <button id="btnQuickAddItem" class="btn btn-amber btn-sm" type="button">+ Add Item</button>
+            <button id="btnQuickCatalog" class="btn btn-dark btn-sm" type="button">📚 Catalog</button>
+          </div>
         </div>
 
-        <div class="hero-welcome-right">
-          <div class="hero-stat">
-            <div class="hero-stat-label">TODAY'S TOTAL SALES</div>
-            <div id="dashTodaySales" class="hero-stat-sales">₹0.00</div>
+        <div class="command-metrics">
+          <div class="cmd-metric-pill">
+            <div class="cmd-metric-label">TODAY'S SALES</div>
+            <div id="dashTodaySales" class="cmd-metric-val" style="color:#4ade80;">₹0.00</div>
           </div>
-          <div class="hero-stat">
-            <div class="hero-stat-label">TODAY'S TOTAL PROFIT</div>
-            <div id="dashTodayProfit" class="hero-stat-profit">₹0.00</div>
+          <div class="cmd-metric-pill">
+            <div class="cmd-metric-label">TODAY'S PROFIT</div>
+            <div id="dashTodayProfit" class="cmd-metric-val" style="color:#22d3ee;">₹0.00</div>
+          </div>
+          <div class="cmd-metric-pill">
+            <div class="cmd-metric-label">PENDING UDHAAR</div>
+            <div id="dashPendingUdhaar" class="cmd-metric-val" style="color:#fbbf24;">₹0.00</div>
+          </div>
+          <div class="cmd-metric-pill">
+            <div class="cmd-metric-label">LOW STOCK ITEMS</div>
+            <div id="dashLowStockCount" class="cmd-metric-val" style="color:#f8fafc;">0</div>
           </div>
         </div>
       </div>
@@ -1047,93 +1020,186 @@
         <button id="btnBannerRestock" class="btn btn-amber btn-sm" type="button">View Stock</button>
       </div>
 
-      <div class="modules-heading-row">
-        <h2 class="modules-heading">Shop Management Modules</h2>
-        <div class="btn-row">
-          <button id="btnQuickNewBill" class="btn btn-teal btn-sm" type="button">+ New Bill</button>
-          <button id="btnQuickAddStock" class="btn btn-dark btn-sm" type="button">+ Add Item</button>
-          <button id="btnQuickSyncNow" class="btn btn-dark btn-sm" type="button">☁️ Cloud Sync</button>
+      <!-- SECTION 1: CORE OPERATIONS (Left-Aligned Heading, 3 Cards Per Row) -->
+      <h2 class="section-group-title">Core Operations</h2>
+
+      <!-- Row 1 of Core Operations (3 Floating Cards) -->
+      <div class="three-col-grid">
+        <div class="floating-card" data-view="billing">
+          <div class="floating-card-icon">🧾</div>
+          <div>
+            <div class="floating-card-title">POS Billing</div>
+            <div class="floating-card-sub">Create bills, GST &amp; print receipts</div>
+          </div>
+        </div>
+        <div class="floating-card" data-view="inventory">
+          <div class="floating-card-icon">📦</div>
+          <div>
+            <div class="floating-card-title">Stock Inventory</div>
+            <div id="subInvCount" class="floating-card-sub">0 items in stock</div>
+          </div>
+        </div>
+        <div class="floating-card" data-view="customers">
+          <div class="floating-card-icon">💰</div>
+          <div>
+            <div class="floating-card-title">Customer Khata</div>
+            <div id="subKhataCount" class="floating-card-sub">0 credit accounts</div>
+          </div>
         </div>
       </div>
 
-      <!-- 3 Rows x 5 Columns Grid -->
-      <div class="modules-grid">
-        <div class="module-tile-card" data-view="inventory">
-          <div class="module-emoji">📦</div>
-          <div class="module-label">Stock Inventory</div>
-          <div id="tileStockSub" class="module-sub">0 Items</div>
+      <!-- Row 2 of Core Operations (3 Floating Cards: Services, Returns, Sales History) -->
+      <div class="three-col-grid">
+        <div class="floating-card" data-view="services">
+          <div class="floating-card-icon">🛠️</div>
+          <div>
+            <div class="floating-card-title">Services Manager</div>
+            <div id="subSrvCount" class="floating-card-sub">0 shop services</div>
+          </div>
         </div>
-        <div class="module-tile-card" data-view="services">
-          <div class="module-emoji">🛠️</div>
-          <div class="module-label">Services Manager</div>
-          <div id="tileSrvSub" class="module-sub">Repairs &amp; Fees</div>
+        <div class="floating-card" data-view="returns">
+          <div class="floating-card-icon">🔄</div>
+          <div>
+            <div class="floating-card-title">Customer Returns</div>
+            <div id="subRetCount" class="floating-card-sub">0 returns recorded</div>
+          </div>
         </div>
-        <div class="module-tile-card" data-view="billing">
-          <div class="module-emoji">🧾</div>
-          <div class="module-label">Bill Creator</div>
-          <div class="module-sub">POS, GST &amp; UPI QR</div>
+        <div class="floating-card" data-view="history">
+          <div class="floating-card-icon">📜</div>
+          <div>
+            <div class="floating-card-title">Sales History &amp; Bills</div>
+            <div id="subBillsCount" class="floating-card-sub">0 saved bills</div>
+          </div>
         </div>
-        <div class="module-tile-card" data-view="returns">
-          <div class="module-emoji">🔄</div>
-          <div class="module-label">Customer Returns</div>
-          <div class="module-sub">Refunds &amp; Restock</div>
-        </div>
-        <div class="module-tile-card" data-view="ai">
-          <div class="module-emoji">🤖</div>
-          <div class="module-label">AI Business Assistant</div>
-          <div class="module-sub">Stock, Sales &amp; Khata</div>
-        </div>
+      </div>
 
-        <div class="module-tile-card" data-view="customers">
-          <div class="module-emoji">💰</div>
-          <div class="module-label">Credit Manager</div>
-          <div id="tileUdhaarSub" class="module-sub">₹0.00 Udhaar</div>
-        </div>
-        <div class="module-tile-card" data-view="history">
-          <div class="module-emoji">📜</div>
-          <div class="module-label">Sales History</div>
-          <div id="tileBillsSub" class="module-sub">0 Bills</div>
-        </div>
-        <div class="module-tile-card" data-view="suppliers">
-          <div class="module-emoji">🚚</div>
-          <div class="module-label">Suppliers &amp; Orders</div>
-          <div class="module-sub">Wholesale Orders</div>
-        </div>
-        <div class="module-tile-card" data-view="studio">
-          <div class="module-emoji">📱</div>
-          <div class="module-label">Status Creator</div>
-          <div class="module-sub">Offers &amp; Catalog</div>
-        </div>
-        <div class="module-tile-card" data-view="settings">
-          <div class="module-emoji">🏪</div>
-          <div class="module-label">Business Setup</div>
-          <div class="module-sub">Shop, UPI &amp; Backup</div>
-        </div>
+      <!-- SECTION 2: GROWTH & TOOLS (Left-Aligned Heading, 3 Cards Per Row) -->
+      <h2 class="section-group-title">Growth &amp; Tools</h2>
 
-        <div class="module-tile-card" data-view="quicksettings">
-          <div class="module-emoji">⚙️</div>
-          <div class="module-label">Quick Preferences</div>
-          <div class="module-sub">Theme, Terms &amp; Reset</div>
+      <!-- Row 1 of Growth & Tools (3 Floating Cards: Catalog, Suppliers, AI Assistant) -->
+      <div class="three-col-grid">
+        <div class="floating-card" data-view="catalog">
+          <div class="floating-card-icon">📚</div>
+          <div>
+            <div class="floating-card-title">Product Catalog</div>
+            <div class="floating-card-sub">Browse, filter &amp; quick-bill items</div>
+          </div>
         </div>
-        <div class="module-tile-card" data-modal="calcModal">
-          <div class="module-emoji">🔢</div>
-          <div class="module-label">Counter Calculator</div>
-          <div class="module-sub">Fast Math Pad</div>
+        <div class="floating-card" data-view="suppliers">
+          <div class="floating-card-icon">🚚</div>
+          <div>
+            <div class="floating-card-title">Suppliers &amp; Orders</div>
+            <div id="subSupCount" class="floating-card-sub">0 purchase orders</div>
+          </div>
         </div>
-        <div class="module-tile-card" data-view="labels">
-          <div class="module-emoji">🏷️</div>
-          <div class="module-label">Price Tags &amp; Offers</div>
-          <div class="module-sub">Shelf Price Cards</div>
+        <div class="floating-card" data-view="ai">
+          <div class="floating-card-icon">🤖</div>
+          <div>
+            <div class="floating-card-title">AI Business Assistant</div>
+            <div class="floating-card-sub">Sales, low stock &amp; udhaar helper</div>
+          </div>
         </div>
-        <div class="module-tile-card" data-modal="eodModal">
-          <div class="module-emoji">💵</div>
-          <div class="module-label">Cash &amp; EOD Report</div>
-          <div class="module-sub">Daily Closing</div>
+      </div>
+
+      <!-- Row 2 of Growth & Tools (3 Floating Cards: Status Creator, Price Tags, Firebase Sync) -->
+      <div class="three-col-grid">
+        <div class="floating-card" data-view="studio">
+          <div class="floating-card-icon">📱</div>
+          <div>
+            <div class="floating-card-title">Status Creator</div>
+            <div class="floating-card-sub">WhatsApp shop updates &amp; offers</div>
+          </div>
         </div>
-        <div class="module-tile-card" data-view="firebase">
-          <div class="module-emoji">🔥</div>
-          <div class="module-label">Firebase Cloud Sync</div>
-          <div class="module-sub">Cloud Firestore Backup</div>
+        <div class="floating-card" data-view="labels">
+          <div class="floating-card-icon">🏷️</div>
+          <div>
+            <div class="floating-card-title">Price Tags &amp; Offers</div>
+            <div class="floating-card-sub">Shelf price labels</div>
+          </div>
+        </div>
+        <div class="floating-card" data-view="firebase">
+          <div class="floating-card-icon">🔥</div>
+          <div>
+            <div class="floating-card-title">Firebase Cloud Sync</div>
+            <div class="floating-card-sub">Sync data to Cloud Firestore</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3 of Growth & Tools (Moved from Top Header: Billing, Calculator, EOD, Desktop Setup, Settings) -->
+      <div class="three-col-grid">
+        <div class="floating-card" data-view="billing">
+          <div class="floating-card-icon">🧮</div>
+          <div>
+            <div class="floating-card-title">Billing Counter</div>
+            <div class="floating-card-sub">Quick counter invoice screen</div>
+          </div>
+        </div>
+        <div class="floating-card" data-modal="calcModal">
+          <div class="floating-card-icon">🔢</div>
+          <div>
+            <div class="floating-card-title">Calculator</div>
+            <div class="floating-card-sub">Fast math pad</div>
+          </div>
+        </div>
+        <div class="floating-card" data-modal="eodModal">
+          <div class="floating-card-icon">💵</div>
+          <div>
+            <div class="floating-card-title">EOD Report</div>
+            <div class="floating-card-sub">End-of-day cash &amp; sales summary</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="three-col-grid">
+        <div class="floating-card" data-view="settings">
+          <div class="floating-card-icon">🖥️</div>
+          <div>
+            <div class="floating-card-title">Desktop &amp; Shop Setup</div>
+            <div class="floating-card-sub">Shop details, UPI &amp; JSON backup</div>
+          </div>
+        </div>
+        <div class="floating-card" data-view="quicksettings">
+          <div class="floating-card-icon">⚙️</div>
+          <div>
+            <div class="floating-card-title">Settings &amp; Preferences</div>
+            <div class="floating-card-sub">Theme, terms &amp; reset options</div>
+          </div>
+        </div>
+        <div class="floating-card" data-modal="aboutDevModal">
+          <div class="floating-card-icon">👨‍💻</div>
+          <div>
+            <div class="floating-card-title">About Developer</div>
+            <div class="floating-card-sub">11-yr solo AI app builder</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCT CATALOG VIEW -->
+    <section id="view-catalog" class="app-view hidden">
+      <div class="view-head">
+        <h2>📚 Product &amp; Service Catalog</h2>
+        <div class="btn-row">
+          <input id="catalogFilterInput" type="search" placeholder="Filter catalog items..." style="width:220px;" />
+          <button id="btnGoInvFromCatalog" class="btn btn-teal btn-sm" type="button">+ Add Product</button>
+        </div>
+      </div>
+      <div class="panel-box">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type / SKU</th>
+                <th>Rate</th>
+                <th>Stock / Info</th>
+                <th>GST</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="catalogTableBody"></tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -1265,7 +1331,7 @@
     <!-- BILL CREATOR VIEW -->
     <section id="view-billing" class="app-view hidden">
       <div class="view-head">
-        <h2>🧾 Bill Creator</h2>
+        <h2>🧾 POS Billing</h2>
         <button id="btnClearCart" class="btn btn-red btn-sm" type="button">Clear Bill</button>
       </div>
       <div class="split-grid">
@@ -1481,7 +1547,7 @@
     <!-- CREDIT MANAGER VIEW -->
     <section id="view-customers" class="app-view hidden">
       <div class="view-head">
-        <h2>💰 Credit Manager (Khata)</h2>
+        <h2>💰 Customer Khata</h2>
         <span id="khataTotalBadge" class="free-pill-badge">Total Udhaar: ₹0.00</span>
       </div>
       <div class="panel-box">
@@ -1524,7 +1590,7 @@
     <!-- SALES HISTORY VIEW -->
     <section id="view-history" class="app-view hidden">
       <div class="view-head">
-        <h2>📜 Sales History</h2>
+        <h2>📜 Sales History &amp; Bills</h2>
         <div class="btn-row">
           <select id="historyModeFilter" style="width:auto;">
             <option value="ALL">All Modes</option>
@@ -1653,7 +1719,7 @@
     <!-- BUSINESS SETUP VIEW -->
     <section id="view-settings" class="app-view hidden">
       <div class="view-head">
-        <h2>🏪 Business Setup</h2>
+        <h2>🖥️ Desktop &amp; Shop Setup</h2>
       </div>
       <div class="panel-box">
         <h3>Store Profile &amp; Account Details</h3>
@@ -1701,7 +1767,7 @@
     <!-- QUICK PREFERENCES VIEW -->
     <section id="view-quicksettings" class="app-view hidden">
       <div class="view-head">
-        <h2>⚙️ Quick Preferences</h2>
+        <h2>⚙️ Settings &amp; Preferences</h2>
       </div>
       <div class="panel-box">
         <h3>Account &amp; Storage Summary</h3>
@@ -1831,28 +1897,29 @@
     import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     (function () {
-      const STORAGE_KEY = "zivo_shophelper_free_v3";
-      const TERMS_KEY = "zivo_shophelper_terms_accepted_v3";
+      const STORAGE_KEY = "zivo_shophelper_free_v4";
+      const TERMS_KEY = "zivo_shophelper_terms_accepted_v4";
 
       const VIEW_TITLES = {
-        home: "🏠 Main Dashboard",
-        inventory: "📦 Stock Inventory",
-        services: "🛠️ Services Manager",
-        billing: "🧾 Bill Creator",
-        returns: "🔄 Customer Returns",
-        ai: "🤖 AI Business Assistant",
-        customers: "💰 Credit Manager",
-        history: "📜 Sales History",
-        suppliers: "🚚 Suppliers & Orders",
-        studio: "📱 Status Creator",
-        settings: "🏪 Business Setup",
-        quicksettings: "⚙️ Quick Preferences",
-        labels: "🏷️ Price Tags & Offers",
-        firebase: "🔥 Firebase Cloud Sync"
+        home: "Main Dashboard • Free Shop Utility",
+        catalog: "Product & Service Catalog",
+        inventory: "Stock Inventory",
+        services: "Services Manager",
+        billing: "POS Billing",
+        returns: "Customer Returns",
+        ai: "AI Business Assistant",
+        customers: "Customer Khata",
+        history: "Sales History & Bills",
+        suppliers: "Suppliers & Orders",
+        studio: "Status Creator",
+        settings: "Desktop & Shop Setup",
+        quicksettings: "Settings & Preferences",
+        labels: "Price Tags & Offers",
+        firebase: "Firebase Cloud Sync"
       };
 
       const defaultState = {
-        account: null, // { userName, email, shopName, age, pin }
+        account: null,
         shop: {
           city: "Patna, Bihar",
           upiId: "",
@@ -1886,8 +1953,8 @@
         try {
           const raw =
             localStorage.getItem(STORAGE_KEY) ||
-            localStorage.getItem("zivo_shophelper_saas_v1") ||
-            localStorage.getItem("zivo_shop_helper_master_v2");
+            localStorage.getItem("zivo_shophelper_free_v3") ||
+            localStorage.getItem("zivo_shophelper_saas_v1");
           if (!raw) return structuredClone(defaultState);
           const p = JSON.parse(raw);
           const acc = p.account ? { ...p.account } : null;
@@ -1944,7 +2011,7 @@
         document.getElementById("btnHeaderTheme").textContent = isLight ? "🌙 Dark" : "☀️ Light";
       }
 
-      // Gate Flow
+      // Terms & Auth Gates
       const termsOverlay = document.getElementById("termsGateOverlay");
       const authOverlay = document.getElementById("authGateOverlay");
       const chkAgreeTerms = document.getElementById("chkAgreeTerms");
@@ -1983,7 +2050,6 @@
         }
       }
 
-      // Auth Tabs (Create Profile vs Login)
       const tabSignupBtn = document.getElementById("tabSignupBtn");
       const tabLoginBtn = document.getElementById("tabLoginBtn");
       const signupFields = document.getElementById("signupFields");
@@ -2050,7 +2116,7 @@
         toast(`Signed in to ${state.account.shopName}`);
       });
 
-      // Navigation & Header
+      // Navigation
       function navigateTo(viewKey, record = true) {
         if (!VIEW_TITLES[viewKey]) viewKey = "home";
         if (record && activeView !== viewKey) {
@@ -2060,33 +2126,28 @@
         activeView = viewKey;
         document.querySelectorAll(".app-view").forEach((v) => v.classList.add("hidden"));
         document.getElementById("view-" + viewKey)?.classList.remove("hidden");
-        document.getElementById("headerContextPill").textContent = VIEW_TITLES[viewKey];
+        document.getElementById("headerContextLabel").textContent = VIEW_TITLES[viewKey];
         renderAll();
       }
 
-      document.querySelectorAll(".module-tile-card").forEach((tile) => {
-        tile.addEventListener("click", () => {
-          const v = tile.getAttribute("data-view");
-          const m = tile.getAttribute("data-modal");
+      document.querySelectorAll(".floating-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          const v = card.getAttribute("data-view");
+          const m = card.getAttribute("data-modal");
           if (v) navigateTo(v);
           else if (m) openModal(m);
         });
       });
 
-      document.getElementById("headerLogoBtn").addEventListener("click", () => navigateTo("home"));
-      document.getElementById("headerBrandTitle").addEventListener("click", () => navigateTo("home"));
-      document.getElementById("btnNavHome").addEventListener("click", () => navigateTo("home"));
-      document.getElementById("btnNavBack").addEventListener("click", () => {
+      document.getElementById("headerBrandHome").addEventListener("click", () => navigateTo("home"));
+      document.getElementById("btnHeaderHome").addEventListener("click", () => navigateTo("home"));
+      document.getElementById("btnHeaderBack").addEventListener("click", () => {
         if (viewHistory.length > 1) {
           viewHistory.pop();
           navigateTo(viewHistory[viewHistory.length - 1], false);
         } else {
           navigateTo("home", false);
         }
-      });
-      document.getElementById("btnNavRefresh").addEventListener("click", () => {
-        renderAll();
-        toast("Refreshed");
       });
 
       document.getElementById("btnHeaderTheme").addEventListener("click", () => {
@@ -2096,9 +2157,10 @@
       });
 
       document.getElementById("btnQuickNewBill").addEventListener("click", () => navigateTo("billing"));
-      document.getElementById("btnQuickAddStock").addEventListener("click", () => navigateTo("inventory"));
-      document.getElementById("btnQuickSyncNow").addEventListener("click", () => navigateTo("firebase"));
+      document.getElementById("btnQuickAddItem").addEventListener("click", () => navigateTo("inventory"));
+      document.getElementById("btnQuickCatalog").addEventListener("click", () => navigateTo("catalog"));
       document.getElementById("btnBannerRestock").addEventListener("click", () => navigateTo("inventory"));
+      document.getElementById("btnGoInvFromCatalog").addEventListener("click", () => navigateTo("inventory"));
 
       document.getElementById("btnOpenAboutDev").addEventListener("click", () => openModal("aboutDevModal"));
       document.getElementById("btnLogout").addEventListener("click", () => {
@@ -2121,47 +2183,108 @@
         });
       });
 
-      // Global Search
+      // Fixed Search Across Items, Customers, Bills, Catalog & Modules
       const moduleSearchInput = document.getElementById("moduleSearchInput");
       const moduleSearchDropdown = document.getElementById("moduleSearchDropdown");
-      moduleSearchInput.addEventListener("input", () => {
+      const btnClearSearch = document.getElementById("btnClearSearch");
+
+      function runGlobalSearch() {
         const q = moduleSearchInput.value.trim().toLowerCase();
         if (!q) {
           moduleSearchDropdown.classList.add("hidden");
           return;
         }
         const results = [];
+
         Object.entries(VIEW_TITLES).forEach(([k, label]) => {
-          if (label.toLowerCase().includes(q)) {
-            results.push({ label, badge: "Module", go: () => navigateTo(k) });
+          if (label.toLowerCase().includes(q) || k.toLowerCase().includes(q)) {
+            results.push({ label: `Module: ${label}`, badge: "Open", go: () => navigateTo(k) });
           }
         });
+
         state.inventory.forEach((item) => {
           if (item.name.toLowerCase().includes(q) || (item.sku || "").toLowerCase().includes(q)) {
-            results.push({ label: `Item: ${item.name} (${item.stock})`, badge: formatINR(item.price), go: () => navigateTo("inventory") });
+            results.push({
+              label: `Item: ${item.name} (Stock: ${item.stock})`,
+              badge: formatINR(item.price),
+              go: () => {
+                addCartLine({ name: item.name, qty: 1, price: item.price, costPrice: item.costPrice || 0, gst: item.gst || 0 });
+                navigateTo("billing");
+                toast(`Added ${item.name} to bill`);
+              }
+            });
           }
         });
+
+        state.services.forEach((srv) => {
+          if (srv.name.toLowerCase().includes(q)) {
+            results.push({
+              label: `Service: ${srv.name}`,
+              badge: formatINR(srv.fee),
+              go: () => {
+                addCartLine({ name: srv.name, qty: 1, price: srv.fee, costPrice: 0, gst: srv.gst || 0 });
+                navigateTo("billing");
+              }
+            });
+          }
+        });
+
         state.customers.forEach((c) => {
           if (c.name.toLowerCase().includes(q) || (c.phone || "").includes(q)) {
-            results.push({ label: `Customer: ${c.name}`, badge: `Due ${formatINR(c.balance)}`, go: () => navigateTo("customers") });
+            results.push({
+              label: `Customer: ${c.name}`,
+              badge: `Due ${formatINR(c.balance)}`,
+              go: () => navigateTo("customers")
+            });
           }
         });
+
+        state.bills.forEach((b) => {
+          const itemMatch = Array.isArray(b.items) && b.items.some((it) => (it.name || "").toLowerCase().includes(q));
+          if (
+            (b.billNo || "").toLowerCase().includes(q) ||
+            (b.customerName || "").toLowerCase().includes(q) ||
+            (b.mode || "").toLowerCase().includes(q) ||
+            itemMatch
+          ) {
+            results.push({
+              label: `Bill ${b.billNo} • ${b.customerName} (${b.mode})`,
+              badge: formatINR(b.grandTotal),
+              go: () => {
+                state.cart = structuredClone(b.items || []);
+                document.getElementById("billCustName").value = b.customerName || "";
+                document.getElementById("billPayMode").value = b.mode || "Cash";
+                document.getElementById("billDiscount").value = b.discount || 0;
+                navigateTo("billing");
+              }
+            });
+          }
+        });
+
         if (!results.length) {
-          moduleSearchDropdown.innerHTML = `<div class="dropdown-item"><span>No matches found</span></div>`;
+          moduleSearchDropdown.innerHTML = `<div class="dropdown-item"><span>No item, customer, bill, or module matches "${esc(q)}"</span></div>`;
         } else {
           moduleSearchDropdown.innerHTML = results
-            .slice(0, 8)
+            .slice(0, 10)
             .map((r) => `<div class="dropdown-item"><span>${esc(r.label)}</span><strong>${esc(r.badge)}</strong></div>`)
             .join("");
           moduleSearchDropdown.querySelectorAll(".dropdown-item").forEach((row, idx) => {
             row.addEventListener("click", () => {
               results[idx].go();
-              moduleSearchInput.value = "";
               moduleSearchDropdown.classList.add("hidden");
             });
           });
         }
         moduleSearchDropdown.classList.remove("hidden");
+      }
+
+      moduleSearchInput.addEventListener("input", runGlobalSearch);
+      moduleSearchInput.addEventListener("focus", () => {
+        if (moduleSearchInput.value.trim()) runGlobalSearch();
+      });
+      btnClearSearch.addEventListener("click", () => {
+        moduleSearchInput.value = "";
+        moduleSearchDropdown.classList.add("hidden");
       });
 
       // Dashboard & Metrics
@@ -2171,8 +2294,8 @@
       }
 
       function renderHome() {
-        const shopName = state.account?.shopName || "Zivo Retail Store";
-        document.getElementById("welcomeShopHeading").textContent = `Welcome Back, ${shopName} 👋`;
+        const shopName = state.account?.shopName || "Zivo Shop Helper";
+        document.getElementById("welcomeShopHeading").textContent = shopName;
 
         const today = getTodayDateStr();
         const todayBills = state.bills.filter((b) => (b.date || "").slice(0, 10) === today);
@@ -2192,31 +2315,92 @@
           else if (b.mode === "Udhaar") udhaarBillSum += amt;
         });
 
+        const totalUdhaar = state.customers.reduce((s, c) => s + (Number(c.balance) || 0), 0);
+        const lowItems = state.inventory.filter((i) => Number(i.stock) <= Number(i.lowThreshold ?? 5));
+
         document.getElementById("welcomeBreakdown").textContent =
-          `Select a feature below to begin • Cash: ${formatINR(cashSum)} • UPI: ${formatINR(upiSum)} • Udhaar: ${formatINR(udhaarBillSum)}`;
+          `Today's Sales: ${formatINR(salesSum)} • Cash: ${formatINR(cashSum)} • UPI: ${formatINR(upiSum)} • Udhaar: ${formatINR(udhaarBillSum)}`;
         document.getElementById("dashTodaySales").textContent = formatINR(salesSum);
         document.getElementById("dashTodayProfit").textContent = formatINR(profitSum);
+        document.getElementById("dashPendingUdhaar").textContent = formatINR(totalUdhaar);
+        document.getElementById("dashLowStockCount").textContent = String(lowItems.length);
 
-        const totalUdhaar = state.customers.reduce((s, c) => s + (Number(c.balance) || 0), 0);
-        document.getElementById("tileStockSub").textContent = `${state.inventory.length} Items`;
-        document.getElementById("tileSrvSub").textContent = `${state.services.length} Services`;
-        document.getElementById("tileUdhaarSub").textContent = `${formatINR(totalUdhaar)} Due`;
-        document.getElementById("tileBillsSub").textContent = `${state.bills.length} Bills`;
+        document.getElementById("subInvCount").textContent = `${state.inventory.length} items in stock`;
+        document.getElementById("subKhataCount").textContent = `${state.customers.length} credit accounts`;
+        document.getElementById("subSrvCount").textContent = `${state.services.length} shop services`;
+        document.getElementById("subRetCount").textContent = `${state.returns.length} returns recorded`;
+        document.getElementById("subBillsCount").textContent = `${state.bills.length} saved bills`;
+        document.getElementById("subSupCount").textContent = `${state.suppliers.length} purchase orders`;
 
-        const lowItems = state.inventory.filter((i) => Number(i.stock) <= Number(i.lowThreshold ?? 5));
         const banner = document.getElementById("lowStockBanner");
         if (lowItems.length > 0) {
           banner.classList.remove("hidden");
           document.getElementById("lowStockBannerText").textContent =
-            `⚠️ Low stock on ${lowItems.length} item(s): ${lowItems.map((i) => `${i.name} (${i.stock})`).join(", ")}`;
+            `Low stock alert on ${lowItems.length} item(s): ${lowItems.map((i) => `${i.name} (${i.stock})`).join(", ")}`;
         } else {
           banner.classList.add("hidden");
         }
 
         const fbReady = Boolean(state.firebase.apiKey && state.firebase.projectId && state.firebase.appId);
-        document.getElementById("cloudStatusBadge").innerHTML = fbReady
-          ? `<span class="active-dot"></span> Firebase Cloud Ready`
-          : `<span class="active-dot"></span> Local Mode Ready`;
+        document.getElementById("cloudStatusBadge").textContent = fbReady ? "Firebase Cloud Ready" : "Local Mode";
+      }
+
+      // Catalog View
+      document.getElementById("catalogFilterInput").addEventListener("input", renderCatalog);
+
+      function renderCatalog() {
+        const q = (document.getElementById("catalogFilterInput").value || "").trim().toLowerCase();
+        const combined = [
+          ...state.inventory.map((i) => ({
+            kind: "inv",
+            id: i.id,
+            name: i.name,
+            meta: i.sku ? `Product • SKU: ${i.sku}` : "Product",
+            price: i.price,
+            costPrice: i.costPrice || 0,
+            stockText: `${i.stock} in stock`,
+            gst: i.gst || 0
+          })),
+          ...state.services.map((s) => ({
+            kind: "srv",
+            id: s.id,
+            name: s.name,
+            meta: "Shop Service",
+            price: s.fee,
+            costPrice: 0,
+            stockText: "Service Fee",
+            gst: s.gst || 0
+          }))
+        ].filter((row) => !q || row.name.toLowerCase().includes(q) || row.meta.toLowerCase().includes(q));
+
+        const tbody = document.getElementById("catalogTableBody");
+        if (!combined.length) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No items in catalog yet. Add products in Stock Inventory or services in Services Manager.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = combined
+          .map(
+            (r, idx) => `
+            <tr>
+              <td><strong>${esc(r.name)}</strong></td>
+              <td>${esc(r.meta)}</td>
+              <td>${formatINR(r.price)}</td>
+              <td>${esc(r.stockText)}</td>
+              <td>${r.gst}%</td>
+              <td><button class="btn btn-teal btn-xs cat-bill-btn" data-idx="${idx}" type="button">+ Add to Bill</button></td>
+            </tr>`
+          )
+          .join("");
+
+        tbody.querySelectorAll(".cat-bill-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const item = combined[Number(btn.getAttribute("data-idx"))];
+            if (!item) return;
+            addCartLine({ name: item.name, qty: 1, price: item.price, costPrice: item.costPrice, gst: item.gst });
+            navigateTo("billing");
+            toast(`Added ${item.name} to bill`);
+          });
+        });
       }
 
       // Inventory
@@ -2276,7 +2460,7 @@
                 <td>${formatINR(i.price)}</td>
                 <td>${i.stock}</td>
                 <td>${i.gst}%</td>
-                <td style="font-weight:800;color:${isLow ? "#fbbf24" : "#4ade80"};">${isLow ? "Low Stock" : "In Stock"}</td>
+                <td style="font-weight:800;color:${isLow ? "#f59e0b" : "#22c55e"};">${isLow ? "Low Stock" : "In Stock"}</td>
                 <td>
                   <div class="btn-row">
                     <button class="btn btn-teal btn-xs bill-inv" data-id="${i.id}" type="button">+ Bill</button>
@@ -2328,8 +2512,7 @@
         document.getElementById("srvName").value = "";
         document.getElementById("srvFee").value = "";
         saveState();
-        renderServices();
-        renderHome();
+        renderAll();
         toast("Service added");
       });
 
@@ -2368,8 +2551,7 @@
         } else if (dBtn) {
           state.services = state.services.filter((x) => x.id !== dBtn.getAttribute("data-id"));
           saveState();
-          renderServices();
-          renderHome();
+          renderAll();
         }
       });
 
@@ -2460,7 +2642,6 @@
         });
       });
 
-      // Customer autocomplete in Billing
       const billCustName = document.getElementById("billCustName");
       const billCustDropdown = document.getElementById("billCustDropdown");
       billCustName.addEventListener("input", () => {
@@ -2726,7 +2907,7 @@
                 <tr>
                   <td><strong>${esc(c.name)}</strong></td>
                   <td>${esc(c.phone || "-")}</td>
-                  <td style="color:#fbbf24;font-weight:800;">${formatINR(c.balance)}</td>
+                  <td style="color:#f59e0b;font-weight:800;">${formatINR(c.balance)}</td>
                   <td><input type="number" min="1" step="any" placeholder="₹ Amt" class="khata-amt-input" data-id="${c.id}" style="max-width:110px;padding:5px 8px;font-size:12px;" /></td>
                   <td>
                     <div class="btn-row">
@@ -2859,7 +3040,7 @@
         state.suppliers.push({ id: "sup-" + Date.now(), date: new Date().toISOString(), supplier, items, total, status: "Ordered" });
         ["supName", "supItems", "supCost"].forEach((id) => (document.getElementById(id).value = ""));
         saveState();
-        renderSuppliers();
+        renderAll();
         toast("Order recorded");
       });
 
@@ -2900,7 +3081,7 @@
         } else if (dBtn) {
           state.suppliers = state.suppliers.filter((x) => x.id !== dBtn.getAttribute("data-id"));
           saveState();
-          renderSuppliers();
+          renderAll();
         }
       });
 
@@ -3231,6 +3412,7 @@
       function renderAll() {
         applyTheme();
         renderHome();
+        renderCatalog();
         renderInventory();
         renderServices();
         renderBilling();
