@@ -944,6 +944,137 @@
         box-shadow: none;
       }
     }
+
+    /* Zivo UI refresh: clearer hierarchy, accessible focus, and polished quick actions */
+    :focus-visible {
+      outline: 2px solid var(--cyan-accent);
+      outline-offset: 3px;
+    }
+    button, .module-tile { -webkit-tap-highlight-color: transparent; }
+    .top-navbar { backdrop-filter: blur(14px); }
+    .module-tile {
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 22px rgba(0,0,0,.14);
+    }
+    .module-tile::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--teal-bar), var(--cyan-accent));
+      opacity: .0;
+      transition: opacity .18s ease;
+    }
+    .module-tile:hover::after { opacity: 1; }
+    .welcome-banner {
+      background:
+        radial-gradient(circle at 88% 10%, rgba(34,211,238,.10), transparent 30%),
+        var(--bg-card);
+      box-shadow: 0 12px 28px rgba(0,0,0,.12);
+    }
+    .panel-box { box-shadow: 0 8px 22px rgba(0,0,0,.10); }
+    .toolbar-strip { box-shadow: 0 8px 20px rgba(0,0,0,.10); }
+    .floating-actions {
+      position: fixed;
+      right: 22px;
+      bottom: 86px;
+      z-index: 749;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 9px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px) scale(.98);
+      transform-origin: bottom right;
+      transition: opacity .18s ease, transform .18s ease, visibility .18s ease;
+    }
+    .floating-actions.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+    .floating-action {
+      min-width: 178px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      font: 750 12.5px/1.2 inherit;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 10px 26px rgba(0,0,0,.28);
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+    .floating-action:hover {
+      transform: translateX(-3px);
+      border-color: var(--cyan-accent);
+      background: var(--bg-card-hover);
+    }
+    .floating-action .fa-icon {
+      width: 30px; height: 30px;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      background: var(--bg-soft);
+      font-size: 16px;
+      flex: 0 0 auto;
+    }
+    .floating-fab {
+      min-height: 50px;
+      padding: 0 19px;
+      border-radius: 17px;
+      background: linear-gradient(135deg, #0d9488, #0891b2);
+      box-shadow: 0 12px 30px rgba(13,148,136,.38);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .floating-fab:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 34px rgba(13,148,136,.48);
+    }
+    .floating-fab .fab-plus {
+      width: 25px; height: 25px;
+      display: grid; place-items: center;
+      border-radius: 9px;
+      background: rgba(255,255,255,.18);
+      font-size: 18px;
+      line-height: 1;
+      transition: transform .18s ease;
+    }
+    .floating-fab[aria-expanded="true"] .fab-plus { transform: rotate(45deg); }
+    .shortcut-hint {
+      color: rgba(255,255,255,.72);
+      font-size: 10px;
+      font-weight: 650;
+      margin-left: auto;
+    }
+    @media (max-width: 1080px) {
+      .modules-grid-5 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    }
+    @media (max-width: 780px) {
+      .workspace { padding-left: 14px; padding-right: 14px; }
+      .top-navbar { padding-left: 14px; padding-right: 14px; }
+      .nav-right { gap: 6px; }
+      .btn-about-dev, .btn-logout, .btn-header-sub { padding: 7px 9px; }
+    }
+    @media (max-width: 600px) {
+      .modules-grid-5 { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+      .module-tile { min-height: 104px; }
+      .welcome-banner { padding: 17px; }
+      .welcome-banner h1 { font-size: 20px; }
+      .floating-fab { right: 14px; bottom: 88px; }
+      .floating-actions { right: 14px; bottom: 148px; }
+      body.platform-windows .floating-fab { bottom: 16px; }
+      body.platform-windows .floating-actions { bottom: 76px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+
   </style>
 </head>
 <body class="stage-terms platform-windows">
@@ -1911,10 +2042,28 @@
       </section>
     </main>
 
-    <!-- Floating Quick Bill Button -->
-    <button id="btnFloatingBill" class="floating-fab" type="button" title="Quick New Bill">
-      <span>🧾</span>
-      <span>New Bill</span>
+    <!-- Floating Quick Actions: available after login -->
+    <div id="floatingActions" class="floating-actions" aria-label="Quick actions">
+      <button class="floating-action" type="button" data-quick-action="billing">
+        <span class="fa-icon">🧾</span><span>New bill</span><span class="shortcut-hint">Ctrl + B</span>
+      </button>
+      <button class="floating-action" type="button" data-quick-action="inventory">
+        <span class="fa-icon">📦</span><span>Add / manage stock</span>
+      </button>
+      <button class="floating-action" type="button" data-quick-action="customers">
+        <span class="fa-icon">💳</span><span>Customer khata</span>
+      </button>
+      <button class="floating-action" type="button" data-quick-action="eod">
+        <span class="fa-icon">📊</span><span>Today's closing report</span>
+      </button>
+      <button class="floating-action" type="button" data-quick-action="calculator">
+        <span class="fa-icon">🔢</span><span>Counter calculator</span>
+      </button>
+    </div>
+    <button id="btnFloatingBill" class="floating-fab" type="button"
+      title="Open quick actions" aria-label="Open quick actions" aria-expanded="false"
+      aria-controls="floatingActions">
+      <span>⚡</span><span>Quick Actions</span><span class="fab-plus">＋</span>
     </button>
 
     <nav class="android-bottom-nav" aria-label="Android Quick Navigation">
@@ -2173,10 +2322,10 @@
 
       function esc(s) {
         return String(s ?? "")
-          .replace(/&/g, "&")
-          .replace(/</g, "<")
-          .replace(/>/g, ">")
-          .replace(/"/g, """);
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
       }
 
       function hasAcceptedTerms() {
@@ -2274,6 +2423,14 @@
           toast("Please fill in username, email, shop name, and passcode");
           return;
         }
+        if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+          toast("Please enter a valid email address");
+          return;
+        }
+        if (pin.length < 4) {
+          toast("Passcode must be at least 4 characters");
+          return;
+        }
         if (age < 18) {
           toast("I know that I am 18 plus — enter an age of 18 or above");
           return;
@@ -2365,7 +2522,61 @@
         }
       });
 
-      document.getElementById("btnFloatingBill").addEventListener("click", () => navigateTo("billing"));
+      const floatingFab = document.getElementById("btnFloatingBill");
+      const floatingActions = document.getElementById("floatingActions");
+
+      function closeQuickActions() {
+        floatingActions.classList.remove("open");
+        floatingFab.setAttribute("aria-expanded", "false");
+      }
+      floatingFab.addEventListener("click", () => {
+        const willOpen = !floatingActions.classList.contains("open");
+        floatingActions.classList.toggle("open", willOpen);
+        floatingFab.setAttribute("aria-expanded", String(willOpen));
+      });
+      floatingActions.querySelectorAll("[data-quick-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const action = button.getAttribute("data-quick-action");
+          closeQuickActions();
+          if (action === "eod") openModal("eodModal");
+          else if (action === "calculator") openModal("calcModal");
+          else {
+            navigateTo(action);
+            if (action === "billing") {
+              const itemInput = document.getElementById("billItemName");
+              if (itemInput) setTimeout(() => itemInput.focus(), 80);
+            }
+            if (action === "inventory") {
+              const productInput = document.getElementById("invName");
+              if (productInput) setTimeout(() => productInput.focus(), 80);
+            }
+          }
+        });
+      });
+      document.addEventListener("click", (event) => {
+        if (!floatingFab.contains(event.target) && !floatingActions.contains(event.target)) closeQuickActions();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeQuickActions();
+        if (event.altKey || event.ctrlKey || event.metaKey) {
+          const key = event.key.toLowerCase();
+          if (key === "b") {
+            event.preventDefault();
+            closeQuickActions();
+            navigateTo("billing");
+            setTimeout(() => document.getElementById("billItemName")?.focus(), 80);
+          } else if (key === "k") {
+            event.preventDefault();
+            closeQuickActions();
+            navigateTo("home");
+            document.getElementById("moduleSearchInput")?.focus();
+          } else if (key === "i") {
+            event.preventDefault();
+            closeQuickActions();
+            navigateTo("inventory");
+          }
+        }
+      });
 
       function toggleUiMode() {
         state.shop.uiMode = state.shop.uiMode === "android" ? "windows" : "android";
