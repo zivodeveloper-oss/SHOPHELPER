@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0d9488" />
-  <title>Zivo ShopHelper - Smart Shop Management & POS</title>
+  <title>Zivo ShopHelper — Free Local Shop POS, Stock &amp; Khata</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%230d9488'/%3E%3Cstop offset='100%25' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='34' font-family='sans-serif' font-weight='900' fill='%23fff'%3EZ%3C/text%3E%3C/svg%3E" />
   <style>
     :root {
       --bg-page: #050a14;
       --bg-card: #0c1424;
-      --bg-card-hover: #111c33;
+      --bg-card-hover: #111d36;
       --bg-soft: #131e33;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
@@ -22,6 +22,16 @@
       --purple-dev: #8b5cf6;
       --red-logout: #e11d48;
       --amber-warn: #f59e0b;
+    }
+
+    body.light-mode {
+      --bg-page: #f1f5f9;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8fafc;
+      --bg-soft: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border-color: #cbd5e1;
     }
 
     * {
@@ -42,12 +52,12 @@
       display: none !important;
     }
 
-    /* Fullscreen Gate Overlays (Terms & Auth) */
+    /* Fullscreen Gate Overlays */
     .gate-overlay {
       position: fixed;
       inset: 0;
       z-index: 10000;
-      background: radial-gradient(circle at 15% 0%, rgba(13, 148, 136, 0.22), transparent 45%), rgba(3, 7, 18, 0.98);
+      background: radial-gradient(circle at 15% 0%, rgba(13, 148, 136, 0.24), transparent 45%), rgba(3, 7, 18, 0.98);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -56,7 +66,7 @@
     }
 
     .gate-panel {
-      width: min(100%, 960px);
+      width: min(100%, 860px);
       margin: auto;
       background: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -82,60 +92,59 @@
     }
 
     .gate-logo {
-      width: 46px;
-      height: 46px;
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
       background: linear-gradient(135deg, #0d9488, #06b6d4);
       color: #fff;
       font-weight: 900;
-      font-size: 22px;
+      font-size: 21px;
       display: grid;
       place-items: center;
+      flex-shrink: 0;
     }
 
-    .word-count-badge {
-      background: rgba(34, 211, 238, 0.14);
-      border: 1px solid rgba(34, 211, 238, 0.35);
-      color: var(--cyan-top);
+    .free-pill-badge {
+      background: rgba(34, 197, 94, 0.14);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: #4ade80;
       padding: 5px 12px;
       border-radius: 999px;
       font-size: 11.5px;
       font-weight: 800;
     }
 
-    .terms-scroll-box {
-      height: 44vh;
-      min-height: 240px;
+    .terms-box {
+      max-height: 46vh;
       overflow-y: auto;
-      background: #070d19;
+      background: var(--bg-soft);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 18px;
+      padding: 16px;
       font-size: 12.5px;
-      line-height: 1.7;
-      color: #cbd5e1;
+      line-height: 1.65;
     }
 
-    .terms-scroll-box h3 {
+    .terms-box h3 {
       color: var(--cyan-top);
-      font-size: 14px;
-      margin: 16px 0 6px;
+      font-size: 13.5px;
+      margin: 12px 0 4px;
     }
 
-    .terms-scroll-box h3:first-child {
+    .terms-box h3:first-child {
       margin-top: 0;
     }
 
-    .terms-scroll-box p {
-      margin-bottom: 10px;
+    .terms-box p {
+      margin-bottom: 8px;
     }
 
     .consent-checks {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin: 16px 0;
-      font-size: 13px;
+      margin: 14px 0;
+      font-size: 12.5px;
     }
 
     .consent-label {
@@ -153,7 +162,6 @@
       flex-shrink: 0;
     }
 
-    /* Auth Card (Create Account / Login) */
     .auth-panel {
       width: min(100%, 450px);
       margin: auto;
@@ -169,7 +177,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      background: #070d19;
+      background: var(--bg-soft);
       padding: 5px;
       border-radius: 11px;
       border: 1px solid var(--border-color);
@@ -192,7 +200,7 @@
       color: #ffffff;
     }
 
-    /* Top Teal Navigation Bar (Exact Screenshot Match) */
+    /* Top Teal Header Bar */
     .top-navbar {
       background: var(--teal-header);
       color: #ffffff;
@@ -253,8 +261,9 @@
 
     .nav-right {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .btn-about-dev {
@@ -285,14 +294,24 @@
       gap: 6px;
     }
 
-    /* Main Workspace Container */
+    .btn-header-sub {
+      background: rgba(6, 12, 24, 0.35);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 8px;
+      padding: 6px 11px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Main Workspace */
     .workspace {
       max-width: 1380px;
       margin: 0 auto;
-      padding: 16px 22px 48px;
+      padding: 16px 22px 54px;
     }
 
-    /* Sub-Navigation Strip (Back, Home, Refresh + Online Pill & Search Bar) */
     .sub-bar {
       display: flex;
       align-items: center;
@@ -311,9 +330,9 @@
       width: 38px;
       height: 38px;
       border-radius: 9px;
-      background: #11192a;
+      background: var(--bg-card);
       border: 1px solid var(--border-color);
-      color: #e2e8f0;
+      color: var(--text-main);
       font-size: 14px;
       display: grid;
       place-items: center;
@@ -327,7 +346,7 @@
 
     .search-strip-box {
       flex: 1;
-      background: #11192a;
+      background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 6px 14px;
@@ -372,13 +391,13 @@
       outline: none;
     }
 
-    /* Welcome Hero Card (Exact Screenshot Match) */
+    /* Welcome Hero Card */
     .hero-welcome-card {
-      background: #0c1424;
+      background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 14px;
       padding: 22px 26px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -399,8 +418,9 @@
 
     .hero-welcome-right {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 28px;
+      gap: 24px;
     }
 
     .hero-stat {
@@ -429,13 +449,37 @@
       margin-top: 2px;
     }
 
-    /* Section Title & 5-Column Cyan-Topped Grid */
-    .modules-heading {
-      font-size: 15.5px;
-      font-weight: 800;
+    .alert-banner {
+      background: rgba(245, 158, 11, 0.14);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: #fbbf24;
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .modules-heading-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
       margin-bottom: 14px;
     }
 
+    .modules-heading {
+      font-size: 15.5px;
+      font-weight: 800;
+    }
+
+    /* 5-Column Cyan-Topped Module Grid */
     .modules-grid {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -443,17 +487,17 @@
     }
 
     .module-tile-card {
-      background: #0c1424;
+      background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-top: 3px solid var(--cyan-top);
       border-radius: 13px;
-      padding: 24px 12px;
+      padding: 22px 12px;
       min-height: 126px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 10px;
       text-align: center;
       cursor: pointer;
       transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
@@ -466,14 +510,18 @@
     }
 
     .module-emoji {
-      font-size: 30px;
+      font-size: 29px;
       line-height: 1;
     }
 
     .module-label {
       font-size: 13.5px;
       font-weight: 800;
-      color: #f8fafc;
+    }
+
+    .module-sub {
+      font-size: 11px;
+      color: var(--text-muted);
     }
 
     /* Inner Module Views */
@@ -558,6 +606,21 @@
       border-color: var(--cyan-top);
     }
 
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      width: auto;
+      accent-color: #0d9488;
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -623,13 +686,12 @@
       gap: 8px;
     }
 
-    /* Dropdown Autocomplete */
     .dropdown-list {
       position: absolute;
       left: 0;
       right: 0;
       top: calc(100% + 4px);
-      background: #0c1424;
+      background: var(--bg-card);
       border: 1px solid var(--cyan-top);
       border-radius: 10px;
       z-index: 500;
@@ -652,7 +714,6 @@
       background: var(--bg-soft);
     }
 
-    /* Tables */
     .table-scroll {
       width: 100%;
       overflow-x: auto;
@@ -677,37 +738,29 @@
       text-transform: uppercase;
     }
 
-    /* Receipt Preview */
+    .qty-stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 2px 6px;
+    }
+
     .receipt-sheet {
       background: #ffffff;
       color: #111827;
       border-radius: 10px;
       padding: 16px;
-      max-width: 310px;
       margin: 0 auto;
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
     }
 
-    /* SaaS Pricing Cards */
-    .saas-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 14px;
-    }
+    .paper-thermal-80 { max-width: 310px; }
+    .paper-thermal-58 { max-width: 230px; }
+    .paper-a4 { max-width: 100%; }
 
-    .saas-card {
-      background: #080f1e;
-      border: 1px solid var(--border-color);
-      border-top: 3px solid var(--cyan-top);
-      border-radius: 14px;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    /* Calculator */
     .calc-display {
       text-align: right;
       font-size: 24px;
@@ -725,7 +778,6 @@
       gap: 8px;
     }
 
-    /* Modals & Toast */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -765,8 +817,8 @@
       bottom: 20px;
       right: 20px;
       z-index: 11000;
-      background: #0c1424;
-      color: #f8fafc;
+      background: var(--bg-card);
+      color: var(--text-main);
       border: 1px solid var(--cyan-top);
       border-radius: 10px;
       padding: 10px 15px;
@@ -802,6 +854,16 @@
       }
     }
 
+    @media (max-width: 540px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .sub-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
     @media print {
       body * {
         visibility: hidden;
@@ -821,36 +883,48 @@
   </style>
 </head>
 <body>
-  <!-- STEP 1: 12,999-WORD TERMS & CONDITIONS GATE -->
+  <!-- STEP 1: CLEAR, SAFE TERMS & CONDITIONS GATE (18+ ONLY) -->
   <div id="termsGateOverlay" class="gate-overlay">
     <div class="gate-panel">
       <div class="gate-header">
         <div class="gate-brand">
           <div class="gate-logo">Z</div>
           <div>
-            <h1 style="font-size:20px;font-weight:900;">Zivo ShopHelper — Terms & Conditions</h1>
-            <p style="font-size:12px;color:var(--text-muted);">Please read and accept the complete SaaS User Agreement (18+ Only) before creating an account or logging in.</p>
+            <h1 style="font-size:20px;font-weight:900;">Zivo ShopHelper — Terms &amp; Conditions</h1>
+            <p style="font-size:12px;color:var(--text-muted);">Free retail utility for local shopkeepers • Please read and accept to continue.</p>
           </div>
         </div>
-        <span id="termsWordCountBadge" class="word-count-badge">Loading Agreement...</span>
+        <span class="free-pill-badge">100% FREE UTILITY • NO PAID PLANS</span>
       </div>
 
-      <div id="termsScrollContainer" class="terms-scroll-box" tabindex="0"></div>
+      <div class="terms-box" tabindex="0">
+        <h3>1. Free Tool &amp; Age Requirement (18+ Only)</h3>
+        <p>Zivo ShopHelper is a free retail helper for local shops to manage billing, stock, customer khata, returns, and supplier orders. You must be at least 18 years old to accept these terms and set up a shop profile.</p>
+
+        <h3>2. Support Contact &amp; Help</h3>
+        <p>If you face any bug, problem, or question while using this app, please email us at <strong>zivo.developer@gmail.com</strong> so we can help fix it directly. Nothing in these terms stops anyone from exercising their lawful rights.</p>
+
+        <h3>3. Third-Party Fraud &amp; Calculation Check</h3>
+        <p>We are not responsible for scams, phishing links, or fake payment requests from third parties. Please always double-check item prices, quantities, GST, discounts, and customer balances before finalizing any bill.</p>
+
+        <h3>4. Local Storage, Firebase Cloud Sync &amp; Profile Details</h3>
+        <p>By default, your shop records are stored locally in your browser on your device—please export a JSON backup regularly so you do not lose data if browser storage is cleared. If you choose to connect your own Firebase Cloud config in Cloud Sync, your records can sync to your Firebase project. For a helpful, personalized experience, we ask for your username, email, and shop name; please note that the creator of Zivo ShopHelper can view account/cloud details when cloud sync or account features are used.</p>
+      </div>
 
       <div class="consent-checks">
         <label class="consent-label">
           <input id="chkAgreeTerms" type="checkbox" />
-          <span>I have read and agree to the complete Terms & Conditions, including the dispute resolution policy requiring me to email <strong>zivo.developer@gmail.com</strong> / <strong>developer@gmail.com</strong> first, and I acknowledge that the creator of Zivo ShopHelper can view my account and shop details to provide a personalized experience.</span>
+          <span>I have read and agree to the Terms &amp; Conditions and understand that local data should be backed up regularly.</span>
         </label>
         <label class="consent-label">
           <input id="chkAgreeAge18" type="checkbox" />
-          <span><strong>Age Confirmation:</strong> I confirm that I am <strong>at least 18 years old</strong> and legally eligible to enter into this agreement and operate a business account.</span>
+          <span><strong>Age Confirmation:</strong> I confirm that I am at least 18 years old.</span>
         </label>
       </div>
 
       <div class="btn-row">
-        <button id="btnAcceptTerms" class="btn btn-teal" type="button" disabled>Accept Terms & Continue to Account</button>
-        <a class="btn btn-dark" href="mailto:zivo.developer@gmail.com">✉️ Contact Developer</a>
+        <button id="btnAcceptTerms" class="btn btn-teal" type="button" disabled>Accept &amp; Continue</button>
+        <a class="btn btn-dark" href="mailto:zivo.developer@gmail.com">✉️ Email Support</a>
       </div>
     </div>
   </div>
@@ -861,19 +935,19 @@
       <div class="gate-brand" style="margin-bottom:14px;">
         <div class="gate-logo" style="width:40px;height:40px;font-size:19px;">Z</div>
         <div>
-          <h2 style="font-size:18px;font-weight:900;">Zivo ShopHelper SaaS</h2>
-          <p style="font-size:11.5px;color:var(--text-muted);">Create your shop account or sign in (18+ users only)</p>
+          <h2 style="font-size:18px;font-weight:900;">Zivo ShopHelper</h2>
+          <p style="font-size:11.5px;color:var(--text-muted);">Create your free shop profile or sign in (18+ only)</p>
         </div>
       </div>
 
       <div class="auth-tabs">
-        <button id="tabSignupBtn" class="auth-tab-btn active" type="button">Create Account</button>
+        <button id="tabSignupBtn" class="auth-tab-btn active" type="button">Create Profile</button>
         <button id="tabLoginBtn" class="auth-tab-btn" type="button">Login</button>
       </div>
 
       <div id="signupFields">
         <div class="field">
-          <label for="regUserName">Full Name / Username *</label>
+          <label for="regUserName">Username / Name *</label>
           <input id="regUserName" type="text" placeholder="e.g. Rajesh Kumar" />
         </div>
         <div class="field">
@@ -881,40 +955,40 @@
           <input id="regEmail" type="email" placeholder="e.g. rajesh@shop.com" />
         </div>
         <div class="field">
-          <label for="regShopName">Shop / Store Name *</label>
+          <label for="regShopName">Shop Name *</label>
           <input id="regShopName" type="text" placeholder="e.g. Zivo Retail Store" />
         </div>
         <div class="grid-2">
           <div class="field">
-            <label for="regAge">Your Age (Must be 18+) *</label>
+            <label for="regAge">Your Age (18+ Required) *</label>
             <input id="regAge" type="number" min="18" max="120" placeholder="18+" />
           </div>
           <div class="field">
-            <label for="regPin">Password / PIN *</label>
-            <input id="regPin" type="password" placeholder="Create password" />
+            <label for="regPin">Passcode / PIN *</label>
+            <input id="regPin" type="password" placeholder="Create PIN" />
           </div>
         </div>
         <p style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">
-          For a personalized experience, we store your email, shop name, and username. Note: The creator of Zivo ShopHelper can see your registered details.
+          We ask for your email, shop name, and username for a personalized experience. Note: The creator of Zivo ShopHelper can see your details.
         </p>
-        <button id="btnCreateAccount" class="btn btn-teal btn-full" type="button">Create Shop Account & Enter</button>
+        <button id="btnCreateAccount" class="btn btn-teal btn-full" type="button">Create Free Shop Profile</button>
       </div>
 
       <div id="loginFields" class="hidden">
         <div class="field">
-          <label for="loginEmail">Registered Email or Username</label>
-          <input id="loginEmail" type="text" placeholder="Enter your email or username" />
+          <label for="loginEmail">Email or Username</label>
+          <input id="loginEmail" type="text" placeholder="Enter email or username" />
         </div>
         <div class="field">
-          <label for="loginPin">Password / PIN</label>
-          <input id="loginPin" type="password" placeholder="Enter your password" />
+          <label for="loginPin">Passcode / PIN</label>
+          <input id="loginPin" type="password" placeholder="Enter PIN" />
         </div>
-        <button id="btnLoginAccount" class="btn btn-teal btn-full" type="button">Sign In to Dashboard</button>
+        <button id="btnLoginAccount" class="btn btn-teal btn-full" type="button">Unlock Shop Dashboard</button>
       </div>
     </div>
   </div>
 
-  <!-- TOP TEAL HEADER BAR (EXACT SCREENSHOT MATCH) -->
+  <!-- TOP TEAL HEADER BAR -->
   <header class="top-navbar">
     <div class="top-navbar-inner">
       <div class="nav-left">
@@ -924,6 +998,7 @@
       </div>
 
       <div class="nav-right">
+        <button id="btnHeaderTheme" class="btn-header-sub" type="button">☀️ Light</button>
         <button id="btnOpenAboutDev" class="btn-about-dev" type="button">👤 About Developer</button>
         <button id="btnLogout" class="btn-logout" type="button">🚪 Logout</button>
       </div>
@@ -941,8 +1016,8 @@
       </div>
 
       <div class="search-strip-box">
-        <span class="active-users-pill"><span class="active-dot"></span> Active Users: 1 Online</span>
-        <input id="moduleSearchInput" type="search" placeholder="Search Modules..." autocomplete="off" />
+        <span id="cloudStatusBadge" class="active-users-pill"><span class="active-dot"></span> Local Mode Ready</span>
+        <input id="moduleSearchInput" type="search" placeholder="Search Modules, Items, Customers, or Bills..." autocomplete="off" />
         <div id="moduleSearchDropdown" class="dropdown-list hidden"></div>
       </div>
     </div>
@@ -952,7 +1027,7 @@
       <div class="hero-welcome-card">
         <div class="hero-welcome-left">
           <h1 id="welcomeShopHeading">Welcome Back, Zivo Retail Store 👋</h1>
-          <p>Select a feature below to begin.</p>
+          <p id="welcomeBreakdown">Select a feature below to begin • Cash: ₹0.00 • UPI: ₹0.00 • Udhaar: ₹0.00</p>
         </div>
 
         <div class="hero-welcome-right">
@@ -967,74 +1042,98 @@
         </div>
       </div>
 
-      <h2 class="modules-heading">Shop Management Modules</h2>
+      <div id="lowStockBanner" class="alert-banner hidden">
+        <span id="lowStockBannerText">Low stock alert on items.</span>
+        <button id="btnBannerRestock" class="btn btn-amber btn-sm" type="button">View Stock</button>
+      </div>
 
-      <!-- 3 Rows x 5 Columns Grid matching Screenshot -->
+      <div class="modules-heading-row">
+        <h2 class="modules-heading">Shop Management Modules</h2>
+        <div class="btn-row">
+          <button id="btnQuickNewBill" class="btn btn-teal btn-sm" type="button">+ New Bill</button>
+          <button id="btnQuickAddStock" class="btn btn-dark btn-sm" type="button">+ Add Item</button>
+          <button id="btnQuickSyncNow" class="btn btn-dark btn-sm" type="button">☁️ Cloud Sync</button>
+        </div>
+      </div>
+
+      <!-- 3 Rows x 5 Columns Grid -->
       <div class="modules-grid">
-        <!-- Row 1 -->
         <div class="module-tile-card" data-view="inventory">
           <div class="module-emoji">📦</div>
           <div class="module-label">Stock Inventory</div>
+          <div id="tileStockSub" class="module-sub">0 Items</div>
         </div>
         <div class="module-tile-card" data-view="services">
           <div class="module-emoji">🛠️</div>
           <div class="module-label">Services Manager</div>
+          <div id="tileSrvSub" class="module-sub">Repairs &amp; Fees</div>
         </div>
         <div class="module-tile-card" data-view="billing">
           <div class="module-emoji">🧾</div>
           <div class="module-label">Bill Creator</div>
+          <div class="module-sub">POS, GST &amp; UPI QR</div>
         </div>
         <div class="module-tile-card" data-view="returns">
           <div class="module-emoji">🔄</div>
           <div class="module-label">Customer Returns</div>
+          <div class="module-sub">Refunds &amp; Restock</div>
         </div>
         <div class="module-tile-card" data-view="ai">
           <div class="module-emoji">🤖</div>
           <div class="module-label">AI Business Assistant</div>
+          <div class="module-sub">Stock, Sales &amp; Khata</div>
         </div>
 
-        <!-- Row 2 -->
         <div class="module-tile-card" data-view="customers">
           <div class="module-emoji">💰</div>
           <div class="module-label">Credit Manager</div>
+          <div id="tileUdhaarSub" class="module-sub">₹0.00 Udhaar</div>
         </div>
         <div class="module-tile-card" data-view="history">
           <div class="module-emoji">📜</div>
           <div class="module-label">Sales History</div>
+          <div id="tileBillsSub" class="module-sub">0 Bills</div>
         </div>
         <div class="module-tile-card" data-view="suppliers">
           <div class="module-emoji">🚚</div>
-          <div class="module-label">Suppliers & Orders</div>
+          <div class="module-label">Suppliers &amp; Orders</div>
+          <div class="module-sub">Wholesale Orders</div>
         </div>
         <div class="module-tile-card" data-view="studio">
           <div class="module-emoji">📱</div>
           <div class="module-label">Status Creator</div>
+          <div class="module-sub">Offers &amp; Catalog</div>
         </div>
         <div class="module-tile-card" data-view="settings">
           <div class="module-emoji">🏪</div>
           <div class="module-label">Business Setup</div>
+          <div class="module-sub">Shop, UPI &amp; Backup</div>
         </div>
 
-        <!-- Row 3 (Matches bottom edge of screenshot) -->
         <div class="module-tile-card" data-view="quicksettings">
           <div class="module-emoji">⚙️</div>
           <div class="module-label">Quick Preferences</div>
+          <div class="module-sub">Theme, Terms &amp; Reset</div>
         </div>
         <div class="module-tile-card" data-modal="calcModal">
           <div class="module-emoji">🔢</div>
           <div class="module-label">Counter Calculator</div>
+          <div class="module-sub">Fast Math Pad</div>
         </div>
         <div class="module-tile-card" data-view="labels">
           <div class="module-emoji">🏷️</div>
-          <div class="module-label">Price Tags & Offers</div>
+          <div class="module-label">Price Tags &amp; Offers</div>
+          <div class="module-sub">Shelf Price Cards</div>
         </div>
         <div class="module-tile-card" data-modal="eodModal">
           <div class="module-emoji">💵</div>
-          <div class="module-label">Cash & EOD Report</div>
+          <div class="module-label">Cash &amp; EOD Report</div>
+          <div class="module-sub">Daily Closing</div>
         </div>
-        <div class="module-tile-card" data-view="saas">
-          <div class="module-emoji">🧑‍💼</div>
-          <div class="module-label">SaaS Plans & Billing</div>
+        <div class="module-tile-card" data-view="firebase">
+          <div class="module-emoji">🔥</div>
+          <div class="module-label">Firebase Cloud Sync</div>
+          <div class="module-sub">Cloud Firestore Backup</div>
         </div>
       </div>
     </section>
@@ -1043,10 +1142,10 @@
     <section id="view-inventory" class="app-view hidden">
       <div class="view-head">
         <h2>📦 Stock Inventory</h2>
-        <span id="invCountBadge" style="font-size:12px;color:var(--cyan-top);font-weight:800;">0 Products</span>
+        <span id="invCountBadge" class="free-pill-badge">0 Products</span>
       </div>
       <div class="panel-box">
-        <h3>Add / Update Product</h3>
+        <h3 id="invFormTitle">Add / Edit Product</h3>
         <input id="invEditId" type="hidden" />
         <div class="grid-3">
           <div class="field">
@@ -1071,18 +1170,27 @@
             <label for="invStock">Stock Quantity</label>
             <input id="invStock" type="number" min="0" step="any" placeholder="0" />
           </div>
-          <div class="field">
-            <label for="invGst">GST Slab (%)</label>
-            <select id="invGst">
-              <option value="0">0%</option>
-              <option value="5">5%</option>
-              <option value="12">12%</option>
-              <option value="18">18%</option>
-              <option value="28">28%</option>
-            </select>
+          <div class="grid-2" style="margin-bottom:0;">
+            <div class="field">
+              <label for="invLow">Low Alert</label>
+              <input id="invLow" type="number" min="0" value="5" />
+            </div>
+            <div class="field">
+              <label for="invGst">GST %</label>
+              <select id="invGst">
+                <option value="0">0%</option>
+                <option value="5">5%</option>
+                <option value="12">12%</option>
+                <option value="18">18%</option>
+                <option value="28">28%</option>
+              </select>
+            </div>
           </div>
         </div>
-        <button id="btnSaveInv" class="btn btn-teal" type="button">Save Product</button>
+        <div class="btn-row">
+          <button id="btnSaveInv" class="btn btn-teal" type="button">Save Product</button>
+          <button id="btnCancelInvEdit" class="btn btn-dark hidden" type="button">Cancel Edit</button>
+        </div>
       </div>
 
       <div class="panel-box">
@@ -1097,6 +1205,7 @@
                 <th>Price</th>
                 <th>Stock</th>
                 <th>GST</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -1194,7 +1303,7 @@
                 <input id="billDiscount" type="number" min="0" step="0.01" value="0" />
               </div>
             </div>
-            <button id="btnAddToCart" class="btn btn-teal btn-full" type="button">+ Add to Bill</button>
+            <button id="btnAddToCart" class="btn btn-teal btn-full" type="button">+ Add to Bill (Enter)</button>
           </div>
 
           <div class="panel-box">
@@ -1217,16 +1326,19 @@
           </div>
 
           <div class="panel-box">
-            <h3>Customer & Checkout</h3>
-            <div class="grid-3">
+            <h3>Customer &amp; Checkout</h3>
+            <div class="grid-2">
               <div class="field">
                 <label for="billCustName">Customer Name</label>
-                <input id="billCustName" type="text" placeholder="Walk-in Customer" />
+                <input id="billCustName" type="text" placeholder="Walk-in Customer" autocomplete="off" />
+                <div id="billCustDropdown" class="dropdown-list hidden"></div>
               </div>
               <div class="field">
                 <label for="billCustPhone">WhatsApp Phone</label>
                 <input id="billCustPhone" type="tel" placeholder="98XXXXXXXX" />
               </div>
+            </div>
+            <div class="grid-2">
               <div class="field">
                 <label for="billPayMode">Payment Mode</label>
                 <select id="billPayMode">
@@ -1236,18 +1348,30 @@
                   <option value="Card">Card</option>
                 </select>
               </div>
+              <div class="field">
+                <label for="billPaperSize">Receipt Size</label>
+                <select id="billPaperSize">
+                  <option value="thermal-80">Thermal 80mm</option>
+                  <option value="thermal-58">Thermal 58mm</option>
+                  <option value="a4">A4 Invoice</option>
+                </select>
+              </div>
             </div>
-            <div class="btn-row">
-              <button id="btnFinalizeBill" class="btn btn-green" type="button">💾 Save & Generate Invoice</button>
+            <label class="checkbox-row">
+              <input id="chkDeductStock" type="checkbox" checked />
+              Deduct sold quantities from Stock Inventory automatically
+            </label>
+            <div class="btn-row" style="margin-top:14px;">
+              <button id="btnFinalizeBill" class="btn btn-green" type="button">💾 Save &amp; Generate Bill</button>
               <button id="btnPrintBill" class="btn btn-dark" type="button">🖨️ Print Receipt</button>
-              <button id="btnWhatsAppBill" class="btn btn-teal" type="button">📲 WhatsApp Slip</button>
+              <button id="btnWhatsAppBill" class="btn btn-teal" type="button">📲 WhatsApp Bill</button>
             </div>
           </div>
         </div>
 
         <div class="panel-box">
           <h3>Live Receipt Preview</h3>
-          <div id="printableReceiptArea" class="receipt-sheet">
+          <div id="printableReceiptArea" class="receipt-sheet paper-thermal-80">
             <div style="text-align:center;border-bottom:1px dashed #9ca3af;padding-bottom:8px;margin-bottom:8px;">
               <div style="font-weight:900;font-size:15px;" id="rcptShopTitle">Zivo Retail Store</div>
               <div style="font-size:11px;color:#4b5563;" id="rcptShopSub">Patna, Bihar</div>
@@ -1300,14 +1424,18 @@
           </div>
           <div class="field">
             <label for="retQty">Quantity</label>
-            <input id="retQty" type="number" min="1" value="1" />
+            <input id="retQty" type="number" min="1" step="any" value="1" />
           </div>
           <div class="field">
             <label for="retRefund">Refund Amount (₹)</label>
             <input id="retRefund" type="number" min="0" step="0.01" placeholder="0.00" />
           </div>
         </div>
-        <button id="btnRecordReturn" class="btn btn-amber" type="button">Record Return & Restock</button>
+        <label class="checkbox-row">
+          <input id="chkRestockReturn" type="checkbox" checked />
+          Add returned quantity back to Stock Inventory
+        </label>
+        <button id="btnRecordReturn" class="btn btn-amber" style="margin-top:10px;" type="button">Record Return</button>
       </div>
       <div class="panel-box">
         <h3>Return History</h3>
@@ -1332,7 +1460,7 @@
       <div class="view-head">
         <h2>🤖 AI Business Assistant</h2>
         <div class="btn-row">
-          <button class="btn btn-dark btn-sm ai-chip" data-q="Summarize today's sales and profit" type="button">Today's Sales & Profit</button>
+          <button class="btn btn-dark btn-sm ai-chip" data-q="Summarize today's sales and profit" type="button">Today's Sales &amp; Profit</button>
           <button class="btn btn-dark btn-sm ai-chip" data-q="Which items are low on stock?" type="button">Low Stock Check</button>
           <button class="btn btn-dark btn-sm ai-chip" data-q="Show pending customer udhaar" type="button">Pending Udhaar</button>
         </div>
@@ -1354,7 +1482,7 @@
     <section id="view-customers" class="app-view hidden">
       <div class="view-head">
         <h2>💰 Credit Manager (Khata)</h2>
-        <span id="khataTotalBadge" style="font-size:12px;color:var(--amber-warn);font-weight:800;">Total Udhaar: ₹0.00</span>
+        <span id="khataTotalBadge" class="free-pill-badge">Total Udhaar: ₹0.00</span>
       </div>
       <div class="panel-box">
         <h3>Add Customer Account</h3>
@@ -1383,6 +1511,7 @@
                 <th>Customer</th>
                 <th>Phone</th>
                 <th>Due Balance</th>
+                <th>Custom Amount (₹)</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -1396,7 +1525,16 @@
     <section id="view-history" class="app-view hidden">
       <div class="view-head">
         <h2>📜 Sales History</h2>
-        <button id="btnExportCsv" class="btn btn-dark btn-sm" type="button">⬇️ Export CSV</button>
+        <div class="btn-row">
+          <select id="historyModeFilter" style="width:auto;">
+            <option value="ALL">All Modes</option>
+            <option value="Cash">Cash</option>
+            <option value="UPI">UPI</option>
+            <option value="Udhaar">Udhaar</option>
+            <option value="Card">Card</option>
+          </select>
+          <button id="btnExportCsv" class="btn btn-dark btn-sm" type="button">⬇️ Export CSV</button>
+        </div>
       </div>
       <div class="panel-box">
         <div class="table-scroll">
@@ -1409,6 +1547,7 @@
                 <th>Mode</th>
                 <th>Total</th>
                 <th>Profit</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="historyTableBody"></tbody>
@@ -1417,10 +1556,10 @@
       </div>
     </section>
 
-    <!-- SUPPLIERS & ORDERS VIEW -->
+    <!-- SUPPLIERS VIEW -->
     <section id="view-suppliers" class="app-view hidden">
       <div class="view-head">
-        <h2>🚚 Suppliers & Orders</h2>
+        <h2>🚚 Suppliers &amp; Orders</h2>
       </div>
       <div class="panel-box">
         <h3>New Purchase Order</h3>
@@ -1451,6 +1590,7 @@
                 <th>Items</th>
                 <th>Total</th>
                 <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody id="supTableBody"></tbody>
@@ -1459,7 +1599,7 @@
       </div>
     </section>
 
-    <!-- STATUS CREATOR & PRICE TAGS VIEW -->
+    <!-- STATUS CREATOR VIEW -->
     <section id="view-studio" class="app-view hidden">
       <div class="view-head">
         <h2>📱 Status Creator</h2>
@@ -1469,17 +1609,17 @@
         <div class="grid-2">
           <div class="field">
             <label for="promoHeading">Offer Headline</label>
-            <input id="promoHeading" type="text" value="Mega Weekend Sale at Zivo Retail Store!" />
+            <input id="promoHeading" type="text" value="Fresh Daily Essentials Available!" />
           </div>
           <div class="field">
             <label for="promoSub">Offer Details</label>
-            <input id="promoSub" type="text" value="Flat 10% OFF on groceries & daily essentials. Free local delivery!" />
+            <input id="promoSub" type="text" value="Fast counter service, Cash &amp; UPI accepted, regular khata support." />
           </div>
         </div>
-        <div style="background:linear-gradient(135deg,#0d9488,#0284c7);padding:22px;border-radius:14px;text-align:center;margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:800;letter-spacing:1px;opacity:0.9;">SPECIAL STORE ANNOUNCEMENT</div>
-          <div id="promoPreviewTitle" style="font-size:20px;font-weight:900;margin:6px 0;">Mega Weekend Sale at Zivo Retail Store!</div>
-          <div id="promoPreviewBody" style="font-size:13px;opacity:0.95;">Flat 10% OFF on groceries & daily essentials. Free local delivery!</div>
+        <div style="background:linear-gradient(135deg,#0d9488,#0284c7);color:#fff;padding:22px;border-radius:14px;text-align:center;margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:800;letter-spacing:1px;opacity:0.9;">SHOP UPDATE</div>
+          <div id="promoPreviewTitle" style="font-size:20px;font-weight:900;margin:6px 0;">Fresh Daily Essentials Available!</div>
+          <div id="promoPreviewBody" style="font-size:13px;opacity:0.95;">Fast counter service, Cash &amp; UPI accepted, regular khata support.</div>
         </div>
         <button id="btnCopyStatus" class="btn btn-teal" type="button">📋 Copy Status Text</button>
       </div>
@@ -1488,7 +1628,7 @@
     <!-- PRICE TAGS VIEW -->
     <section id="view-labels" class="app-view hidden">
       <div class="view-head">
-        <h2>🏷️ Price Tags & Offers</h2>
+        <h2>🏷️ Price Tags &amp; Offers</h2>
       </div>
       <div class="panel-box">
         <h3>Printable Shelf Price Tag</h3>
@@ -1499,7 +1639,7 @@
           </div>
           <div class="field">
             <label for="tagProductPrice">Tag Price (₹)</label>
-            <input id="tagProductPrice" type="number" value="120" />
+            <input id="tagProductPrice" type="number" step="0.01" value="120" />
           </div>
         </div>
         <div style="background:#ffffff;color:#0f172a;border-radius:12px;padding:16px;max-width:260px;margin:10px auto;text-align:center;">
@@ -1510,13 +1650,13 @@
       </div>
     </section>
 
-    <!-- BUSINESS SETUP & QUICK PREFERENCES VIEW -->
+    <!-- BUSINESS SETUP VIEW -->
     <section id="view-settings" class="app-view hidden">
       <div class="view-head">
         <h2>🏪 Business Setup</h2>
       </div>
       <div class="panel-box">
-        <h3>Store Profile & Account Details</h3>
+        <h3>Store Profile &amp; Account Details</h3>
         <div class="grid-2">
           <div class="field">
             <label for="setShopName">Shop Name</label>
@@ -1550,80 +1690,91 @@
         <div class="btn-row">
           <button id="btnSaveSetup" class="btn btn-teal" type="button">Save Business Setup</button>
           <button id="btnDownloadBackup" class="btn btn-dark" type="button">⬇️ Download Backup JSON</button>
+          <label class="btn btn-dark" style="cursor:pointer;">
+            ⬆️ Import Backup JSON
+            <input id="importBackupFile" type="file" accept="application/json" class="hidden" />
+          </label>
         </div>
       </div>
     </section>
 
+    <!-- QUICK PREFERENCES VIEW -->
     <section id="view-quicksettings" class="app-view hidden">
       <div class="view-head">
         <h2>⚙️ Quick Preferences</h2>
       </div>
       <div class="panel-box">
-        <h3>Registered Account Summary</h3>
+        <h3>Account &amp; Storage Summary</h3>
         <p id="prefAccountSummary" style="font-size:13px;color:var(--text-muted);margin-bottom:12px;"></p>
         <div class="btn-row">
-          <button id="btnViewTermsAgain" class="btn btn-dark" type="button">📄 Review 12,999-Word Terms & Conditions</button>
+          <button id="btnToggleThemePref" class="btn btn-dark" type="button">🌓 Toggle Light / Dark Theme</button>
+          <button id="btnViewTermsAgain" class="btn btn-dark" type="button">📄 Review Terms &amp; Conditions</button>
           <button id="btnResetDemoData" class="btn btn-red" type="button">🗑️ Reset Shop Data</button>
         </div>
       </div>
     </section>
 
-    <!-- SAAS PLANS & MONETIZATION VIEW -->
-    <section id="view-saas" class="app-view hidden">
+    <!-- FIREBASE CLOUD SYNC VIEW -->
+    <section id="view-firebase" class="app-view hidden">
       <div class="view-head">
-        <h2>🧑‍💼 SaaS Plans & Subscription</h2>
-        <span id="currentPlanTag" class="word-count-badge">ACTIVE PLAN: STARTER</span>
+        <h2>🔥 Firebase Cloud Sync</h2>
+        <span id="fbStatePill" class="free-pill-badge">Not Connected</span>
       </div>
-      <div class="saas-grid">
-        <div class="saas-card">
-          <div>
-            <div style="font-size:11px;font-weight:800;color:var(--cyan-top);">FREE TIER</div>
-            <h3 style="font-size:18px;margin:4px 0;">Starter Shop</h3>
-            <div style="font-size:24px;font-weight:900;margin-bottom:8px;">₹0 <span style="font-size:12px;color:var(--text-muted);">/ month</span></div>
-            <p style="font-size:12px;color:var(--text-muted);">Core POS billing, stock tracker, and customer khata for single-counter shops.</p>
-          </div>
-          <button class="btn btn-dark select-plan-btn" data-plan="STARTER" type="button">Select Starter</button>
+      <div class="panel-box">
+        <h3>Connect Your Firebase Firestore Config</h3>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
+          Paste your Firebase project JSON config (or fill the fields below) to sync your shop records to Cloud Firestore under a document key. Local storage continues working offline even without Firebase.
+        </p>
+        <div class="field">
+          <label for="fbJsonInput">Paste Firebase Config JSON (Optional Auto-Fill)</label>
+          <textarea id="fbJsonInput" rows="3" placeholder='{"apiKey":"...","authDomain":"...","projectId":"...","appId":"..."}'></textarea>
         </div>
-
-        <div class="saas-card">
-          <div>
-            <div style="font-size:11px;font-weight:800;color:#4ade80;">MOST POPULAR</div>
-            <h3 style="font-size:18px;margin:4px 0;">Zivo Shop Pro</h3>
-            <div style="font-size:24px;font-weight:900;margin-bottom:8px;">₹199 <span style="font-size:12px;color:var(--text-muted);">/ month</span></div>
-            <p style="font-size:12px;color:var(--text-muted);">Unlimited invoices, GST reports, WhatsApp status studio, and priority support via zivo.developer@gmail.com.</p>
+        <div class="grid-2">
+          <div class="field">
+            <label for="fbApiKey">API Key</label>
+            <input id="fbApiKey" type="text" placeholder="AIza..." />
           </div>
-          <button class="btn btn-teal select-plan-btn" data-plan="SHOP PRO (₹199/mo)" type="button">Activate Shop Pro</button>
-        </div>
-
-        <div class="saas-card">
-          <div>
-            <div style="font-size:11px;font-weight:800;color:#c084fc;">BUSINESS</div>
-            <h3 style="font-size:18px;margin:4px 0;">Multi-Counter SaaS</h3>
-            <div style="font-size:24px;font-weight:900;margin-bottom:8px;">₹499 <span style="font-size:12px;color:var(--text-muted);">/ month</span></div>
-            <p style="font-size:12px;color:var(--text-muted);">Full commercial license, supplier order automation, and direct developer onboarding.</p>
+          <div class="field">
+            <label for="fbProjectId">Project ID</label>
+            <input id="fbProjectId" type="text" placeholder="your-project-id" />
           </div>
-          <button class="btn btn-amber select-plan-btn" data-plan="BUSINESS (₹499/mo)" type="button">Activate Business</button>
         </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="fbAppId">App ID</label>
+            <input id="fbAppId" type="text" placeholder="1:123456:web:abcdef" />
+          </div>
+          <div class="field">
+            <label for="fbDocKey">Shop Cloud Sync Key / ID</label>
+            <input id="fbDocKey" type="text" placeholder="e.g. zivo_shop_patna_01" />
+          </div>
+        </div>
+        <div class="btn-row">
+          <button id="btnSaveFirebaseCfg" class="btn btn-teal" type="button">💾 Save Firebase Config</button>
+          <button id="btnPushFirebase" class="btn btn-green" type="button">☁️ Push Data to Cloud</button>
+          <button id="btnPullFirebase" class="btn btn-dark" type="button">⬇️ Pull Data from Cloud</button>
+        </div>
+        <p id="fbLastSyncText" style="font-size:11.5px;color:var(--text-muted);margin-top:10px;"></p>
       </div>
     </section>
   </main>
 
-  <!-- ABOUT DEVELOPER MODAL (EXACT SPECS) -->
+  <!-- ABOUT DEVELOPER MODAL -->
   <div id="aboutDevModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-top">
         <h3 style="font-size:17px;font-weight:900;">👤 About Developer</h3>
         <button class="btn btn-dark btn-sm close-modal-btn" data-modal="aboutDevModal" type="button">✕</button>
       </div>
-      <div style="background:#080f1e;border:1px solid var(--border-color);border-radius:12px;padding:14px;font-size:13px;line-height:1.65;">
+      <div style="background:var(--bg-soft);border:1px solid var(--border-color);border-radius:12px;padding:14px;font-size:13px;line-height:1.65;">
         <p style="margin-bottom:8px;">
-          <strong>Zivo ShopHelper</strong> is created by an <strong>11-year-old developer</strong> who has already published <strong>10 web apps online</strong> and <strong>2 apps on the Microsoft Store</strong>.
+          <strong>Zivo ShopHelper</strong> is made by an <strong>11-year-old solo developer</strong> living in India who has published <strong>10 web apps online</strong> and <strong>2 apps on the Microsoft Store</strong>.
         </p>
         <p style="margin-bottom:8px;">
-          All of these apps are <strong>built using AI</strong> to help local shopkeepers, students, and everyday users work faster and smarter.
+          All of these apps are <strong>built using AI</strong> as a free helper for local shops and everyday users.
         </p>
         <p>
-          <strong>For help, support, or inquiries contact:</strong><br />
+          <strong>For help or support contact:</strong><br />
           <a href="mailto:zivo.developer@gmail.com" style="color:var(--cyan-top);font-weight:800;">zivo.developer@gmail.com</a>
         </p>
       </div>
@@ -1666,7 +1817,7 @@
   <div id="eodModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-top">
-        <h3>💵 Cash & End-of-Day Report</h3>
+        <h3>💵 Cash &amp; End-of-Day Report</h3>
         <button class="btn btn-dark btn-sm close-modal-btn" data-modal="eodModal" type="button">✕</button>
       </div>
       <div id="eodSummaryContent" style="font-size:13px;line-height:1.8;"></div>
@@ -1675,10 +1826,13 @@
 
   <div id="toastMsg" class="toast"></div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
     (function () {
-      const STORAGE_KEY = "zivo_shophelper_saas_v1";
-      const TERMS_KEY = "zivo_shophelper_terms_accepted_12999";
+      const STORAGE_KEY = "zivo_shophelper_free_v3";
+      const TERMS_KEY = "zivo_shophelper_terms_accepted_v3";
 
       const VIEW_TITLES = {
         home: "🏠 Main Dashboard",
@@ -1694,15 +1848,23 @@
         settings: "🏪 Business Setup",
         quicksettings: "⚙️ Quick Preferences",
         labels: "🏷️ Price Tags & Offers",
-        saas: "🧑‍💼 SaaS Plans & Billing"
+        firebase: "🔥 Firebase Cloud Sync"
       };
 
       const defaultState = {
-        account: null, // { userName, email, shopName, age, pin, plan }
+        account: null, // { userName, email, shopName, age, pin }
         shop: {
           city: "Patna, Bihar",
           upiId: "",
-          gstin: ""
+          gstin: "",
+          theme: "dark"
+        },
+        firebase: {
+          apiKey: "",
+          projectId: "",
+          appId: "",
+          docKey: "",
+          lastSync: ""
         },
         inventory: [],
         services: [],
@@ -1718,15 +1880,22 @@
       let viewHistory = ["home"];
       let activeView = "home";
       let calcBuf = "";
+      let pickedCost = 0;
 
       function loadState() {
         try {
-          const raw = localStorage.getItem(STORAGE_KEY);
+          const raw =
+            localStorage.getItem(STORAGE_KEY) ||
+            localStorage.getItem("zivo_shophelper_saas_v1") ||
+            localStorage.getItem("zivo_shop_helper_master_v2");
           if (!raw) return structuredClone(defaultState);
           const p = JSON.parse(raw);
+          const acc = p.account ? { ...p.account } : null;
+          if (acc && "plan" in acc) delete acc.plan;
           return {
-            account: p.account || null,
+            account: acc,
             shop: { ...defaultState.shop, ...(p.shop || {}) },
+            firebase: { ...defaultState.firebase, ...(p.firebase || {}) },
             inventory: Array.isArray(p.inventory) ? p.inventory : [],
             services: Array.isArray(p.services) ? p.services : [],
             returns: Array.isArray(p.returns) ? p.returns : [],
@@ -1744,7 +1913,9 @@
       function saveState() {
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        } catch {}
+        } catch {
+          toast("Storage unavailable or full");
+        }
       }
 
       function formatINR(n) {
@@ -1761,125 +1932,24 @@
 
       function esc(s) {
         return String(s ?? "")
-          .replace(/&/g, "&")
-          .replace(/</g, "<")
-          .replace(/>/g, ">")
-          .replace(/"/g, """);
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
       }
 
-      // Generate exact 12,999-word Terms & Conditions
-      function buildExact12999WordTerms() {
-        const coreSections = [
-          {
-            title: "1. BINDING ACCEPTANCE OF TERMS AND AGE REQUIREMENT (18+ ONLY)",
-            body: "Welcome to Zivo ShopHelper, a Software-as-a-Service (SaaS) retail point-of-sale, inventory management, digital ledger, and business productivity platform created for local shops, merchants, and retail counters. By accessing, installing, registering an account, or using any part of Zivo ShopHelper, you acknowledge that you have read, understood, and unconditionally agreed to be bound by these Terms and Conditions. STRICT AGE REQUIREMENT: You must be at least eighteen (18) years of age to accept these Terms and Conditions, create a Zivo ShopHelper account, or operate a shop profile on this platform. If you are under 18 years old, you are strictly prohibited from creating an account or using this service."
-          },
-          {
-            title: "2. PERSONALIZED EXPERIENCE, ACCOUNT DATA COLLECTION & CREATOR VISIBILITY NOTICE",
-            body: "For a seamless and personalized experience, we ask you to provide certain account and business details during registration and setup, including your email address, shop name, username, age confirmation, and store preferences. This information enables tailored dashboards, customized customer receipts, shop branding, and account recovery. IMPORTANT PRIVACY & VISIBILITY NOTICE: Please note that the creator and developer of Zivo ShopHelper can see your registered details, account profile metadata, shop name, email address, username, subscription tier, and diagnostic records stored or synced through the application. Do not enter sensitive personal passwords used on banking websites or confidential third-party secrets into your shop profile fields."
-          },
-          {
-            title: "3. MANDATORY PRE-LEGAL EMAIL RESOLUTION & DISCLAIMER OF SCAM OR FRAUD LIABILITY",
-            body: "DIRECT SUPPORT & PRE-COMPLAINT RESOLUTION: Before filing any legal complaint, consumer grievance, regulatory notice, or court case against Zivo ShopHelper or its developer, you agree that you must first contact us directly by emailing zivo.developer@gmail.com and developer@gmail.com with full details of your issue so that we can review and fix your problem directly there only. We are not responsible or liable for any legal complaint, claim, or case filed against us before emailing us at zivo.developer@gmail.com or developer@gmail.com to allow us to resolve the matter. NO LIABILITY FOR THIRD-PARTY SCAMS OR FRAUD: Any scam, phishing attempt, unauthorized payment request, fake subscription link, impersonation, or fraud that happens to you while using or interacting around this app is solely between you and the third party, and we are not responsible or liable for any financial loss, scam, or fraud suffered by you."
-          },
-          {
-            title: "4. SAAS SUBSCRIPTION PLANS, BILLING, AND COMMERCIAL USAGE",
-            body: "Zivo ShopHelper operates as a Software-as-a-Service (SaaS) platform offering both free starter access and paid subscription tiers for growing retail businesses. Subscription fees, renewal cycles, and feature entitlements are displayed inside the SaaS Plans & Billing module. You are responsible for maintaining accurate billing records and verifying all tax rates, GST slabs, product prices, discounts, and customer khata entries generated through the software."
-          },
-          {
-            title: "5. LOCAL DATA STORAGE, BACKUPS, AND AI-ASSISTED DEVELOPMENT",
-            body: "Zivo ShopHelper is built using modern Artificial Intelligence (AI) development tools by an independent 11-year-old developer who has published 10 web applications online and 2 applications on the Microsoft Store. While every effort is made to ensure smooth operation, software provided on an as-is and as-available basis may contain occasional calculation, display, or browser storage issues. When running in offline browser mode, shop data is saved locally on your device; clearing browser storage or losing your device without exporting a JSON backup may result in permanent data loss."
-          }
-        ];
-
-        const clauseTopics = [
-          "Retail Point-of-Sale Calculation Verification and Receipt Accuracy Standards",
-          "Customer Khata Ledger Maintenance and Credit Reconciliation Responsibilities",
-          "Inventory Stock Valuation, Cost Price Margins, and Shrinkage Auditing",
-          "Goods and Services Tax (GST) Slab Configuration and Merchant Compliance",
-          "Supplier Purchase Order Tracking and Wholesale Delivery Verification",
-          "Customer Returns, Exchanges, and Restocking Authorization Procedures",
-          "Device Security, Browser Cache Management, and Regular JSON Data Backups",
-          "Prohibition of Unauthorized Reverse Engineering, Scraping, or Malware Distribution",
-          "Limitation of Indirect, Consequential, and Business Interruption Damages",
-          "Governing Principles, Electronic Consent Validity, and Contact Protocol via zivo.developer@gmail.com"
-        ];
-
-        const paragraphs = [];
-        coreSections.forEach((s) => {
-          paragraphs.push({ heading: s.title, text: s.body });
-        });
-
-        let clauseIndex = 6;
-        let topicCursor = 0;
-        while (true) {
-          const topic = clauseTopics[topicCursor % clauseTopics.length];
-          const heading = `${clauseIndex}. SAAS OPERATIONAL CLAUSE — ${topic.toUpperCase()}`;
-          const text =
-            `Under Section ${clauseIndex} of the Zivo ShopHelper SaaS Agreement regarding ${topic}, every registered merchant aged 18 years or older agrees to independently verify all store figures, invoice totals, UPI QR payment confirmations, and credit balances before completing customer transactions. ` +
-            `For a personalized experience, Zivo ShopHelper utilizes your submitted email address, shop name, and username, and you explicitly acknowledge that the creator of Zivo ShopHelper can see your details to maintain platform quality, prevent abuse, and assist with technical support. ` +
-            `Furthermore, any scam or fraud that happens to you involving third parties, fake UPI screenshots, or external links is not the responsibility of Zivo ShopHelper or its developer. ` +
-            `In all circumstances, if you experience any technical error, billing discrepancy, or service concern, you agree not to initiate any legal complaint or court case before emailing zivo.developer@gmail.com and developer@gmail.com so that our team can resolve your problem directly there.`;
-
-          paragraphs.push({ heading, text });
-
-          const currentWords = paragraphs
-            .map((p) => `${p.heading} ${p.text}`)
-            .join(" ")
-            .trim()
-            .split(/\s+/).length;
-
-          if (currentWords >= 12880) break;
-          clauseIndex++;
-          topicCursor++;
-        }
-
-        // Pad final concluding clause to reach the exact 12,999-word count
-        let runningText = paragraphs.map((p) => `${p.heading} ${p.text}`).join(" ").trim();
-        let wordCount = runningText.split(/\s+/).length;
-        const targetWords = 12999;
-        const needed = Math.max(0, targetWords - wordCount);
-
-        if (needed > 0) {
-          const finalHeadingWords = ["FINAL", "ACKNOWLEDGMENT", "AND", "CONSENT", "CONFIRMATION"];
-          const remainingForBody = Math.max(0, needed - finalHeadingWords.length);
-          const fillerPool = [
-            "By", "checking", "the", "acceptance", "box", "below,", "you", "confirm", "that", "you",
-            "are", "at", "least", "eighteen", "years", "old,", "have", "reviewed", "these", "terms,",
-            "understand", "that", "the", "creator", "of", "Zivo", "ShopHelper", "can", "see", "your",
-            "registered", "shop", "details", "for", "a", "personalized", "experience,", "accept", "that",
-            "we", "are", "not", "responsible", "for", "any", "third-party", "scam", "or", "fraud,",
-            "and", "agree", "to", "email", "zivo.developer@gmail.com", "and", "developer@gmail.com",
-            "first", "to", "resolve", "any", "issue", "before", "filing", "any", "legal", "complaint."
-          ];
-          const bodyWords = [];
-          for (let i = 0; i < remainingForBody; i++) {
-            bodyWords.push(fillerPool[i % fillerPool.length]);
-          }
-          paragraphs.push({
-            heading: finalHeadingWords.join(" "),
-            text: bodyWords.join(" ")
-          });
-        }
-
-        const finalCombined = paragraphs.map((p) => `${p.heading} ${p.text}`).join(" ").trim();
-        const exactCount = finalCombined.split(/\s+/).length;
-
-        const container = document.getElementById("termsScrollContainer");
-        container.innerHTML = paragraphs
-          .map((p) => `<h3>${esc(p.heading)}</h3><p>${esc(p.text)}</p>`)
-          .join("");
-        document.getElementById("termsWordCountBadge").textContent = `${exactCount.toLocaleString()} Words • Official Terms`;
+      function applyTheme() {
+        const isLight = state.shop.theme === "light";
+        document.body.classList.toggle("light-mode", isLight);
+        document.getElementById("btnHeaderTheme").textContent = isLight ? "🌙 Dark" : "☀️ Light";
       }
 
-      // Gate Flow Initialization
+      // Gate Flow
       const termsOverlay = document.getElementById("termsGateOverlay");
       const authOverlay = document.getElementById("authGateOverlay");
       const chkAgreeTerms = document.getElementById("chkAgreeTerms");
       const chkAgreeAge18 = document.getElementById("chkAgreeAge18");
       const btnAcceptTerms = document.getElementById("btnAcceptTerms");
-
-      buildExact12999WordTerms();
 
       function updateTermsButtonState() {
         btnAcceptTerms.disabled = !(chkAgreeTerms.checked && chkAgreeAge18.checked);
@@ -1898,7 +1968,6 @@
         }
       });
 
-      // Check initial gate state on load
       const hasAcceptedTerms = (() => {
         try {
           return localStorage.getItem(TERMS_KEY) === "yes";
@@ -1914,7 +1983,7 @@
         }
       }
 
-      // Auth Tabs (Create Account vs Login)
+      // Auth Tabs (Create Profile vs Login)
       const tabSignupBtn = document.getElementById("tabSignupBtn");
       const tabLoginBtn = document.getElementById("tabLoginBtn");
       const signupFields = document.getElementById("signupFields");
@@ -1942,26 +2011,22 @@
         const pin = document.getElementById("regPin").value.trim();
 
         if (!userName || !email || !shopName || !pin) {
-          toast("Please fill in username, email, shop name, and password");
+          toast("Please fill in username, email, shop name, and passcode");
           return;
         }
         if (age < 18) {
-          toast("Access Denied: You must be at least 18 years old to create an account");
+          toast("You must be at least 18 years old to create a shop profile");
           return;
         }
 
-        state.account = {
-          userName,
-          email,
-          shopName,
-          age,
-          pin,
-          plan: "STARTER"
-        };
+        state.account = { userName, email, shopName, age, pin };
+        if (!state.firebase.docKey) {
+          state.firebase.docKey = shopName.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "zivo_shop";
+        }
         saveState();
         authOverlay.classList.add("hidden");
         renderAll();
-        toast(`Welcome, ${userName}! Account created for ${shopName}`);
+        toast(`Welcome, ${userName}!`);
       });
 
       document.getElementById("btnLoginAccount").addEventListener("click", () => {
@@ -1969,7 +2034,7 @@
         const pinInput = document.getElementById("loginPin").value.trim();
 
         if (!state.account) {
-          toast("No local account found yet — please create an account first");
+          toast("No profile saved yet — create one first");
           tabSignupBtn.click();
           return;
         }
@@ -1977,7 +2042,7 @@
           state.account.email.toLowerCase() === idInput ||
           state.account.userName.toLowerCase() === idInput;
         if (!matchUser || state.account.pin !== pinInput) {
-          toast("Invalid email/username or password");
+          toast("Incorrect email/username or passcode");
           return;
         }
         authOverlay.classList.add("hidden");
@@ -1985,7 +2050,7 @@
         toast(`Signed in to ${state.account.shopName}`);
       });
 
-      // Navigation & Header Actions
+      // Navigation & Header
       function navigateTo(viewKey, record = true) {
         if (!VIEW_TITLES[viewKey]) viewKey = "home";
         if (record && activeView !== viewKey) {
@@ -2001,10 +2066,10 @@
 
       document.querySelectorAll(".module-tile-card").forEach((tile) => {
         tile.addEventListener("click", () => {
-          const targetView = tile.getAttribute("data-view");
-          const targetModal = tile.getAttribute("data-modal");
-          if (targetView) navigateTo(targetView);
-          else if (targetModal) openModal(targetModal);
+          const v = tile.getAttribute("data-view");
+          const m = tile.getAttribute("data-modal");
+          if (v) navigateTo(v);
+          else if (m) openModal(m);
         });
       });
 
@@ -2021,8 +2086,19 @@
       });
       document.getElementById("btnNavRefresh").addEventListener("click", () => {
         renderAll();
-        toast("Dashboard refreshed");
+        toast("Refreshed");
       });
+
+      document.getElementById("btnHeaderTheme").addEventListener("click", () => {
+        state.shop.theme = state.shop.theme === "light" ? "dark" : "light";
+        saveState();
+        applyTheme();
+      });
+
+      document.getElementById("btnQuickNewBill").addEventListener("click", () => navigateTo("billing"));
+      document.getElementById("btnQuickAddStock").addEventListener("click", () => navigateTo("inventory"));
+      document.getElementById("btnQuickSyncNow").addEventListener("click", () => navigateTo("firebase"));
+      document.getElementById("btnBannerRestock").addEventListener("click", () => navigateTo("inventory"));
 
       document.getElementById("btnOpenAboutDev").addEventListener("click", () => openModal("aboutDevModal"));
       document.getElementById("btnLogout").addEventListener("click", () => {
@@ -2045,7 +2121,7 @@
         });
       });
 
-      // Module Search Bar
+      // Global Search
       const moduleSearchInput = document.getElementById("moduleSearchInput");
       const moduleSearchDropdown = document.getElementById("moduleSearchDropdown");
       moduleSearchInput.addEventListener("input", () => {
@@ -2061,15 +2137,20 @@
           }
         });
         state.inventory.forEach((item) => {
-          if (item.name.toLowerCase().includes(q)) {
-            results.push({ label: `Product: ${item.name}`, badge: formatINR(item.price), go: () => navigateTo("inventory") });
+          if (item.name.toLowerCase().includes(q) || (item.sku || "").toLowerCase().includes(q)) {
+            results.push({ label: `Item: ${item.name} (${item.stock})`, badge: formatINR(item.price), go: () => navigateTo("inventory") });
+          }
+        });
+        state.customers.forEach((c) => {
+          if (c.name.toLowerCase().includes(q) || (c.phone || "").includes(q)) {
+            results.push({ label: `Customer: ${c.name}`, badge: `Due ${formatINR(c.balance)}`, go: () => navigateTo("customers") });
           }
         });
         if (!results.length) {
-          moduleSearchDropdown.innerHTML = `<div class="dropdown-item"><span>No matching modules</span></div>`;
+          moduleSearchDropdown.innerHTML = `<div class="dropdown-item"><span>No matches found</span></div>`;
         } else {
           moduleSearchDropdown.innerHTML = results
-            .slice(0, 7)
+            .slice(0, 8)
             .map((r) => `<div class="dropdown-item"><span>${esc(r.label)}</span><strong>${esc(r.badge)}</strong></div>`)
             .join("");
           moduleSearchDropdown.querySelectorAll(".dropdown-item").forEach((row, idx) => {
@@ -2083,7 +2164,7 @@
         moduleSearchDropdown.classList.remove("hidden");
       });
 
-      // Dashboard & Metrics Rendering
+      // Dashboard & Metrics
       function getTodayDateStr() {
         const d = new Date();
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -2095,61 +2176,146 @@
 
         const today = getTodayDateStr();
         const todayBills = state.bills.filter((b) => (b.date || "").slice(0, 10) === today);
-        const salesSum = todayBills.reduce((s, b) => s + (Number(b.grandTotal) || 0), 0);
-        const profitSum = todayBills.reduce((s, b) => s + (Number(b.profit) || 0), 0);
 
+        let salesSum = 0;
+        let profitSum = 0;
+        let cashSum = 0;
+        let upiSum = 0;
+        let udhaarBillSum = 0;
+
+        todayBills.forEach((b) => {
+          const amt = Number(b.grandTotal) || 0;
+          salesSum += amt;
+          profitSum += Number(b.profit) || 0;
+          if (b.mode === "Cash") cashSum += amt;
+          else if (b.mode === "UPI") upiSum += amt;
+          else if (b.mode === "Udhaar") udhaarBillSum += amt;
+        });
+
+        document.getElementById("welcomeBreakdown").textContent =
+          `Select a feature below to begin • Cash: ${formatINR(cashSum)} • UPI: ${formatINR(upiSum)} • Udhaar: ${formatINR(udhaarBillSum)}`;
         document.getElementById("dashTodaySales").textContent = formatINR(salesSum);
         document.getElementById("dashTodayProfit").textContent = formatINR(profitSum);
+
+        const totalUdhaar = state.customers.reduce((s, c) => s + (Number(c.balance) || 0), 0);
+        document.getElementById("tileStockSub").textContent = `${state.inventory.length} Items`;
+        document.getElementById("tileSrvSub").textContent = `${state.services.length} Services`;
+        document.getElementById("tileUdhaarSub").textContent = `${formatINR(totalUdhaar)} Due`;
+        document.getElementById("tileBillsSub").textContent = `${state.bills.length} Bills`;
+
+        const lowItems = state.inventory.filter((i) => Number(i.stock) <= Number(i.lowThreshold ?? 5));
+        const banner = document.getElementById("lowStockBanner");
+        if (lowItems.length > 0) {
+          banner.classList.remove("hidden");
+          document.getElementById("lowStockBannerText").textContent =
+            `⚠️ Low stock on ${lowItems.length} item(s): ${lowItems.map((i) => `${i.name} (${i.stock})`).join(", ")}`;
+        } else {
+          banner.classList.add("hidden");
+        }
+
+        const fbReady = Boolean(state.firebase.apiKey && state.firebase.projectId && state.firebase.appId);
+        document.getElementById("cloudStatusBadge").innerHTML = fbReady
+          ? `<span class="active-dot"></span> Firebase Cloud Ready`
+          : `<span class="active-dot"></span> Local Mode Ready`;
       }
 
       // Inventory
+      function resetInvForm() {
+        document.getElementById("invEditId").value = "";
+        document.getElementById("invFormTitle").textContent = "Add / Edit Product";
+        ["invName", "invSku", "invCost", "invPrice", "invStock"].forEach((id) => (document.getElementById(id).value = ""));
+        document.getElementById("invLow").value = "5";
+        document.getElementById("invGst").value = "0";
+        document.getElementById("btnCancelInvEdit").classList.add("hidden");
+      }
+
+      document.getElementById("btnCancelInvEdit").addEventListener("click", resetInvForm);
+
       document.getElementById("btnSaveInv").addEventListener("click", () => {
+        const editId = document.getElementById("invEditId").value;
         const name = document.getElementById("invName").value.trim();
         const sku = document.getElementById("invSku").value.trim();
         const costPrice = Number(document.getElementById("invCost").value) || 0;
         const price = Number(document.getElementById("invPrice").value) || 0;
         const stock = Number(document.getElementById("invStock").value) || 0;
+        const lowThreshold = Number(document.getElementById("invLow").value) || 0;
         const gst = Number(document.getElementById("invGst").value) || 0;
+
         if (!name) {
           toast("Enter product name");
           return;
         }
-        state.inventory.push({ id: "inv-" + Date.now(), name, sku, costPrice, price, stock, gst });
-        ["invName", "invSku", "invCost", "invPrice", "invStock"].forEach((id) => (document.getElementById(id).value = ""));
+        if (editId) {
+          const item = state.inventory.find((x) => x.id === editId);
+          if (item) Object.assign(item, { name, sku, costPrice, price, stock, lowThreshold, gst });
+          toast("Product updated");
+        } else {
+          state.inventory.push({ id: "inv-" + Date.now(), name, sku, costPrice, price, stock, lowThreshold, gst });
+          toast("Product added");
+        }
+        resetInvForm();
         saveState();
         renderAll();
-        toast("Product added");
       });
 
       function renderInventory() {
         document.getElementById("invCountBadge").textContent = `${state.inventory.length} Products`;
         const tbody = document.getElementById("invTableBody");
         if (!state.inventory.length) {
-          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--text-muted);">No inventory items yet</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-muted);">No inventory items yet</td></tr>`;
           return;
         }
         tbody.innerHTML = state.inventory
-          .map(
-            (i) => `
-            <tr>
-              <td><strong>${esc(i.name)}</strong></td>
-              <td>${esc(i.sku || "-")}</td>
-              <td>${formatINR(i.costPrice)}</td>
-              <td>${formatINR(i.price)}</td>
-              <td>${i.stock}</td>
-              <td>${i.gst}%</td>
-              <td><button class="btn btn-red btn-xs del-inv" data-id="${i.id}" type="button">Delete</button></td>
-            </tr>`
-          )
+          .map((i) => {
+            const isLow = Number(i.stock) <= Number(i.lowThreshold ?? 5);
+            return `
+              <tr>
+                <td><strong>${esc(i.name)}</strong></td>
+                <td>${esc(i.sku || "-")}</td>
+                <td>${formatINR(i.costPrice)}</td>
+                <td>${formatINR(i.price)}</td>
+                <td>${i.stock}</td>
+                <td>${i.gst}%</td>
+                <td style="font-weight:800;color:${isLow ? "#fbbf24" : "#4ade80"};">${isLow ? "Low Stock" : "In Stock"}</td>
+                <td>
+                  <div class="btn-row">
+                    <button class="btn btn-teal btn-xs bill-inv" data-id="${i.id}" type="button">+ Bill</button>
+                    <button class="btn btn-dark btn-xs edit-inv" data-id="${i.id}" type="button">Edit</button>
+                    <button class="btn btn-red btn-xs del-inv" data-id="${i.id}" type="button">✕</button>
+                  </div>
+                </td>
+              </tr>`;
+          })
           .join("");
       }
 
       document.getElementById("invTableBody").addEventListener("click", (e) => {
-        const btn = e.target.closest(".del-inv");
-        if (!btn) return;
-        state.inventory = state.inventory.filter((x) => x.id !== btn.getAttribute("data-id"));
-        saveState();
-        renderAll();
+        const bBtn = e.target.closest(".bill-inv");
+        const eBtn = e.target.closest(".edit-inv");
+        const dBtn = e.target.closest(".del-inv");
+        if (bBtn) {
+          const item = state.inventory.find((x) => x.id === bBtn.getAttribute("data-id"));
+          if (!item) return;
+          addCartLine({ name: item.name, qty: 1, price: item.price, costPrice: item.costPrice || 0, gst: item.gst || 0 });
+          toast(`Added ${item.name} to bill`);
+        } else if (eBtn) {
+          const item = state.inventory.find((x) => x.id === eBtn.getAttribute("data-id"));
+          if (!item) return;
+          document.getElementById("invEditId").value = item.id;
+          document.getElementById("invFormTitle").textContent = "Editing: " + item.name;
+          document.getElementById("invName").value = item.name;
+          document.getElementById("invSku").value = item.sku || "";
+          document.getElementById("invCost").value = item.costPrice || 0;
+          document.getElementById("invPrice").value = item.price;
+          document.getElementById("invStock").value = item.stock;
+          document.getElementById("invLow").value = item.lowThreshold ?? 5;
+          document.getElementById("invGst").value = item.gst || 0;
+          document.getElementById("btnCancelInvEdit").classList.remove("hidden");
+        } else if (dBtn) {
+          state.inventory = state.inventory.filter((x) => x.id !== dBtn.getAttribute("data-id"));
+          saveState();
+          renderAll();
+        }
       });
 
       // Services
@@ -2163,6 +2329,7 @@
         document.getElementById("srvFee").value = "";
         saveState();
         renderServices();
+        renderHome();
         toast("Service added");
       });
 
@@ -2179,26 +2346,55 @@
               <td><strong>${esc(s.name)}</strong></td>
               <td>${formatINR(s.fee)}</td>
               <td>${s.gst}%</td>
-              <td><button class="btn btn-teal btn-xs bill-srv" data-id="${s.id}" type="button">+ Bill</button></td>
+              <td>
+                <div class="btn-row">
+                  <button class="btn btn-teal btn-xs bill-srv" data-id="${s.id}" type="button">+ Bill</button>
+                  <button class="btn btn-red btn-xs del-srv" data-id="${s.id}" type="button">✕</button>
+                </div>
+              </td>
             </tr>`
           )
           .join("");
       }
 
       document.getElementById("srvTableBody").addEventListener("click", (e) => {
-        const btn = e.target.closest(".bill-srv");
-        if (!btn) return;
-        const s = state.services.find((x) => x.id === btn.getAttribute("data-id"));
-        if (!s) return;
-        state.cart.push({ name: s.name, qty: 1, price: s.fee, costPrice: 0, gst: s.gst });
-        saveState();
-        navigateTo("billing");
+        const bBtn = e.target.closest(".bill-srv");
+        const dBtn = e.target.closest(".del-srv");
+        if (bBtn) {
+          const s = state.services.find((x) => x.id === bBtn.getAttribute("data-id"));
+          if (!s) return;
+          addCartLine({ name: s.name, qty: 1, price: s.fee, costPrice: 0, gst: s.gst });
+          navigateTo("billing");
+        } else if (dBtn) {
+          state.services = state.services.filter((x) => x.id !== dBtn.getAttribute("data-id"));
+          saveState();
+          renderServices();
+          renderHome();
+        }
       });
 
       // Billing
+      function addCartLine(line) {
+        const match = state.cart.find(
+          (x) => x.name.toLowerCase() === line.name.toLowerCase() && Number(x.price) === Number(line.price)
+        );
+        if (match) {
+          match.qty = Number(match.qty) + (Number(line.qty) || 1);
+        } else {
+          state.cart.push({
+            name: line.name,
+            qty: Number(line.qty) || 1,
+            price: Number(line.price) || 0,
+            costPrice: Number(line.costPrice) || 0,
+            gst: Number(line.gst) || 0
+          });
+        }
+        saveState();
+        renderBilling();
+      }
+
       const billItemName = document.getElementById("billItemName");
       const billItemDropdown = document.getElementById("billItemDropdown");
-      let pickedCost = 0;
 
       billItemName.addEventListener("input", () => {
         pickedCost = 0;
@@ -2207,44 +2403,90 @@
           billItemDropdown.classList.add("hidden");
           return;
         }
-        const hits = state.inventory.filter((i) => i.name.toLowerCase().includes(q));
+        const hits = [
+          ...state.inventory
+            .filter((i) => i.name.toLowerCase().includes(q) || (i.sku || "").toLowerCase().includes(q))
+            .map((i) => ({ name: i.name, price: i.price, costPrice: i.costPrice || 0, gst: i.gst || 0, tag: `Stock: ${i.stock}` })),
+          ...state.services
+            .filter((s) => s.name.toLowerCase().includes(q))
+            .map((s) => ({ name: s.name, price: s.fee, costPrice: 0, gst: s.gst || 0, tag: "Service" }))
+        ];
         if (!hits.length) {
           billItemDropdown.classList.add("hidden");
           return;
         }
         billItemDropdown.innerHTML = hits
-          .map((i, idx) => `<div class="dropdown-item" data-idx="${idx}"><span>${esc(i.name)}</span><strong>${formatINR(i.price)}</strong></div>`)
+          .map((h, idx) => `<div class="dropdown-item" data-idx="${idx}"><span>${esc(h.name)} (${esc(h.tag)})</span><strong>${formatINR(h.price)}</strong></div>`)
           .join("");
         billItemDropdown.querySelectorAll(".dropdown-item").forEach((row, idx) => {
           row.addEventListener("click", () => {
             billItemName.value = hits[idx].name;
             document.getElementById("billItemPrice").value = hits[idx].price;
-            document.getElementById("billItemGst").value = hits[idx].gst || 0;
-            pickedCost = hits[idx].costPrice || 0;
+            document.getElementById("billItemGst").value = hits[idx].gst;
+            pickedCost = hits[idx].costPrice;
             billItemDropdown.classList.add("hidden");
           });
         });
         billItemDropdown.classList.remove("hidden");
       });
 
-      document.getElementById("btnAddToCart").addEventListener("click", () => {
+      function submitCartLine() {
         const name = billItemName.value.trim();
         const qty = Number(document.getElementById("billItemQty").value) || 0;
         const price = Number(document.getElementById("billItemPrice").value) || 0;
         const gst = Number(document.getElementById("billItemGst").value) || 0;
         if (!name || qty <= 0) {
-          toast("Enter item name and quantity");
+          toast("Enter item name and valid quantity");
           return;
         }
         const invHit = state.inventory.find((i) => i.name.toLowerCase() === name.toLowerCase());
         const costPrice = pickedCost || (invHit ? Number(invHit.costPrice) || 0 : 0);
-        state.cart.push({ name, qty, price, costPrice, gst });
+        addCartLine({ name, qty, price, costPrice, gst });
         billItemName.value = "";
         document.getElementById("billItemQty").value = "1";
         document.getElementById("billItemPrice").value = "0";
         pickedCost = 0;
-        saveState();
+        billItemDropdown.classList.add("hidden");
+        billItemName.focus();
+      }
+
+      document.getElementById("btnAddToCart").addEventListener("click", submitCartLine);
+      ["billItemName", "billItemQty", "billItemPrice"].forEach((id) => {
+        document.getElementById(id).addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            submitCartLine();
+          }
+        });
+      });
+
+      // Customer autocomplete in Billing
+      const billCustName = document.getElementById("billCustName");
+      const billCustDropdown = document.getElementById("billCustDropdown");
+      billCustName.addEventListener("input", () => {
         renderBilling();
+        const q = billCustName.value.trim().toLowerCase();
+        if (!q) {
+          billCustDropdown.classList.add("hidden");
+          return;
+        }
+        const matches = state.customers.filter((c) => c.name.toLowerCase().includes(q));
+        if (!matches.length) {
+          billCustDropdown.classList.add("hidden");
+          return;
+        }
+        billCustDropdown.innerHTML = matches
+          .map((c, idx) => `<div class="dropdown-item" data-idx="${idx}"><span>${esc(c.name)}</span><strong>Due ${formatINR(c.balance)}</strong></div>`)
+          .join("");
+        billCustDropdown.querySelectorAll(".dropdown-item").forEach((row, idx) => {
+          row.addEventListener("click", () => {
+            billCustName.value = matches[idx].name;
+            if (matches[idx].phone) document.getElementById("billCustPhone").value = matches[idx].phone;
+            billCustDropdown.classList.add("hidden");
+            renderBilling();
+          });
+        });
+        billCustDropdown.classList.remove("hidden");
       });
 
       function calcTotals() {
@@ -2273,16 +2515,27 @@
               const amt = l.qty * l.price * (1 + l.gst / 100);
               return `
                 <tr>
-                  <td>${esc(l.name)}</td>
-                  <td>${l.qty}</td>
+                  <td><strong>${esc(l.name)}</strong></td>
+                  <td>
+                    <div class="qty-stepper">
+                      <button class="btn btn-dark btn-xs q-dec" data-idx="${idx}" type="button">−</button>
+                      <span>${l.qty}</span>
+                      <button class="btn btn-dark btn-xs q-inc" data-idx="${idx}" type="button">+</button>
+                    </div>
+                  </td>
                   <td>${formatINR(l.price)}</td>
                   <td>${l.gst}%</td>
-                  <td>${formatINR(amt)}</td>
+                  <td><strong>${formatINR(amt)}</strong></td>
                   <td><button class="btn btn-red btn-xs rem-cart" data-idx="${idx}" type="button">✕</button></td>
                 </tr>`;
             })
             .join("");
         }
+
+        const paper = document.getElementById("billPaperSize").value;
+        const sheet = document.getElementById("printableReceiptArea");
+        sheet.classList.remove("paper-thermal-80", "paper-thermal-58", "paper-a4");
+        sheet.classList.add("paper-" + paper);
 
         const t = calcTotals();
         const shopName = state.account?.shopName || "Zivo Retail Store";
@@ -2317,14 +2570,23 @@
       }
 
       document.getElementById("cartTableBody").addEventListener("click", (e) => {
-        const btn = e.target.closest(".rem-cart");
-        if (!btn) return;
-        state.cart.splice(Number(btn.getAttribute("data-idx")), 1);
+        const inc = e.target.closest(".q-inc");
+        const dec = e.target.closest(".q-dec");
+        const rem = e.target.closest(".rem-cart");
+        if (inc) {
+          state.cart[Number(inc.getAttribute("data-idx"))].qty += 1;
+        } else if (dec) {
+          const idx = Number(dec.getAttribute("data-idx"));
+          if (state.cart[idx].qty > 1) state.cart[idx].qty -= 1;
+          else state.cart.splice(idx, 1);
+        } else if (rem) {
+          state.cart.splice(Number(rem.getAttribute("data-idx")), 1);
+        } else return;
         saveState();
         renderBilling();
       });
 
-      ["billDiscount", "billCustName", "billPayMode"].forEach((id) => {
+      ["billDiscount", "billPayMode", "billPaperSize"].forEach((id) => {
         document.getElementById(id).addEventListener("input", renderBilling);
         document.getElementById(id).addEventListener("change", renderBilling);
       });
@@ -2346,15 +2608,21 @@
         const mode = document.getElementById("billPayMode").value;
         const billNo = `INV-${String(state.billSeq++).padStart(3, "0")}`;
 
-        state.cart.forEach((line) => {
-          const inv = state.inventory.find((i) => i.name.toLowerCase() === line.name.toLowerCase());
-          if (inv) inv.stock = Math.max(0, Number(inv.stock) - Number(line.qty));
-        });
+        if (document.getElementById("chkDeductStock").checked) {
+          state.cart.forEach((line) => {
+            const inv = state.inventory.find((i) => i.name.toLowerCase() === line.name.toLowerCase());
+            if (inv) inv.stock = Math.max(0, Number(inv.stock) - Number(line.qty));
+          });
+        }
 
         if (mode === "Udhaar") {
           const existing = state.customers.find((c) => c.name.toLowerCase() === customerName.toLowerCase());
-          if (existing) existing.balance = (Number(existing.balance) || 0) + t.total;
-          else state.customers.push({ id: "cus-" + Date.now(), name: customerName, phone, balance: t.total });
+          if (existing) {
+            existing.balance = (Number(existing.balance) || 0) + t.total;
+            if (phone && !existing.phone) existing.phone = phone;
+          } else {
+            state.customers.push({ id: "cus-" + Date.now(), name: customerName, phone, balance: t.total });
+          }
         }
 
         state.bills.push({
@@ -2362,15 +2630,21 @@
           billNo,
           date: new Date().toISOString(),
           customerName,
+          phone,
           mode,
+          items: structuredClone(state.cart),
+          subtotal: t.sub,
+          gstTotal: t.gst,
+          discount: t.disc,
           grandTotal: t.total,
           profit: t.profit
         });
 
         state.cart = [];
+        document.getElementById("billDiscount").value = "0";
         saveState();
         renderAll();
-        toast(`Invoice ${billNo} saved (${formatINR(t.total)})`);
+        toast(`Bill ${billNo} saved (${formatINR(t.total)})`);
       });
 
       document.getElementById("btnPrintBill").addEventListener("click", () => window.print());
@@ -2378,7 +2652,12 @@
       document.getElementById("btnWhatsAppBill").addEventListener("click", () => {
         const t = calcTotals();
         const shopName = state.account?.shopName || "Zivo Retail Store";
-        const text = `*${shopName}*\nTotal Bill: *${formatINR(t.total)}* (${document.getElementById("billPayMode").value})`;
+        const lines = state.cart.map((i) => `• ${i.name} x${i.qty} = ${formatINR(i.qty * i.price * (1 + i.gst / 100))}`);
+        const text =
+          `*${shopName}*\nBill for ${document.getElementById("billCustName").value.trim() || "Customer"}\n` +
+          (lines.length ? lines.join("\n") + "\n" : "") +
+          `*Total: ${formatINR(t.total)}* (${document.getElementById("billPayMode").value})` +
+          (state.shop.upiId ? `\nUPI: ${state.shop.upiId}` : "");
         const phone = document.getElementById("billCustPhone").value.replace(/\D/g, "");
         window.open(
           phone ? `https://wa.me/${phone}?text=${encodeURIComponent(text)}` : `https://wa.me/?text=${encodeURIComponent(text)}`,
@@ -2393,8 +2672,10 @@
         const qty = Number(document.getElementById("retQty").value) || 1;
         const refund = Number(document.getElementById("retRefund").value) || 0;
         if (!item) return;
-        const inv = state.inventory.find((i) => i.name.toLowerCase() === item.toLowerCase());
-        if (inv) inv.stock = Number(inv.stock) + qty;
+        if (document.getElementById("chkRestockReturn").checked) {
+          const inv = state.inventory.find((i) => i.name.toLowerCase() === item.toLowerCase());
+          if (inv) inv.stock = Number(inv.stock) + qty;
+        }
         state.returns.push({ date: new Date().toISOString(), item, qty, refund });
         document.getElementById("retItem").value = "";
         document.getElementById("retRefund").value = "";
@@ -2446,36 +2727,68 @@
                   <td><strong>${esc(c.name)}</strong></td>
                   <td>${esc(c.phone || "-")}</td>
                   <td style="color:#fbbf24;font-weight:800;">${formatINR(c.balance)}</td>
+                  <td><input type="number" min="1" step="any" placeholder="₹ Amt" class="khata-amt-input" data-id="${c.id}" style="max-width:110px;padding:5px 8px;font-size:12px;" /></td>
                   <td>
                     <div class="btn-row">
-                      <button class="btn btn-green btn-xs settle-khata" data-id="${c.id}" type="button">Settle ₹100</button>
+                      <button class="btn btn-amber btn-xs add-khata" data-id="${c.id}" type="button">+ Due</button>
+                      <button class="btn btn-green btn-xs settle-khata" data-id="${c.id}" type="button">Settle</button>
+                      <button class="btn btn-teal btn-xs remind-khata" data-id="${c.id}" type="button">📲 Remind</button>
                       <button class="btn btn-red btn-xs del-khata" data-id="${c.id}" type="button">✕</button>
                     </div>
                   </td>
                 </tr>`
               )
               .join("")
-          : `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No khata entries</td></tr>`;
+          : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No khata entries</td></tr>`;
       }
 
       document.getElementById("khataTableBody").addEventListener("click", (e) => {
-        const settle = e.target.closest(".settle-khata");
-        const del = e.target.closest(".del-khata");
-        if (settle) {
-          const c = state.customers.find((x) => x.id === settle.getAttribute("data-id"));
-          if (c) c.balance = Math.max(0, (Number(c.balance) || 0) - 100);
-        } else if (del) {
-          state.customers = state.customers.filter((x) => x.id !== del.getAttribute("data-id"));
-        } else return;
-        saveState();
-        renderAll();
+        const addBtn = e.target.closest(".add-khata");
+        const settleBtn = e.target.closest(".settle-khata");
+        const remindBtn = e.target.closest(".remind-khata");
+        const delBtn = e.target.closest(".del-khata");
+
+        if (addBtn || settleBtn) {
+          const id = (addBtn || settleBtn).getAttribute("data-id");
+          const c = state.customers.find((x) => x.id === id);
+          const inp = document.querySelector(`.khata-amt-input[data-id="${id}"]`);
+          const amt = Number(inp?.value) || 0;
+          if (!c || amt <= 0) {
+            toast("Enter a valid amount first");
+            return;
+          }
+          if (addBtn) c.balance = (Number(c.balance) || 0) + amt;
+          else c.balance = Math.max(0, (Number(c.balance) || 0) - amt);
+          saveState();
+          renderAll();
+          toast("Khata updated");
+        } else if (remindBtn) {
+          const c = state.customers.find((x) => x.id === remindBtn.getAttribute("data-id"));
+          if (!c) return;
+          const shopName = state.account?.shopName || "Zivo Retail Store";
+          const msg = `Namaste ${c.name}, reminder from *${shopName}*: your pending balance is *${formatINR(c.balance)}*.`;
+          const phone = (c.phone || "").replace(/\D/g, "");
+          window.open(
+            phone ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`,
+            "_blank",
+            "noopener,noreferrer"
+          );
+        } else if (delBtn) {
+          state.customers = state.customers.filter((x) => x.id !== delBtn.getAttribute("data-id"));
+          saveState();
+          renderAll();
+        }
       });
 
       // Sales History
+      document.getElementById("historyModeFilter").addEventListener("change", renderHistory);
+
       function renderHistory() {
+        const mode = document.getElementById("historyModeFilter").value;
+        const rows = state.bills.filter((b) => mode === "ALL" || b.mode === mode);
         const tbody = document.getElementById("historyTableBody");
-        tbody.innerHTML = state.bills.length
-          ? state.bills
+        tbody.innerHTML = rows.length
+          ? rows
               .slice()
               .reverse()
               .map(
@@ -2487,11 +2800,45 @@
                   <td>${esc(b.mode)}</td>
                   <td>${formatINR(b.grandTotal)}</td>
                   <td style="color:var(--cyan-top);">${formatINR(b.profit || 0)}</td>
+                  <td>
+                    <div class="btn-row">
+                      <button class="btn btn-dark btn-xs open-bill" data-id="${b.id}" type="button">View</button>
+                      <button class="btn btn-red btn-xs del-bill" data-id="${b.id}" type="button">✕</button>
+                    </div>
+                  </td>
                 </tr>`
               )
               .join("")
-          : `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No invoices yet</td></tr>`;
+          : `<tr><td colspan="7" style="text-align:center;color:var(--text-muted);">No invoices yet</td></tr>`;
       }
+
+      document.getElementById("historyTableBody").addEventListener("click", (e) => {
+        const openBtn = e.target.closest(".open-bill");
+        const delBtn = e.target.closest(".del-bill");
+        if (openBtn) {
+          const b = state.bills.find((x) => x.id === openBtn.getAttribute("data-id"));
+          if (!b) return;
+          state.cart = structuredClone(b.items || []);
+          document.getElementById("billCustName").value = b.customerName || "";
+          document.getElementById("billPayMode").value = b.mode || "Cash";
+          document.getElementById("billDiscount").value = b.discount || 0;
+          navigateTo("billing");
+          toast(`Loaded ${b.billNo}`);
+        } else if (delBtn) {
+          const id = delBtn.getAttribute("data-id");
+          const b = state.bills.find((x) => x.id === id);
+          if (b && Array.isArray(b.items)) {
+            b.items.forEach((line) => {
+              const inv = state.inventory.find((i) => i.name.toLowerCase() === line.name.toLowerCase());
+              if (inv) inv.stock = Number(inv.stock) + Number(line.qty);
+            });
+          }
+          state.bills = state.bills.filter((x) => x.id !== id);
+          saveState();
+          renderAll();
+          toast("Bill deleted & stock restored");
+        }
+      });
 
       document.getElementById("btnExportCsv").addEventListener("click", () => {
         const rows = [["Invoice", "Date", "Customer", "Mode", "Total", "Profit"].join(",")].concat(
@@ -2509,7 +2856,7 @@
         const items = document.getElementById("supItems").value.trim();
         const total = Number(document.getElementById("supCost").value) || 0;
         if (!supplier || !items) return;
-        state.suppliers.push({ date: new Date().toISOString(), supplier, items, total, status: "Ordered" });
+        state.suppliers.push({ id: "sup-" + Date.now(), date: new Date().toISOString(), supplier, items, total, status: "Ordered" });
         ["supName", "supItems", "supCost"].forEach((id) => (document.getElementById(id).value = ""));
         saveState();
         renderSuppliers();
@@ -2523,16 +2870,41 @@
               .slice()
               .reverse()
               .map(
-                (s) =>
-                  `<tr><td>${new Date(s.date).toLocaleDateString("en-IN")}</td><td>${esc(s.supplier)}</td><td>${esc(
-                    s.items
-                  )}</td><td>${formatINR(s.total)}</td><td>${esc(s.status)}</td></tr>`
+                (s) => `
+                <tr>
+                  <td>${new Date(s.date).toLocaleDateString("en-IN")}</td>
+                  <td>${esc(s.supplier)}</td>
+                  <td>${esc(s.items)}</td>
+                  <td>${formatINR(s.total)}</td>
+                  <td>${esc(s.status)}</td>
+                  <td>
+                    <div class="btn-row">
+                      ${s.status !== "Received" ? `<button class="btn btn-green btn-xs recv-sup" data-id="${s.id}" type="button">Received</button>` : ""}
+                      <button class="btn btn-red btn-xs del-sup" data-id="${s.id}" type="button">✕</button>
+                    </div>
+                  </td>
+                </tr>`
               )
               .join("")
-          : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No supplier orders</td></tr>`;
+          : `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No supplier orders</td></tr>`;
       }
 
-      // Status Creator & Price Tags
+      document.getElementById("supTableBody").addEventListener("click", (e) => {
+        const rBtn = e.target.closest(".recv-sup");
+        const dBtn = e.target.closest(".del-sup");
+        if (rBtn) {
+          const o = state.suppliers.find((x) => x.id === rBtn.getAttribute("data-id"));
+          if (o) o.status = "Received";
+          saveState();
+          renderSuppliers();
+        } else if (dBtn) {
+          state.suppliers = state.suppliers.filter((x) => x.id !== dBtn.getAttribute("data-id"));
+          saveState();
+          renderSuppliers();
+        }
+      });
+
+      // Status & Price Tags
       ["promoHeading", "promoSub"].forEach((id) => {
         document.getElementById(id).addEventListener("input", () => {
           document.getElementById("promoPreviewTitle").textContent = document.getElementById("promoHeading").value;
@@ -2560,17 +2932,17 @@
         feed.appendChild(u);
 
         const low = q.toLowerCase();
-        let ans = `You currently have ${state.inventory.length} products, ${state.customers.length} khata customers, and ${state.bills.length} invoices.`;
+        let ans = `You have ${state.inventory.length} products, ${state.customers.length} khata accounts, and ${state.bills.length} saved bills.`;
         if (low.includes("sale") || low.includes("profit")) {
-          ans = `Today's sales stand at ${document.getElementById("dashTodaySales").textContent} with a profit of ${
+          ans = `Today's sales are ${document.getElementById("dashTodaySales").textContent} and profit is ${
             document.getElementById("dashTodayProfit").textContent
           }.`;
         } else if (low.includes("stock")) {
-          const lowItems = state.inventory.filter((i) => Number(i.stock) <= 5);
+          const lowItems = state.inventory.filter((i) => Number(i.stock) <= Number(i.lowThreshold ?? 5));
           ans = lowItems.length
             ? `Low stock items: ${lowItems.map((i) => `${i.name} (${i.stock})`).join(", ")}.`
-            : "All items have healthy stock levels.";
-        } else if (low.includes("udhaar")) {
+            : "All items are above their low-stock alert level.";
+        } else if (low.includes("udhaar") || low.includes("credit")) {
           const due = state.customers.filter((c) => Number(c.balance) > 0);
           ans = due.length
             ? `Pending udhaar: ${due.map((c) => `${c.name} (${formatINR(c.balance)})`).join(", ")}.`
@@ -2590,11 +2962,22 @@
         askAi(inp.value.trim());
         inp.value = "";
       });
+      document.getElementById("aiPromptInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") document.getElementById("btnAskAi").click();
+      });
       document.querySelectorAll(".ai-chip").forEach((c) => c.addEventListener("click", () => askAi(c.getAttribute("data-q"))));
 
-      // Settings, Preferences & SaaS Plans
+      // Settings & Backup
       document.getElementById("btnSaveSetup").addEventListener("click", () => {
-        if (state.account) {
+        if (!state.account) {
+          state.account = {
+            userName: document.getElementById("setUserName").value.trim() || "Shop Owner",
+            email: document.getElementById("setEmail").value.trim() || "",
+            shopName: document.getElementById("setShopName").value.trim() || "Zivo Retail Store",
+            age: 18,
+            pin: ""
+          };
+        } else {
           state.account.shopName = document.getElementById("setShopName").value.trim() || state.account.shopName;
           state.account.userName = document.getElementById("setUserName").value.trim() || state.account.userName;
           state.account.email = document.getElementById("setEmail").value.trim() || state.account.email;
@@ -2610,8 +2993,47 @@
       document.getElementById("btnDownloadBackup").addEventListener("click", () => {
         const a = document.createElement("a");
         a.href = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], { type: "application/json" }));
-        a.download = "zivo-shophelper-backup.json";
+        a.download = `zivo-shop-backup-${getTodayDateStr()}.json`;
         a.click();
+      });
+
+      document.getElementById("importBackupFile").addEventListener("change", (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const p = JSON.parse(String(reader.result));
+            if (!p || typeof p !== "object" || Array.isArray(p)) throw new Error();
+            const acc = p.account ? { ...p.account } : state.account;
+            if (acc && "plan" in acc) delete acc.plan;
+            state = {
+              account: acc,
+              shop: { ...defaultState.shop, ...(p.shop || {}) },
+              firebase: { ...defaultState.firebase, ...(p.firebase || {}) },
+              inventory: Array.isArray(p.inventory) ? p.inventory : [],
+              services: Array.isArray(p.services) ? p.services : [],
+              returns: Array.isArray(p.returns) ? p.returns : [],
+              suppliers: Array.isArray(p.suppliers) ? p.suppliers : [],
+              customers: Array.isArray(p.customers) ? p.customers : [],
+              bills: Array.isArray(p.bills) ? p.bills : [],
+              cart: Array.isArray(p.cart) ? p.cart : [],
+              billSeq: Math.max(1, Number(p.billSeq) || 1)
+            };
+            saveState();
+            renderAll();
+            toast("Backup imported");
+          } catch {
+            toast("Invalid JSON backup");
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      document.getElementById("btnToggleThemePref").addEventListener("click", () => {
+        state.shop.theme = state.shop.theme === "light" ? "dark" : "light";
+        saveState();
+        applyTheme();
       });
 
       document.getElementById("btnViewTermsAgain").addEventListener("click", () => {
@@ -2620,24 +3042,127 @@
 
       document.getElementById("btnResetDemoData").addEventListener("click", () => {
         const keepAcc = state.account;
+        const keepFb = state.firebase;
+        const keepShop = state.shop;
         state = structuredClone(defaultState);
         state.account = keepAcc;
+        state.firebase = keepFb;
+        state.shop = keepShop;
         saveState();
         renderAll();
-        toast("Shop records cleared");
+        toast("Shop records reset");
       });
 
-      document.querySelectorAll(".select-plan-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const plan = btn.getAttribute("data-plan");
-          if (state.account) state.account.plan = plan;
+      // Firebase Cloud Firestore Sync
+      document.getElementById("fbJsonInput").addEventListener("input", () => {
+        const raw = document.getElementById("fbJsonInput").value.trim();
+        if (!raw) return;
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed.apiKey) document.getElementById("fbApiKey").value = parsed.apiKey;
+          if (parsed.projectId) document.getElementById("fbProjectId").value = parsed.projectId;
+          if (parsed.appId) document.getElementById("fbAppId").value = parsed.appId;
+        } catch {}
+      });
+
+      function readFirebaseInputs() {
+        return {
+          apiKey: document.getElementById("fbApiKey").value.trim(),
+          projectId: document.getElementById("fbProjectId").value.trim(),
+          appId: document.getElementById("fbAppId").value.trim(),
+          docKey: document.getElementById("fbDocKey").value.trim() || "default_shop",
+          lastSync: state.firebase.lastSync || ""
+        };
+      }
+
+      document.getElementById("btnSaveFirebaseCfg").addEventListener("click", () => {
+        state.firebase = readFirebaseInputs();
+        saveState();
+        renderFirebaseView();
+        toast("Firebase config saved");
+      });
+
+      function getFirestoreRef(cfg) {
+        if (!cfg.apiKey || !cfg.projectId || !cfg.appId) {
+          throw new Error("Enter API Key, Project ID, and App ID first");
+        }
+        const app = initializeApp(
+          { apiKey: cfg.apiKey, projectId: cfg.projectId, appId: cfg.appId },
+          "zivo_sync_" + cfg.projectId
+        );
+        const db = getFirestore(app);
+        return doc(db, "zivo_shops", cfg.docKey);
+      }
+
+      document.getElementById("btnPushFirebase").addEventListener("click", async () => {
+        try {
+          const cfg = readFirebaseInputs();
+          const ref = getFirestoreRef(cfg);
+          const payload = {
+            updatedAt: new Date().toISOString(),
+            account: state.account,
+            shop: state.shop,
+            inventory: state.inventory,
+            services: state.services,
+            returns: state.returns,
+            suppliers: state.suppliers,
+            customers: state.customers,
+            bills: state.bills,
+            billSeq: state.billSeq
+          };
+          await setDoc(ref, payload);
+          cfg.lastSync = new Date().toLocaleString("en-IN");
+          state.firebase = cfg;
+          saveState();
+          renderFirebaseView();
+          toast("Synced to Firebase Cloud");
+        } catch (err) {
+          toast(err?.message || "Firebase push failed");
+        }
+      });
+
+      document.getElementById("btnPullFirebase").addEventListener("click", async () => {
+        try {
+          const cfg = readFirebaseInputs();
+          const ref = getFirestoreRef(cfg);
+          const snap = await getDoc(ref);
+          if (!snap.exists()) {
+            toast("No cloud record found for this key");
+            return;
+          }
+          const d = snap.data();
+          if (d.account) state.account = d.account;
+          if (d.shop) state.shop = { ...state.shop, ...d.shop };
+          state.inventory = Array.isArray(d.inventory) ? d.inventory : state.inventory;
+          state.services = Array.isArray(d.services) ? d.services : state.services;
+          state.returns = Array.isArray(d.returns) ? d.returns : state.returns;
+          state.suppliers = Array.isArray(d.suppliers) ? d.suppliers : state.suppliers;
+          state.customers = Array.isArray(d.customers) ? d.customers : state.customers;
+          state.bills = Array.isArray(d.bills) ? d.bills : state.bills;
+          state.billSeq = Math.max(1, Number(d.billSeq) || state.billSeq);
+          cfg.lastSync = new Date().toLocaleString("en-IN");
+          state.firebase = cfg;
           saveState();
           renderAll();
-          toast(`Plan switched to ${plan}`);
-        });
+          toast("Pulled latest data from Firebase");
+        } catch (err) {
+          toast(err?.message || "Firebase pull failed");
+        }
       });
 
-      // Calculator
+      function renderFirebaseView() {
+        document.getElementById("fbApiKey").value = state.firebase.apiKey || "";
+        document.getElementById("fbProjectId").value = state.firebase.projectId || "";
+        document.getElementById("fbAppId").value = state.firebase.appId || "";
+        document.getElementById("fbDocKey").value = state.firebase.docKey || "";
+        const ready = Boolean(state.firebase.apiKey && state.firebase.projectId && state.firebase.appId);
+        document.getElementById("fbStatePill").textContent = ready ? "Configured" : "Not Connected";
+        document.getElementById("fbLastSyncText").textContent = state.firebase.lastSync
+          ? `Last Cloud Sync: ${state.firebase.lastSync}`
+          : "No cloud sync performed yet.";
+      }
+
+      // Calculator & EOD
       document.querySelectorAll(".calc-key").forEach((btn) => {
         btn.addEventListener("click", () => {
           const k = btn.getAttribute("data-k");
@@ -2664,21 +3189,32 @@
         });
       });
 
-      // EOD Modal
       function renderEodModal() {
         const today = getTodayDateStr();
         const todayBills = state.bills.filter((b) => (b.date || "").slice(0, 10) === today);
-        const sales = todayBills.reduce((s, b) => s + (Number(b.grandTotal) || 0), 0);
-        const profit = todayBills.reduce((s, b) => s + (Number(b.profit) || 0), 0);
+        let sales = 0;
+        let profit = 0;
+        const modes = { Cash: 0, UPI: 0, Udhaar: 0, Card: 0 };
+        todayBills.forEach((b) => {
+          const amt = Number(b.grandTotal) || 0;
+          sales += amt;
+          profit += Number(b.profit) || 0;
+          if (modes[b.mode] !== undefined) modes[b.mode] += amt;
+        });
         document.getElementById("eodSummaryContent").innerHTML = `
           <div><strong>Date:</strong> ${today}</div>
-          <div><strong>Total Invoices:</strong> ${todayBills.length}</div>
+          <div><strong>Total Bills:</strong> ${todayBills.length}</div>
           <div><strong>Today's Total Sales:</strong> <span style="color:#22c55e;font-weight:800;">${formatINR(sales)}</span></div>
           <div><strong>Today's Total Profit:</strong> <span style="color:#06b6d4;font-weight:800;">${formatINR(profit)}</span></div>
+          <hr style="border:none;border-top:1px solid var(--border-color);margin:6px 0;" />
+          <div><strong>Cash:</strong> ${formatINR(modes.Cash)}</div>
+          <div><strong>UPI:</strong> ${formatINR(modes.UPI)}</div>
+          <div><strong>Udhaar:</strong> ${formatINR(modes.Udhaar)}</div>
+          <div><strong>Card:</strong> ${formatINR(modes.Card)}</div>
         `;
       }
 
-      function renderSettingsAndProfile() {
+      function renderProfileFields() {
         const shopName = state.account?.shopName || "Zivo Retail Store";
         document.getElementById("setShopName").value = shopName;
         document.getElementById("setUserName").value = state.account?.userName || "";
@@ -2687,13 +3223,13 @@
         document.getElementById("setCity").value = state.shop.city || "";
         document.getElementById("setGstin").value = state.shop.gstin || "";
         document.getElementById("tagOutShop").textContent = shopName.toUpperCase();
-        document.getElementById("currentPlanTag").textContent = `ACTIVE PLAN: ${state.account?.plan || "STARTER"}`;
         document.getElementById("prefAccountSummary").textContent = state.account
-          ? `Signed in as ${state.account.userName} (${state.account.email}) • Shop: ${state.account.shopName} • Verified Age: ${state.account.age}+`
-          : "No active account";
+          ? `Profile: ${state.account.userName} (${state.account.email}) • Shop: ${state.account.shopName} • Age: ${state.account.age}+ • 100% Free Utility`
+          : "No shop profile created yet • 100% Free Utility";
       }
 
       function renderAll() {
+        applyTheme();
         renderHome();
         renderInventory();
         renderServices();
@@ -2702,7 +3238,8 @@
         renderCustomers();
         renderHistory();
         renderSuppliers();
-        renderSettingsAndProfile();
+        renderFirebaseView();
+        renderProfileFields();
       }
 
       renderAll();
